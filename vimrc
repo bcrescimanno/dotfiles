@@ -133,3 +133,6 @@ nnoremap <Leader>b :CommandTBuffer<cr>
 
 " plugin: Ack.vim
 nnoremap <Leader>a :Ack 
+
+" plugin: gist-vim
+let g:gist_clip_command = 'pbcopy'
