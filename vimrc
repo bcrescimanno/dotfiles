@@ -130,3 +130,6 @@ nnoremap <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
 let g:CommandTMaxHeight=20
 nnoremap <Leader>t :CommandT<cr>
 nnoremap <Leader>b :CommandTBuffer<cr>
+
+" plugin: Ack.vim
+nnoremap <Leader>a :Ack 
