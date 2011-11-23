@@ -19,6 +19,10 @@ if has("gui_macvim")
     macmenu &File.New\ Tab key=<D-T>
     map <D-t> :CommandT<CR>
 
+    " NERD Commenter
+    map <D-/> <plug>NERDCommenterToggle<CR>
+    imap <D-/> <Esc><plug>NERDCommenterToggle<CR>i>
+
     " If the parameter is a directory, cd into it
     function s:CdIfDirectory(directory)
         let explicitDirectory = isdirectory(a:directory)

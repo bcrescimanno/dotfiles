@@ -136,6 +136,7 @@ nnoremap <Leader>a :Ack
 
 " plugin: gist-vim
 let g:gist_clip_command = 'pbcopy'
+let g:gist_detect_filetype = 1
 
 " plugin: NERDTree
 nnoremap <Leader>n :NERDTreeToggle<cr>
