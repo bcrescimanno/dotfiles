@@ -125,3 +125,8 @@ nmap <silent> ,sw :execute ":resize " . line('$')<cr>
 
 " Opens an edit command with the path of the currently edited file filled in
 nnoremap <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
+
+" plugin: Command-T
+let g:CommandTMaxHeight=20
+nnoremap <Leader>t :CommandT<cr>
+nnoremap <Leader>b :CommandTBuffer<cr>

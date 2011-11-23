@@ -15,6 +15,10 @@ if has("gui_macvim")
     set guioptions-=r
     set guioptions-=R
 
+    " Command-T 
+    macmenu &File.New\ Tab key=<D-T>
+    map <D-t> :CommandT<CR>
+
     " If the parameter is a directory, cd into it
     function s:CdIfDirectory(directory)
         let explicitDirectory = isdirectory(a:directory)
