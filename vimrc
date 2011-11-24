@@ -63,9 +63,12 @@ set statusline=%f               " Path
 set statusline+=%m              " Modified flag
 set statusline+=%r              " Readonly flag
 set statusline+=%w              " Preview window flag
+set statusline+=\    " Space.
 
-" Add syntastic warning flag
-set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%#redbar#                " Highlight the following as a warning.
+set statusline+=%{SyntasticStatuslineFlag()} " Syntastic errors.
+set statusline+=%*                           " Reset highlighting.
+
 set statusline+=%=              " Right align
 set statusline+=(%{&ft})        " Show file type
 
