@@ -116,6 +116,10 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+nnoremap <Leader>wl <C-w>l
+nnoremap <Leader>wh <C-w>h
+nnoremap <Leader>wj <C-w>j
+nnoremap <Leader>wk <C-w>k
 nnoremap <leader>q :close<cr>
 
 " Quick editing for .vimrc
@@ -128,6 +132,14 @@ nmap <silent> ,sw :execute ":resize " . line('$')<cr>
 
 " Opens an edit command with the path of the currently edited file filled in
 nnoremap <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
+
+" Fast paste from system clipboard
+nnoremap <Leader>p "*p
+nnoremap <Leader>P "*P
+
+" Custom Filetypes
+au BufRead,BufNewFile {Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru}    set ft=ruby
+au BufNewFile,BufRead *.json set ft=javascript
 
 " plugin: Command-T
 let g:CommandTMaxHeight=20
