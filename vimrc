@@ -162,6 +162,7 @@ let g:gist_detect_filetype = 1
 nnoremap <Leader>n :NERDTreeToggle<cr>
 let NERDTreeMinimalUI=1
 let NERDTreeDirArrows=1
+au FileType nerdtree setlocal nolist
 
 " plugin: Syntastic
 let g:syntastic_enable_signs=1
@@ -171,3 +172,6 @@ run SyntasticEnable javascript
 
 " plugin: Gundo
 nnoremap <Leader>u :GundoToggle<cr>
+
+" plugin: YankRing
+nnoremap <Leader>y :YRShow<cr>
