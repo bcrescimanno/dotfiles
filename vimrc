@@ -63,6 +63,9 @@ set statusline=%f               " Path
 set statusline+=%m              " Modified flag
 set statusline+=%r              " Readonly flag
 set statusline+=%w              " Preview window flag
+
+" Add syntastic warning flag
+set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%=              " Right align
 set statusline+=(%{&ft})        " Show file type
 
@@ -142,3 +145,9 @@ let g:gist_detect_filetype = 1
 nnoremap <Leader>n :NERDTreeToggle<cr>
 let NERDTreeMinimalUI=1
 let NERDTreeDirArrows=1
+
+" plugin: Syntastic
+let g:syntastic_enable_signs=1
+let g:syntastic_auto_jump=1
+let g:syntastic_auto_loc_list=1
+run SyntasticEnable javascript
