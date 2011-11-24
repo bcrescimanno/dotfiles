@@ -126,6 +126,11 @@ nnoremap <leader>q :close<cr>
 nnoremap <leader>ev <C-w>v<C-w>l<C-w>L:e $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 
+" Easier indentation
+vnoremap > >gv
+vnoremap < <gv
+vnoremap = =gv
+
 " Shrink the current window to fit the number of lines in the buffer.  Useful
 " for those buffers that are only a few lines
 nmap <silent> ,sw :execute ":resize " . line('$')<cr>
