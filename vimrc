@@ -110,7 +110,10 @@ nnoremap <leader>V V`]
 inoremap jk <esc>
 
 " Resize splits when the window is resized
-au VimResized * exe "normal! \<c-w>="
+augroup resized
+    autocmd!
+    au VimResized * exe "normal! \<c-w>="
+augroup END
 
 " Working with splits
 nnoremap <leader>w :vsplit<cr>
@@ -146,11 +149,14 @@ nnoremap <Leader>p "*p
 nnoremap <Leader>P "*P
 
 " Uppercase the last word from insert mode - useful for constants
-inoremap <C-u> <esc>vbUea
+inoremap <C-u> <esc>viwUea
 
 " Custom Filetypes
-au BufRead,BufNewFile {Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru}    set ft=ruby
-au BufNewFile,BufRead *.json set ft=javascript
+augroup filetypes
+    autocmd!
+    au BufRead,BufNewFile {Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru}    set ft=ruby
+    au BufNewFile,BufRead *.json set ft=javascript
+augroup END
 
 " plugin: Command-T
 let g:CommandTMaxHeight=20
@@ -168,7 +174,10 @@ let g:gist_detect_filetype = 1
 nnoremap <Leader>n :NERDTreeToggle<cr>
 let NERDTreeMinimalUI=1
 let NERDTreeDirArrows=1
-au FileType nerdtree setlocal nolist
+augroup NerdTree
+    autocmd!
+    au FileType nerdtree setlocal nolist
+augroup END
 
 " plugin: Syntastic
 let g:syntastic_enable_signs=1
