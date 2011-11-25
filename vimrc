@@ -8,7 +8,7 @@ let mapleader=','               " Use the , for leader
 
 " Visual stuff
 set background=dark             " Always assume a dark background
-color desert                    " Use a more pleasing colorscheme
+color vividchalk                " Use a more pleasing colorscheme
 
 " Basic Settings
 set encoding=utf-8              " Use utf-8 encoding
@@ -144,6 +144,9 @@ nnoremap <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
 " Fast paste from system clipboard
 nnoremap <Leader>p "*p
 nnoremap <Leader>P "*P
+
+" Uppercase the last word from insert mode - useful for constants
+inoremap <C-u> <esc>vbUea
 
 " Custom Filetypes
 au BufRead,BufNewFile {Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru}    set ft=ruby
