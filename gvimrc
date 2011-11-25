@@ -3,7 +3,8 @@ if has("gui_macvim")
     set fuoptions=maxhorz,maxvert
 
     " Use a decent font
-    set guifont=Menlo\ Regular:h12
+    "set guifont=Menlo\ Regular:h12
+    set guifont=Droid\ Sans\ Mono:h12
 
     " Command-Enter for full screen
     macmenu Window.Toggle\ Full\ Screen\ Mode key=<D-CR>
