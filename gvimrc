@@ -24,30 +24,35 @@ if has("gui_macvim")
     map <D-/> <plug>NERDCommenterToggle<CR>
     imap <D-/> <Esc><plug>NERDCommenterToggle<CR>i>
 
-    " If the parameter is a directory, cd into it
-    function s:CdIfDirectory(directory)
-        let explicitDirectory = isdirectory(a:directory)
-        let directory = explicitDirectory || empty(a:directory)
-
-        if explicitDirectory
-            exe "cd " . fnameescape(a:directory)
-        endif
-
-        " Allows reading from stdin
-        " ex: git diff | mvim -R -
-        if strlen(a:directory) == 0 
-            return
-        endif
-
-        if directory
-            NERDTree
-            wincmd p
-            bd
-        endif
-
-        if explicitDirectory
-            wincmd p
-        endif
-    endfunction
 
 endif
+
+" If the parameter is a directory, cd into it
+function s:CdIfDirectory(directory)
+    let explicitDirectory = isdirectory(a:directory)
+    let directory = explicitDirectory || empty(a:directory)
+
+    if explicitDirectory
+        exe "cd " . fnameescape(a:directory)
+    endif
+
+    " Allows reading from stdin
+    " ex: git diff | mvim -R -
+    if strlen(a:directory) == 0 
+        return
+    endif
+
+    if directory
+        NERDTree
+        wincmd p
+        bd
+    endif
+
+    if explicitDirectory
+        wincmd p
+    endif
+endfunction
+
+augroup graphicalopen
+    autocmd VimEnter * call s:CdIfDirectory(expand("<amatch>"))
+augroup END
