@@ -63,7 +63,6 @@ command_t() {
 }
 
 clone_or_pull git://github.com/mileszs/ack.vim.git ack.vim
-clone_or_pull git://github.com/mileszs/ack.vim.git ack.vim
 clone_or_pull git://github.com/vim-scripts/YankRing.vim.git YankRing.vim
 clone_or_pull git://github.com/mattn/gist-vim.git gist-vim
 clone_or_pull git://github.com/sjl/gundo.vim.git gundo
@@ -79,6 +78,7 @@ clone_or_pull git://github.com/tpope/vim-haml.git vim-haml
 clone_or_pull git://github.com/pangloss/vim-javascript.git vim-javascript
 clone_or_pull git://github.com/tpope/vim-markdown.git vim-markdown
 clone_or_pull git://github.com/tpope/vim-surround.git vim-surround
+clone_or_pull git://github.com/robgleeson/hammer.vim.git hammer.vim
 
 # Command-T uses a special function because it must be built
 command_t git://github.com/wincent/Command-T.git command-t
