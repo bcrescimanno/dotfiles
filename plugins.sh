@@ -10,6 +10,9 @@
 # the latest version of that plugin. Otherwise, it will clone the git
 # repository.
 #
+# This script is currently very "happy path." I've never done much bash
+# scripting so I'm not up on good error handling.
+#
 # You'll need pathogen to use these scripts within Vim. Be sure to run
 # :Helptags
 # after installations and updates from within Vim to update the helpfiles
@@ -23,17 +26,9 @@
 # 2) Only build command-t when it's actually updated
 # 3) Create a report of what plugins were added / updated
 
-DIRECTORY=~/.vim/bundle
+PATHOGEN_DIR="vimtest/autoload"
+DIRECTORY="vimtest/bundle"
 START_DIR=$(pwd)
-
-echo "Installing Vim Plugins to: $DIRECTORY"
-
-if [ ! -d "$DIRECTORY" ]; then
-    echo "Creating plugin directory\n"
-    mkdir -p $DIRECTORY
-fi
-
-cd $DIRECTORY
 
 clone_or_pull() {
     echo "*************************"
@@ -51,6 +46,61 @@ clone_or_pull() {
     echo "\nFinished $2\n************************\n"
 }
 
+dependencies() {
+    ERROR=0;
+    ERR_STR="Error - Missing Dependency: "
+    if  ! command -v jshint &> /dev/null;
+    then
+        echo $ERR_STR"JSHint"
+        ERROR=1
+    fi
+
+    if  ! command -v curl &> /dev/null;
+    then
+        echo $ERR_STR"curl"
+        ERROR=1
+    fi
+
+    if  ! command -v git &> /dev/null;
+    then
+        echo $ERR_STR"git"
+        ERROR=1
+    fi
+
+    if  ! command -v rake &> /dev/null;
+    then
+        echo $ERR_STR"rake"
+        ERROR=1
+    fi
+
+    if  ! command -v ack &> /dev/null;
+    then
+        echo $ERR_STR"ack"
+        ERROR=1
+    fi
+
+    if [ $ERROR -eq 1 ]
+    then
+        echo "Missing dependencies - Installation Aborted"
+        exit 1
+    fi
+}
+
+pathogen() {
+    echo "*************************"
+    echo "Determining if Pathogen is set up"
+    if [ ! -f $PATHOGEN_DIR/pathogen.vim ]
+    then
+        echo "Installing Pathogen"
+        mkdir -p $PATHOGEN_DIR
+        curl -so $PATHOGEN_DIR/pathogen.vim https://raw.github.com/tpope/vim-pathogen/HEAD/autoload/pathogen.vim
+        echo "Pathogen Installed"
+    else
+        echo "Pathogen already installed - skipping"
+    fi
+    echo "*************************"
+}
+
 command_t() {
     clone_or_pull $1 $2
     echo "*************************"
@@ -61,6 +111,18 @@ command_t() {
     echo "Command-T Plugin Built"
     echo "*************************"
 }
+
+dependencies
+pathogen
+
+echo "Installing Vim Plugins to: $DIRECTORY"
+
+if [ ! -d "$DIRECTORY" ]; then
+    echo "Creating plugin directory\n"
+    mkdir -p $DIRECTORY
+fi
+
+cd $DIRECTORY
 
 clone_or_pull git://github.com/mileszs/ack.vim.git ack.vim
 clone_or_pull git://github.com/vim-scripts/YankRing.vim.git YankRing.vim
@@ -85,3 +147,5 @@ command_t git://github.com/wincent/Command-T.git command-t
 
 cd $START_DIR
 echo "\nPlugin installation / update complete\n"
+
+exit 0;
