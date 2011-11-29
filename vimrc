@@ -101,7 +101,7 @@ noremap L g_
 map <leader>W  :%s/\s\+$//<cr>:let @/=''<CR>
 
 " File-wide replace
-nnoremap <leader>s :%s/
+nnoremap <leader>sr :%s/
 
 " Reslect
 nnoremap <leader>V V`]

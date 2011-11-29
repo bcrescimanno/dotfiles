@@ -54,5 +54,6 @@ function s:CdIfDirectory(directory)
 endfunction
 
 augroup graphicalopen
+    autocmd!
     autocmd VimEnter * call s:CdIfDirectory(expand("<amatch>"))
 augroup END
