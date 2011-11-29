@@ -1,8 +1,6 @@
 Dotfiles
 ========
 
-I've gotta keep dotfiles somewhere; why not github (you know, like everyone else)?
-
 Currently, I'm tracking my Vim configuration and plugins as well as my JSHint configuration
 
 Dependencies
@@ -13,12 +11,11 @@ I can modify the included plugins.sh script to handle some of these. I've only t
 on OS X but it should work in any *nix environment. It won't work on Windows and I won't be
 adding support for it--feel free to fork if you want!
 
-* Pathogen (this is required for any of this to work)
 * Ack
 * Exuberant-ctags
 * JSHint (if you want Javascript syntax checking)
 * Ruby
-* GNU make
+* curl
 
 Usage
 -----
@@ -32,8 +29,6 @@ Create some symlinks:
     ln -s ~/bc-dotfiles/vimrc ~/.vimrc
     ln -s ~/bc-dotfiles/gvimrc ~/.gvimrc
     ln -s ~/bc-dotfiles/.vim ~/.vim
-
-Install Pathogen (Maybe I'll automate this later) for Vim
 
 Run plugins.sh:
 
