@@ -26,8 +26,8 @@
 # 2) Only build command-t when it's actually updated
 # 3) Create a report of what plugins were added / updated
 
-PATHOGEN_DIR="~/vim/autoload"
-DIRECTORY="~/vim/bundle"
+PATHOGEN_DIR=~/.vim/autoload
+DIRECTORY=~/.vim/bundle
 START_DIR=$(pwd)
 
 clone_or_pull() {
