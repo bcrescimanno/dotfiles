@@ -12,7 +12,7 @@
     "noempty"         : false,
     "nonew"           : true,
     "plusplus"        : false,
-    "regexp"          : true,
+    "regexp"          : false,
     "undef"           : true,
     "strict"          : false,
     "trailing"        : false,
