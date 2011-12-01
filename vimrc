@@ -183,7 +183,7 @@ augroup END
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_jump=0
 let g:syntastic_auto_loc_list=1
-run SyntasticEnable javascript
+nnoremap <leader>lc :lclose<cr>
 
 " plugin: Gundo
 nnoremap <Leader>u :GundoToggle<cr>
