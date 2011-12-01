@@ -53,7 +53,23 @@ function s:CdIfDirectory(directory)
     endif
 endfunction
 
-augroup graphicalopen
-    autocmd!
-    autocmd VimEnter * call s:CdIfDirectory(expand("<amatch>"))
-augroup END
+" Project Tree
+if exists("loaded_nerd_tree")
+    augroup graphicalopen
+        autocmd VimEnter * call s:CdIfDirectory(expand("<amatch>"))
+        autocmd WinEnter * call s:CloseIfOnlyNerdTreeLeft()
+    augroup END
+endif
+
+" Close all open buffers on entering a window if the only
+" buffer that's left is the NERDTree buffer
+function s:CloseIfOnlyNerdTreeLeft()
+  if exists("t:NERDTreeBufName")
+    if bufwinnr(t:NERDTreeBufName) != -1
+      if winnr("$") == 1
+        q
+      endif
+    endif
+  endif
+endfunction
+
