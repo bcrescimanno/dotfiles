@@ -105,9 +105,17 @@ command_t() {
     clone_or_pull $1 $2
     echo "*************************"
     echo "Building Command-T Plugin:"
+    if command -v rvm &> /dev/null;
+    then
+        rvm use system
+    fi
     cd $2
     rake make
     cd ..
+    if command -v rvm &> /dev/null;
+    then
+        rvm use default
+    fi
     echo "Command-T Plugin Built"
     echo "*************************"
 }
