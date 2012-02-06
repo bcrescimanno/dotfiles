@@ -149,9 +149,11 @@ clone_or_pull git://github.com/pangloss/vim-javascript.git vim-javascript
 clone_or_pull git://github.com/tpope/vim-markdown.git vim-markdown
 clone_or_pull git://github.com/tpope/vim-surround.git vim-surround
 clone_or_pull git://github.com/robgleeson/hammer.vim.git hammer.vim
+clone_or_pull git://github.com/altercation/vim-colors-solarized.git vim-colors-solarized
+
 
 # Command-T uses a special function because it must be built
-command_t git://github.com/wincent/Command-T.git command-t
+#command_t git://github.com/wincent/Command-T.git command-t
 
 cd $START_DIR
 echo "\nPlugin installation / update complete\n"

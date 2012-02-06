@@ -182,7 +182,8 @@ augroup END
 " plugin: Syntastic
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_jump=0
-let g:syntastic_auto_loc_list=1
+let g:syntastic_auto_loc_list=0
+let g:syntastic_disabled_filetypes = ['scss', 'css']
 nnoremap <leader>lc :lclose<cr>
 
 " plugin: Gundo
@@ -190,3 +191,14 @@ nnoremap <Leader>u :GundoToggle<cr>
 
 " plugin: YankRing
 nnoremap <Leader>y :YRShow<cr>
+
+" Perforce Stuff
+function P4Checkout()
+    set ar
+    silent !p4 edit %
+endfunction
+
+augroup Perforce
+    autocmd!
+    au FileChangedRO * call P4Checkout()
+augroup END
