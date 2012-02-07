@@ -196,6 +196,7 @@ nnoremap <Leader>y :YRShow<cr>
 function P4Checkout()
     set ar
     silent !p4 edit %
+    set noreadonly
 endfunction
 
 augroup Perforce
