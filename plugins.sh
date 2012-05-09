@@ -35,12 +35,12 @@ clone_or_pull() {
     if [ ! -d $2 ]
     then
         echo "Downloading plugin $2\n"
-        git submodule $1 $2
+        git submodule add $1 $2
     else
         echo "Updating plugin $2\n"
         cd $2
         git pull
-        cd ..
+        cd $START_DIR
     fi
 
     echo "\nFinished $2\n************************\n"
@@ -130,26 +130,22 @@ if [ ! -d "$DIRECTORY" ]; then
     mkdir -p $DIRECTORY
 fi
 
-cd $DIRECTORY
-
-clone_or_pull git://github.com/mileszs/ack.vim.git ack.vim
-clone_or_pull git://github.com/vim-scripts/YankRing.vim.git YankRing.vim
-clone_or_pull git://github.com/mattn/gist-vim.git gist-vim
-clone_or_pull git://github.com/sjl/gundo.vim.git gundo
-clone_or_pull git://github.com/scrooloose/nerdcommenter.git nerdcommenter
-clone_or_pull git://github.com/scrooloose/nerdtree.git nerdtree
-clone_or_pull git://github.com/msanders/snipmate.vim.git snipmate.vim
-clone_or_pull git://github.com/scrooloose/syntastic.git syntastic.vim
-clone_or_pull git://github.com/vim-scripts/taglist.vim.git taglist.vim
-clone_or_pull git://github.com/vim-scripts/AutoClose.git vim-autoclose
-clone_or_pull git://github.com/Lokaltog/vim-easymotion.git vim-easymotion
-clone_or_pull git://github.com/tpope/vim-endwise.git vim-endwise
-clone_or_pull git://github.com/tpope/vim-haml.git vim-haml
-clone_or_pull git://github.com/pangloss/vim-javascript.git vim-javascript
-clone_or_pull git://github.com/tpope/vim-markdown.git vim-markdown
-clone_or_pull git://github.com/tpope/vim-surround.git vim-surround
-clone_or_pull git://github.com/robgleeson/hammer.vim.git hammer.vim
-clone_or_pull git://github.com/altercation/vim-colors-solarized.git vim-colors-solarized
+clone_or_pull git://github.com/mileszs/ack.vim.git $DIRECTORY/ack.vim
+clone_or_pull git://github.com/vim-scripts/YankRing.vim.git $DIRECTORY/YankRing.vim
+clone_or_pull git://github.com/mattn/gist-vim.git $DIRECTORY/gist-vim
+clone_or_pull git://github.com/sjl/gundo.vim.git $DIRECTORY/gundo
+clone_or_pull git://github.com/scrooloose/nerdcommenter.git $DIRECTORY/nerdcommenter
+clone_or_pull git://github.com/scrooloose/nerdtree.git $DIRECTORY/nerdtree
+clone_or_pull git://github.com/msanders/snipmate.vim.git $DIRECTORY/snipmate.vim
+clone_or_pull git://github.com/scrooloose/syntastic.git $DIRECTORY/syntastic.vim
+clone_or_pull git://github.com/vim-scripts/taglist.vim.git $DIRECTORY/taglist.vim
+clone_or_pull git://github.com/Lokaltog/vim-easymotion.git $DIRECTORY/vim-easymotion
+clone_or_pull git://github.com/kana/vim-smartinput.git $DIRECTORY/vim-smartinput
+clone_or_pull git://github.com/tpope/vim-haml.git $DIRECTORY/vim-haml
+clone_or_pull git://github.com/pangloss/vim-javascript.git $DIRECTORY/vim-javascript
+clone_or_pull git://github.com/tpope/vim-markdown.git $DIRECTORY/vim-markdown
+clone_or_pull git://github.com/tpope/vim-surround.git $DIRECTORY/vim-surround
+clone_or_pull git://github.com/altercation/vim-colors-solarized.git $DIRECTORY/vim-colors-solarized
 
 
 # Command-T uses a special function because it must be built
