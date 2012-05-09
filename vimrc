@@ -162,6 +162,11 @@ augroup END
 let g:CommandTMaxHeight=20
 nnoremap <Leader>t :CommandT<cr>
 nnoremap <Leader>b :CommandTBuffer<cr>
+if &term =~ "xterm" || &term =~ "screen"
+    let g:CommandTCancelMap     = ['<ESC>', '<C-c>']
+    let g:CommandTSelectNextMap = ['<C-n>', '<C-j>', '<ESC>OB']
+    let g:CommandTSelectPrevMap = ['<C-p>', '<C-k>', '<ESC>OA']
+endif
 
 " plugin: Ack.vim
 nnoremap <Leader>a :Ack 
@@ -191,6 +196,7 @@ nnoremap <Leader>u :GundoToggle<cr>
 
 " plugin: YankRing
 nnoremap <Leader>y :YRShow<cr>
+
 
 " Perforce Stuff
 function P4Checkout()
