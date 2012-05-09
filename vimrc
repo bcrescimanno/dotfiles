@@ -201,11 +201,13 @@ nnoremap <Leader>y :YRShow<cr>
 " Perforce Stuff
 function P4Checkout()
     set ar
-    silent !p4 edit %
+    let filename = expand( "%:p")
+    let commandLine = "p4 edit " . filename
+    let result = system( commandLine )
     set noreadonly
 endfunction
 
 augroup Perforce
     autocmd!
-    au FileChangedRO * call P4Checkout()
+    au FileChangedRO * nested call P4Checkout()
 augroup END
