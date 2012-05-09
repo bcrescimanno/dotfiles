@@ -8,7 +8,7 @@ let mapleader=','               " Use the , for leader
 
 " Visual stuff
 set background=dark             " Always assume a dark background
-color vividchalk                " Use a more pleasing colorscheme
+color solarized                " Use a more pleasing colorscheme
 
 " Basic Settings
 set encoding=utf-8              " Use utf-8 encoding

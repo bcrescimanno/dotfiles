@@ -35,7 +35,7 @@ clone_or_pull() {
     if [ ! -d $2 ]
     then
         echo "Downloading plugin $2\n"
-        git clone $1 $2
+        git submodule $1 $2
     else
         echo "Updating plugin $2\n"
         cd $2
