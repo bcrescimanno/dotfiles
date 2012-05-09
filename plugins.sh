@@ -149,7 +149,7 @@ clone_or_pull git://github.com/altercation/vim-colors-solarized.git $DIRECTORY/v
 
 
 # Command-T uses a special function because it must be built
-#command_t git://github.com/wincent/Command-T.git command-t
+#command_t git://github.com/wincent/Command-T.git $DIRECTORY/command-t
 
 cd $START_DIR
 echo "\nPlugin installation / update complete\n"

@@ -52,3 +52,6 @@
 [submodule "/Users/bcrescimanno/.vim/bundle/vim-smartinput"]
 	path = /Users/bcrescimanno/.vim/bundle/vim-smartinput
 	url = git://github.com/kana/vim-smartinput.git
+[submodule "/Users/bcrescimanno/.vim/bundle/command-t"]
+	path = /Users/bcrescimanno/.vim/bundle/command-t
+	url = git://github.com/wincent/Command-T.git
