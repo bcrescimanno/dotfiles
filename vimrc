@@ -170,7 +170,7 @@ if &term =~ "xterm" || &term =~ "screen"
 endif
 
 " plugin: Ack.vim
-nnoremap <Leader>a :Ack 
+nnoremap <Leader>a :Ack! 
 
 " plugin: gist-vim
 let g:gist_clip_command = 'pbcopy'
@@ -191,6 +191,7 @@ let g:syntastic_auto_jump=0
 let g:syntastic_auto_loc_list=0
 let g:syntastic_disabled_filetypes = ['scss', 'css']
 nnoremap <leader>lc :lclose<cr>
+nnoremap <leader>lo :lopen<cr>
 
 " plugin: Gundo
 nnoremap <Leader>u :GundoToggle<cr>
