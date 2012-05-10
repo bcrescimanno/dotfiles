@@ -25,6 +25,7 @@ set autowrite                   " Automatically write a file when leaving it
 set formatoptions=or            " Be a bit smarter about comments
 set scrolloff=5                 " Don't get too close to the edge!
 set virtualedit=block           " Allow 'column-like selection in visual mode
+set mouse=a
 
 " White Space
 set nowrap                      " Don't wrap lines
