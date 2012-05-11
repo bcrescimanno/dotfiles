@@ -107,7 +107,7 @@ noremap H ^
 noremap L g_
 
 " Strip trailing whitespace
-map <leader>W  :%s/\s\+$//<cr>:let @/=''<CR>
+nnoremap <leader>W mz:%s/\s\+$//<cr>:let @/=''<cr>`z
 
 " File-wide replace
 nnoremap <leader>sr :%s/
