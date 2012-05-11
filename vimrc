@@ -18,7 +18,6 @@ set visualbell                  " Stop the beeping!
 set nowrap                      " Don't wrap lines
 set backspace=indent,eol,start  " Allow backspace to work normally
 set modelines=0                 " Ignore modelines
-set cursorline                  " Highlight the current cursor position
 set ttyfast                     " Assume we're using a fast terminal
 set lazyredraw                  " Don't attempt to update screen during macros
 set autowrite                   " Automatically write a file when leaving it
@@ -44,6 +43,15 @@ set ignorecase                  " Case-insensitive search...
 set smartcase                   " ...unless I specify caps chars
 set gdefault                    " Assume I want to replace all instances
 set wrapscan                    " Search will wrap
+
+" Only show cursor line for active window
+augroup cline
+    au!
+    au WinLeave * set nocursorline
+    au WinEnter * set cursorline
+    au InsertEnter * set nocursorline
+    au InsertLeave * set cursorline
+augroup END
 
 " Use perl-style regex (like everyone else...)
 nnoremap / /\v
