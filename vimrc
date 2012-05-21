@@ -207,6 +207,9 @@ nnoremap <Leader>u :GundoToggle<cr>
 " plugin: YankRing
 nnoremap <Leader>y :YRShow<cr>
 
+" plugin: Unimpaired
+nnoremap <C-Up> [e
+nnoremap <C-Down> ]e
 
 " Perforce Stuff
 function P4Checkout()

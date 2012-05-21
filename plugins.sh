@@ -146,6 +146,7 @@ clone_or_pull git://github.com/pangloss/vim-javascript.git $DIRECTORY/vim-javasc
 clone_or_pull git://github.com/tpope/vim-markdown.git $DIRECTORY/vim-markdown
 clone_or_pull git://github.com/tpope/vim-surround.git $DIRECTORY/vim-surround
 clone_or_pull git://github.com/altercation/vim-colors-solarized.git $DIRECTORY/vim-colors-solarized
+clone_or_pull git://github.com/tpope/vim-unimpaired.git $DIRECTORY/vim-unimpaired
 
 
 # Command-T uses a special function because it must be built
