@@ -8,6 +8,7 @@ let mapleader=','               " Use the , for leader
 
 " Visual stuff
 set background=dark             " Always assume a dark background
+let g:solarized_termcolors=16
 color solarized                " Use a more pleasing colorscheme
 
 " Basic Settings
