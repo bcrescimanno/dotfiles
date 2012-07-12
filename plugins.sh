@@ -101,25 +101,6 @@ pathogen() {
     echo "*************************"
 }
 
-command_t() {
-    clone_or_pull $1 $2
-    echo "*************************"
-    echo "Building Command-T Plugin:"
-    if command -v rvm &> /dev/null;
-    then
-        rvm use system
-    fi
-    cd $2
-    rake make
-    cd ..
-    if command -v rvm &> /dev/null;
-    then
-        rvm use default
-    fi
-    echo "Command-T Plugin Built"
-    echo "*************************"
-}
-
 dependencies
 pathogen
 
@@ -147,10 +128,7 @@ clone_or_pull git://github.com/tpope/vim-markdown.git $DIRECTORY/vim-markdown
 clone_or_pull git://github.com/tpope/vim-surround.git $DIRECTORY/vim-surround
 clone_or_pull git://github.com/altercation/vim-colors-solarized.git $DIRECTORY/vim-colors-solarized
 clone_or_pull git://github.com/tpope/vim-unimpaired.git $DIRECTORY/vim-unimpaired
-
-
-# Command-T uses a special function because it must be built
-#command_t git://github.com/wincent/Command-T.git $DIRECTORY/command-t
+clone_or_pull git://github.com/kien/ctrlp.vim.git $DIRECTORY/ctrlp.vim
 
 cd $START_DIR
 echo "\nPlugin installation / update complete\n"
