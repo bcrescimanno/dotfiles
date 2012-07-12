@@ -58,3 +58,6 @@
 [submodule "/Users/bcrescimanno/.vim/bundle/vim-unimpaired"]
 	path = /Users/bcrescimanno/.vim/bundle/vim-unimpaired
 	url = git://github.com/tpope/vim-unimpaired.git
+[submodule "/Users/bcrescimanno/.vim/bundle/ctrlp.vim"]
+	path = /Users/bcrescimanno/.vim/bundle/ctrlp.vim
+	url = git://github.com/kien/ctrlp.vim.git
