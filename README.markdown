@@ -14,7 +14,6 @@ adding support for it--feel free to fork if you want!
 * Ack
 * Exuberant-ctags
 * JSHint (if you want Javascript syntax checking)
-* Ruby
 * curl
 
 Usage
@@ -28,14 +27,10 @@ Create some symlinks:
     ln -s ~/bc-dotfiles/jshintrc ~/.jshintrc
     ln -s ~/bc-dotfiles/vimrc ~/.vimrc
     ln -s ~/bc-dotfiles/gvimrc ~/.gvimrc
-    ln -s ~/bc-dotfiles/.vim ~/.vim
+    ln -s ~/bc-dotfiles/vim ~/.vim
+    ln -s ~/bc-dotfiles/tmux.conf ~/.tmux.conf
 
-Run plugins.sh:
+Initialize the submodules
 
     cd ~/bc-dotfiles
-    sh plugins.sh
-
-This will set up all of the plugins that I use. You can comment out any of them in the 
-plugins.sh file if you don't want to install that particular plugin; however, you should
-also check both the vimrc and gvimrc files and remove associated configuration to avoid
-errors when loading vim.
+    git submodules update --init
