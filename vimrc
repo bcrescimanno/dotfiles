@@ -168,15 +168,8 @@ augroup filetypes
     au BufNewFile,BufRead *.json set ft=javascript
 augroup END
 
-" plugin: Command-T
-let g:CommandTMaxHeight=20
-nnoremap <Leader>t :CommandT<cr>
-nnoremap <Leader>b :CommandTBuffer<cr>
-if &term =~ "xterm" || &term =~ "screen"
-    let g:CommandTCancelMap     = ['<ESC>', '<C-c>']
-    let g:CommandTSelectNextMap = ['<C-n>', '<C-j>', '<ESC>OB']
-    let g:CommandTSelectPrevMap = ['<C-p>', '<C-k>', '<ESC>OA']
-endif
+" plugin: CtrlP
+let g:ctrlp_map = '<leader>t'
 
 " plugin: Ack.vim
 nnoremap <Leader>a :Ack! 
