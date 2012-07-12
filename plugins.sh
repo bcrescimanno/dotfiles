@@ -4,6 +4,8 @@
 # author: Brian Crescimanno <brian.crescimanno@gmail.com>
 # license: MIT License http://www.opensource.org/licenses/mit-license.php
 #
+# This script is deprecated for actual use; please see the readme
+#
 # Basic Shell script to download the plugins that I use with Vim
 #
 # The script detects if a plugin already exists and attempts to pull
