@@ -4,7 +4,7 @@ set -e
 
 STARTDIR=$(pwd)
 REPO="git://github.com/bcrescimanno/dotfiles.git"
-NAME="bc-dotfiles"
+NAME="${1:-bc-dotfiles}"
 INSTALLDIR=$HOME/$NAME
 
 # Clone the git repo
