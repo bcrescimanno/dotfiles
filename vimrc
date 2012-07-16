@@ -170,6 +170,7 @@ augroup END
 
 " plugin: CtrlP
 let g:ctrlp_map = '<leader>t'
+let g:ctrlp_working_path_mode = 0
 
 " plugin: Ack.vim
 nnoremap <Leader>a :Ack! 
