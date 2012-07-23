@@ -20,6 +20,7 @@ ln -s $INSTALLDIR/vim $HOME/.vim
 ln -s $INSTALLDIR/gvimrc $HOME/.gvimrc
 ln -s $INSTALLDIR/vimrc $HOME/.vimrc
 ln -s $INSTALLDIR/tmux.conf $HOME/.tmux.conf
+ln -s $INSTALLDIR/ackrc $HOME/.ackrc
 
 cd $INSTALLDIR
 git submodule update --init
