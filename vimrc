@@ -22,11 +22,12 @@ set modelines=0                 " Ignore modelines
 set ttyfast                     " Assume we're using a fast terminal
 set lazyredraw                  " Don't attempt to update screen during macros
 set autowrite                   " Automatically write a file when leaving it
-set formatoptions=or            " Be a bit smarter about comments
+set formatoptions=orncq         " Be a bit smarter about comments
 set scrolloff=5                 " Don't get too close to the edge!
 set virtualedit=block           " Allow 'column-like selection in visual mode
 set mouse=a
-set colorcolumn=100
+set colorcolumn=100             " Highlight column 100 so I can see it
+set textwidth=99                " Don't go further than 99 characters
 
 " White Space
 set nowrap                      " Don't wrap lines
