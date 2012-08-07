@@ -8,7 +8,7 @@ Dependencies
 
 A few of the plugins the plugin script will install require some dependencies; hopefully
 I can modify the included plugins.sh script to handle some of these. I've only tested this
-on OS X but it should work in any *nix environment. It won't work on Windows and I won't be
+on OS X but it should work in any linux / unix  environment. It won't work on Windows and I won't be
 adding support for it--feel free to fork if you want!
 
 * Ack
@@ -17,12 +17,12 @@ adding support for it--feel free to fork if you want!
 * curl
 
 Quick Install
-----
+-------------
 
     curl https://raw.github.com/bcrescimanno/dotfiles/master/go.sh | sh
 
 Detailed Usage
------
+--------------
 Clone the dotfiles to your home directory:
 
     git clone git://github.com/bcrescimanno/dotfiles.git ~/bc-dotfiles
