@@ -66,6 +66,7 @@
         "util",
         "video",
         "view",
+        "view2",
         "webapi",
         "$VIEWS",
         "playback",
