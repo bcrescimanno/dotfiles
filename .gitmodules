@@ -64,3 +64,6 @@
 [submodule "vim/bundle/YouCompleteMe"]
 	path = vim/bundle/YouCompleteMe
 	url = git://github.com/Valloric/YouCompleteMe.git
+[submodule "vim/bundle/vimux"]
+	path = vim/bundle/vimux
+	url = git://github.com/benmills/vimux.git
