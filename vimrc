@@ -249,3 +249,9 @@ augroup Perforce
     au FileChangedRO * nested call P4Checkout()
 augroup END
 " }}}
+
+" {{{ Include a local file
+if filereadable(expand("~/.vimrc.local"))
+  source ~/.vimrc.local
+endif
+" }}}
