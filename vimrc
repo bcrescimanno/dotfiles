@@ -65,8 +65,6 @@ vnoremap / /\v
 " }}}
 
 "{{{ Folding
-set foldmethod=syntax
-
 augroup markerfolds
     au!
     au FileType vim setlocal foldmethod=marker
