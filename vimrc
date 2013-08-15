@@ -98,7 +98,7 @@ set statusline+=%=              " Right align
 set statusline+=(%{&ft})        " Show file type
 
 " Line and column position and counts.
-set statusline+=\ (line\ %l\/%L,\ col\ %03c)
+set statusline+=\ (%l\/%L,\ %03c)
 " }}}
 
 "{{{ Backup and Undo
