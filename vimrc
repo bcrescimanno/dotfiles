@@ -184,6 +184,7 @@ augroup filetypes
     autocmd!
     au BufRead,BufNewFile {Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru}    set ft=ruby
     au BufNewFile,BufRead *.json set ft=javascript
+    au BufWrite crontab.* set nowritebackup
 augroup END
 " }}}
 
