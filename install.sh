@@ -1,8 +1,9 @@
 #!/bin/bash
 
-# Create the backup and undo directories
+# Create necessary subdirectories
 mkdir -p vim/backup
 mkdir -p vim/undo
+mkdir -p vim/bundle
 
 # Create symlinks
 ln -s jshintrc $HOME/.jshintrc
