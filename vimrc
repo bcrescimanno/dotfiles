@@ -1,7 +1,17 @@
 set nocompatible                " Disable vi compatibility
-syntax on                       " Turn on Syntax Highlighting
+filetype off
+
+" {{{ Vundle
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'gmarik/Vundle.vim'
+
+call vundle#end()
+" }}}
 
 filetype plugin indent on       " Use the plugin / indent for each type
+syntax on                       " Turn on Syntax Highlighting
 
 let mapleader=','               " Use the , for leader
 
