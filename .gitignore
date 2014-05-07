@@ -1,4 +1,5 @@
 vim/undo
 vim/backup
+vim/bundle
 vim/.netrwhist
 .DS_Store
