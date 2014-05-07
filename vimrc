@@ -6,6 +6,18 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
+Plugin 'mileszs/ack.vim'
+Plugin 'sjl/gundo.vim'
+Plugin 'scrooloose/nerdcommenter.git'
+Plugin 'scrooloose/nerdtree.git'
+Plugin 'scrooloose/syntastic.git'
+Plugin 'kana/vim-smartinput'
+Plugin 'pangloss/vim-javascript'
+Plugin 'plasticboy/vim-markdown'
+Plugin 'tpope/vim-surround.git'
+Plugin 'altercation/vim-colors-solarized.git'
+Plugin 'kien/ctrlp.vim.git'
+Plugin 'Valloric/YouCompleteMe.git'
 
 call vundle#end()
 " }}}
