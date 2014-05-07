@@ -1,4 +1,3 @@
-call pathogen#infect()          " Enable Pathogen
 set nocompatible                " Disable vi compatibility
 syntax on                       " Turn on Syntax Highlighting
 
