@@ -19,28 +19,6 @@ adding support for it--feel free to fork if you want!
 Quick Install
 -------------
 
-    curl https://raw.github.com/bcrescimanno/dotfiles/master/go.sh | sh
-
-Detailed Usage
---------------
-Clone the dotfiles to your home directory:
-
-    git clone git://github.com/bcrescimanno/dotfiles.git ~/bc-dotfiles
-
-Create some symlinks:
-
-    ln -s ~/bc-dotfiles/jshintrc ~/.jshintrc
-    ln -s ~/bc-dotfiles/vimrc ~/.vimrc
-    ln -s ~/bc-dotfiles/gvimrc ~/.gvimrc
-    ln -s ~/bc-dotfiles/vim ~/.vim
-    ln -s ~/bc-dotfiles/tmux.conf ~/.tmux.conf
-
-Make undo and backup directories
-
-    mkdir ~/bc-dotfiles/vim/backup
-    mkdir ~/bc-dotfiles/vim/undo
-
-Initialize the submodules
-
-    cd ~/bc-dotfiles
-    git submodules update --init
+    git clone git://github.com/bcrescimanno/dotfiles.git
+    cd dotfiles
+    ./install.sh
