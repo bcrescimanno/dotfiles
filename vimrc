@@ -15,9 +15,11 @@ Plugin 'kana/vim-smartinput'
 Plugin 'pangloss/vim-javascript'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'tpope/vim-surround.git'
+Plugin 'tpope/vim-fireplace.git'
 Plugin 'altercation/vim-colors-solarized.git'
 Plugin 'kien/ctrlp.vim.git'
 Plugin 'Valloric/YouCompleteMe.git'
+Plugin 'christoomey/vim-tmux-navigator'
 
 call vundle#end()
 " }}}
