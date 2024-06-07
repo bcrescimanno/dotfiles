@@ -1,0 +1,21 @@
+[window]
+dimensions = { columns = 90, lines = 40 }
+padding = { x = 10, y = 10 }
+opacity = 0.9
+blur = true
+dynamic_title = true
+
+[font]
+size = 13
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font"
+style = "Italic"
