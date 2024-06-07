@@ -5,7 +5,7 @@ import = [
 [window]
 dimensions = { columns = 90, lines = 40 }
 padding = { x = 10, y = 10 }
-opacity = 0.9
+opacity = 0.93
 blur = true
 dynamic_title = true
 
