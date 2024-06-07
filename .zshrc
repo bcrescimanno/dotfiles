@@ -13,6 +13,10 @@ zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-autosuggestions
 
+zinit snippet OMZP::git
+zinit snippet OMZP::sudo
+zinit snippet OMZP::archlinux
+
 # History
 HISTFILE=~/.zsh_history
 HISTSIZE=2000
@@ -34,6 +38,9 @@ bindkey '^n' history-search-forward
 # Completions
 autoload -Uz compinit && compinit
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# Prompt with Oh My Posh
+eval "$(oh-my-posh init zsh --config ~/.config/omp.toml)"
 
 # Aliases
 alias ls='ls --color=auto'
