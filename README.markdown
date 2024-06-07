@@ -1,11 +1,4 @@
 Dotfiles
 ========
 
-Currently, I'm tracking my Vim configuration and plugins as well as my JSHint configuration
-
-Quick Install
--------------
-
-    git clone git://github.com/bcrescimanno/dotfiles.git
-    cd dotfiles
-    ./install.sh
+In the process of reworking these for use with GNU Stow
