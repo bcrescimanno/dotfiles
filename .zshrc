@@ -42,6 +42,8 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 
+zinit cdreplay -q
+
 # Prompt with Oh My Posh
 eval "$(oh-my-posh init zsh --config ~/.config/omp.toml)"
 
