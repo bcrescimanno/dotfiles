@@ -54,3 +54,4 @@ eval "$(fzf --zsh)"
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias xclip='xclip -sel clip'
+alias vim='nvim'
