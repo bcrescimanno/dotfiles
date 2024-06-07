@@ -14,7 +14,7 @@ final_space = true
     style = 'plain'
     foreground = 'blue'
     background = 'transparent'
-    template = ' {{ .Path }} '
+    template = '{{ .Path }}'
 
     [blocks.segments.properties]
       style = 'full'
@@ -64,4 +64,4 @@ final_space = true
 [secondary_prompt]
   foreground = 'p:black'
   background = 'transparent'
-  template = '❭❭  '
+  template = '❭❭ '
