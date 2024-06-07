@@ -12,6 +12,7 @@ source "${ZINIT_HOME}/zinit.zsh"
 zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-autosuggestions
+zinit light Aloxaf/fzf-tab
 
 zinit snippet OMZP::git
 zinit snippet OMZP::sudo
@@ -38,9 +39,14 @@ bindkey '^n' history-search-forward
 # Completions
 autoload -Uz compinit && compinit
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 
 # Prompt with Oh My Posh
 eval "$(oh-my-posh init zsh --config ~/.config/omp.toml)"
+
+# Enable fzf
+eval "$(fzf --zsh)"
 
 # Aliases
 alias ls='ls --color=auto'
