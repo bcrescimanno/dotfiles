@@ -28,10 +28,12 @@ setopt hist_find_no_dups
 
 # Emacs keybindings
 bindkey -e
+bindkey '^p' history-search-backward
+bindkey '^n' history-search-forward
 
-# Load completions
+# Completions
 autoload -Uz compinit && compinit
-
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 # Aliases
 alias ls='ls --color=auto'
