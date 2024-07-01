@@ -10,6 +10,11 @@ console_title_template = '{{ .Shell }} in {{ .Folder }}'
   newline = true
 
   [[blocks.segments]]
+    type = 'session'
+    foreground = 'green'
+    background = 'transparent'
+    template = '{{if .SSHSession}}   {{end}}'
+  [[blocks.segments]]
     type = 'path'
     style = 'plain'
     foreground = 'blue'
