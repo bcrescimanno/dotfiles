@@ -24,3 +24,8 @@ style = "Bold"
 family = "JetBrainsMono Nerd Font"
 style = "Italic"
 
+[[keyboard.bindings]]
+action = "CreateNewWindow"
+key = "N"
+mods = "Control"
+
