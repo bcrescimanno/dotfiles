@@ -1,0 +1,10 @@
+[Unit]
+Description=Wallpaper Slideshow Timer
+Requires=wp-slideshow.service
+
+[Timer]
+OnUnitActiveSec=10m
+AccuracySec=1
+
+[Install]
+WantedBy=timers.target

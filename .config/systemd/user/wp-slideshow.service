@@ -1,0 +1,7 @@
+[Unit]
+Description=Wallpaper Slideshow for Hyprland
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/dotfiles/bin/wp-slideshow.sh
