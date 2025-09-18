@@ -14,8 +14,8 @@ export XCURSOR_THEME=macOS
 # Try to use Wayland
 export SDL_VIDEODRIVER=wayland
 export MOZ_ENABLE_WAYLAND=1
-export ELECTRON_OZONE_PLATFORM_HINT=wayland
-export OZONE_PLATFORM=wayland
+#export ELECTRON_OZONE_PLATFORM_HINT=wayland
+#export OZONE_PLATFORM=wayland
 export QT_QPA_PLATFORM=wayland
 
 # Qt
