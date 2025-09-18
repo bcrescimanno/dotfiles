@@ -3,8 +3,10 @@ Description=Wallpaper Slideshow Timer
 Requires=wp-slideshow.service
 
 [Timer]
+OnBootSec=5s
 OnUnitActiveSec=10m
+Persistent=no
 AccuracySec=1
 
 [Install]
-WantedBy=timers.target
+WantedBy=graphical-session.target

@@ -1,6 +1,7 @@
 [Unit]
 Description=Wallpaper Slideshow for Hyprland
 After=graphical-session.target
+Requires=graphical-session.target
 
 [Service]
 Type=oneshot
