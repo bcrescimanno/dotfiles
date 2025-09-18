@@ -5,9 +5,17 @@ export __GLX_VENDOR_LIBRARY_NAME=nvidia
 export __GL_GSYNC_ALLOWED=true
 export __GL_VRR_ALLOWED=0
 
+# Cursors
 export HYPRCURSOR_THEME=macOS-hyper
 export HYPRCURSOR_SIZE=24
 export XCURSOR_SIZE=24
 export XCURSOR_THEME=macOS
 
+# Try to use Wayland
+export SDL_VIDEODRIVER=wayland
+export MOZ_ENABLE_WAYLAND=1
+export ELECTRON_OZONE_PLATFORM_HINT=wayland
+export OZONE_PLATFORM=wayland
+
+# Qt
 export QT_QPA_PLATFORMTHEME=qt6ct
