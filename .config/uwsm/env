@@ -1,11 +1,13 @@
 # NVIDIA Hyprland support
 # see: https://wiki.hypr.land/Nvidia/ for latest information
-
 export LIBVA_DRIVER_NAME=nvidia
 export __GLX_VENDOR_LIBRARY_NAME=nvidia
 export __GL_GSYNC_ALLOWED=true
 export __GL_VRR_ALLOWED=0
 
+export HYPRCURSOR_THEME=macOS
+export HYPRCURSOR_SIZE=24
 export XCURSOR_SIZE=24
 export XCURSOR_THEME=macOS
+
 export QT_QPA_PLATFORMTHEME=qt6ct
