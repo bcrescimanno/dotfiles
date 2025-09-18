@@ -5,4 +5,4 @@ Requires=graphical-session.target
 
 [Service]
 Type=oneshot
-ExecStart=%h/dotfiles/bin/wp-slideshow.sh
+ExecStart=%h/.config/bin/wp-slideshow.sh
