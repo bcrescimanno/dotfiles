@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# TODO: Fix the direct reference here
 DIR="${1:-$HOME/Pictures/4kwp}"
 
 WP=$(find "$DIR" -type f \( \
