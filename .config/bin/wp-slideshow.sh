@@ -13,6 +13,5 @@ if [[ -z "$WP" ]]; then
     echo "No image files found in '$DIR'"
     exit 1
 else
-    echo "$WP"
     hyprctl hyprpaper reload ,"$WP"
 fi
