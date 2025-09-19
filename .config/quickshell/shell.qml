@@ -9,7 +9,7 @@ Scope {
 
   SystemClock {
     id: clock
-    precision: SystemClock.seconds
+    precision: SystemClock.Seconds
   }
 
   PanelWindow {
@@ -19,7 +19,7 @@ Scope {
       right: true
     }
 
-    height: 30
+    implicitHeight: 30
     color: "transparent"
 
     margins {
@@ -34,12 +34,26 @@ Scope {
       radius: 10
       color: "#cc282A36"
 
+      // Left side
+      RowLayout {
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        spacing: 24
+
+        Text {
+          text: "\u{f08c7}"
+          color: "#f8f9f2ff"
+          font.pixelSize: 24
+          font.family: "JetBrainsMono Nerd Font"
+          leftPadding: 20
+        }
+      }
+
       // Right side?
       RowLayout {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         spacing: 24
-
         Row {
           spacing: 12
           Repeater {
@@ -75,10 +89,12 @@ Scope {
 
           // TODO: Fix the am/pm showing relative to the rest of the string
           // It's hard to see without the seconds--but it's definitely a thing
+          // It also doesn't happen with a fixed-width font...
           Text {
             id: sample
+            font.family: "JetBrainsMono Nerd Font"
             color: "#f8f9f2ff"
-            width: textbox.fixedWidth
+            width: textBox.fixedWidth
             text: Qt.formatDateTime(clock.date, "MMM dd h:mm ap")
           }
         }
