@@ -7,19 +7,22 @@ import QtQuick.Layouts
 Scope {
   id: topBar
 
+  property bool isVisible: false
+
   SystemClock {
     id: clock
     precision: SystemClock.Seconds
   }
 
   PanelWindow {
+    id: toplevel
     anchors {
       top: true
       left: true
       right: true
     }
 
-    implicitHeight: 30
+    implicitHeight: 40
     color: "transparent"
 
     margins {
@@ -40,12 +43,46 @@ Scope {
         anchors.left: parent.left
         spacing: 24
 
-        Text {
-          text: "\u{f08c7}"
-          color: "#f8f9f2ff"
-          font.pixelSize: 24
-          font.family: "JetBrainsMono Nerd Font"
-          leftPadding: 20
+
+        WrapperMouseArea {
+          Text {
+            id: arch
+            text: "\u{f08c7}"
+            color: "#f8f9f2ff"
+            font.pixelSize: 24
+            font.family: "JetBrainsMono Nerd Font"
+            leftPadding: 20
+          }
+
+          // Broken AF - doesn't work with the menu going away
+          // There must be a better way to do context menus in quickshell
+          onClicked: {
+            isVisible = !isVisible
+          }
+        }
+        PopupWindow {
+          id: testWindow
+          anchor.window: toplevel
+          anchor.rect.x: 0
+          anchor.rect.y: toplevel.height-10
+          implicitHeight: 500
+          implicitWidth: 500
+          color: "transparent"
+          visible: isVisible
+
+          Rectangle {
+            anchors.fill: parent
+            radius: 10
+            color: "#282A36"
+            opacity: isVisible ? 0.9 : 0.0
+
+            Behavior on opacity {
+              NumberAnimation {
+                duration: 250
+                easing.type: Easing.InOutQuad
+              }
+            }
+          }
         }
       }
 
@@ -93,6 +130,7 @@ Scope {
           Text {
             id: sample
             font.family: "JetBrainsMono Nerd Font"
+            font.pixelSize: 16
             color: "#f8f9f2ff"
             width: textBox.fixedWidth
             text: Qt.formatDateTime(clock.date, "MMM dd h:mm ap")
