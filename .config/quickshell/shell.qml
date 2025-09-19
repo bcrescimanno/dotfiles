@@ -6,6 +6,11 @@ import QtQuick
 Scope {
   id: topBar
 
+  SystemClock {
+    id: clock
+    precision: SystemClock.seconds
+  }
+
   PanelWindow {
     anchors {
       top: true
@@ -17,11 +22,12 @@ Scope {
     color: "transparent"
 
     margins {
-      top: 20
+      top: 10
       left: 20
       right: 20
     }
 
+    // Renders the main panel
     Rectangle {
       anchors {
         top: parent.top
@@ -33,30 +39,45 @@ Scope {
       radius: 10
       color: "#cc282A36"
 
+      // Right side?
       Row {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 20
-        spacing: 8
+        spacing: 24
 
-        Repeater {
-          model: SystemTray.items
+        Row {
+          spacing: 8
+          Repeater {
+            model: SystemTray.items
 
-          delegate: Item {
-            width: 16
-            height: 16
+            delegate: Item {
+              width: 16
+              height: 16
 
-            IconImage {
-              anchors.fill: parent
-              source: modelData.icon
-            }
+              IconImage {
+                anchors.fill: parent
+                source: modelData.icon
+              }
 
-            MouseArea {
-              anchors.fill: parent
-              onClicked: {
-                modelData.activate()
+              MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                  modelData.activate()
+                }
               }
             }
+          }
+        }
+
+        Item {
+          width: sample.implicitWidth
+          height: sample.implicitHeight
+
+          Text {
+            id: sample
+            color: "#f8f9f2ff"
+            text: Qt.formatDateTime(clock.date, "MMM dd   h:mm:ss ap")
           }
         }
       }
