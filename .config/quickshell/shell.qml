@@ -2,6 +2,7 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.SystemTray
 import QtQuick
+import QtQuick.Layouts
 
 Scope {
   id: topBar
@@ -18,7 +19,7 @@ Scope {
       right: true
     }
 
-    implicitHeight: 30
+    height: 30
     color: "transparent"
 
     margins {
@@ -29,29 +30,22 @@ Scope {
 
     // Renders the main panel
     Rectangle {
-      anchors {
-        top: parent.top
-        left: parent.left
-        right: parent.right
-        bottom: parent.bottom
-      }
-
+      anchors.fill: parent
       radius: 10
       color: "#cc282A36"
 
       // Right side?
-      Row {
+      RowLayout {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: 20
         spacing: 24
 
         Row {
-          spacing: 8
+          spacing: 12
           Repeater {
             model: SystemTray.items
 
-            delegate: Item {
+             Item {
               width: 16
               height: 16
 
@@ -71,13 +65,21 @@ Scope {
         }
 
         Item {
-          width: sample.implicitWidth
+          id: textBox
+          Layout.fillWidth: true
           height: sample.implicitHeight
+          width: fixedWidth
+          Layout.rightMargin: 20
 
+          property int fixedWidth: sample.implicitWidth
+
+          // TODO: Fix the am/pm showing relative to the rest of the string
+          // It's hard to see without the seconds--but it's definitely a thing
           Text {
             id: sample
             color: "#f8f9f2ff"
-            text: Qt.formatDateTime(clock.date, "MMM dd   h:mm:ss ap")
+            width: textbox.fixedWidth
+            text: Qt.formatDateTime(clock.date, "MMM dd h:mm ap")
           }
         }
       }
