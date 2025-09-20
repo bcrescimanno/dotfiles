@@ -52,8 +52,11 @@ Scope {
                         font.family: "JetBrainsMono Nerd Font"
                         leftPadding: 20
                     }
-
                     onClicked: CheckUpdates.ArchService.checkForUpdates()
+                }
+
+                Text {
+                    text: CheckUpdates.ArchService.updatesList.length
                 }
             }
 

@@ -17,6 +17,7 @@ Singleton {
         onExited: exitCode => {
             console.log("Attempting to get updates...");
             if (exitCode === 0 || exitCode === 1) {
+                console.log("I got updates" + exitCode);
                 parseUpdates(stdout.text);
             } else {
                 console.log("Error when checking for updates");
@@ -34,6 +35,9 @@ Singleton {
         if (text) {
             updatesList = text.split("\n");
             console.log("There are " + updatesList.length + " updates");
+        } else {
+            console.log("Zero updates found");
+            console.log(text);
         }
     }
 }
