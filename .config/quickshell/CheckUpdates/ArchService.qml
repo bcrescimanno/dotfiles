@@ -30,7 +30,7 @@ Singleton {
         updateScript.running = true;
     }
 
-    function parseUpdates(text) {
+    function parseUpdates(text: string) {
         if (text) {
             updatesList = text.split("\n");
             console.log("There are " + updatesList.length + " updates");
