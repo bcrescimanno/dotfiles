@@ -4,7 +4,7 @@ import Quickshell.Widgets
 import Quickshell.Services.SystemTray
 import QtQuick
 import QtQuick.Layouts
-import qs.CheckUpdates
+import qs.CheckUpdates as CheckUpdates
 
 Scope {
     id: topBar
@@ -53,7 +53,7 @@ Scope {
                         leftPadding: 20
                     }
 
-                    onClicked: ArchService.checkForUpdates()
+                    onClicked: CheckUpdates.ArchService.checkForUpdates()
                 }
             }
 
