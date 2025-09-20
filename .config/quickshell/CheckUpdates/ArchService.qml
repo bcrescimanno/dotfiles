@@ -27,6 +27,13 @@ Singleton {
         stdout: StdioCollector {}
     }
 
+    Timer {
+        interval: 10000
+        running: true
+        repeat: false
+        onTriggered: checkForUpdates()
+    }
+
     function checkForUpdates() {
         updateScript.running = true;
     }
