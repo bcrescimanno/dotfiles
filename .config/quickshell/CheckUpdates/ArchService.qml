@@ -9,18 +9,18 @@ Singleton {
     id: root
 
     property var updatesList: []
+    property int numUpdates: 0
+    property bool hasRun: false
 
     Process {
         id: updateScript
         command: ['checkupdates']
 
         onExited: exitCode => {
-            console.log("Attempting to get updates...");
             if (exitCode === 0 || exitCode === 1) {
-                console.log("I got updates" + exitCode);
                 parseUpdates(stdout.text);
             } else {
-                console.log("Error when checking for updates");
+                console.error("Error when checking for updates");
             }
         }
 
@@ -28,23 +28,25 @@ Singleton {
     }
 
     Timer {
-        interval: 10000
+        // TODO: Understand why this can't run in advance
+        // TODO: make configurable
+        interval: hasRun ? 3600000 : 1000
         running: true
         repeat: false
         onTriggered: checkForUpdates()
     }
 
     function checkForUpdates() {
+        hasRun = true;
         updateScript.running = true;
     }
 
     function parseUpdates(text: string) {
         if (text) {
-            updatesList = text.split("\n");
-            console.log("There are " + updatesList.length + " updates");
+            updatesList = text.trim().split("\n");
+            numUpdates = updatesList.length;
         } else {
             console.log("Zero updates found");
-            console.log(text);
         }
     }
 }

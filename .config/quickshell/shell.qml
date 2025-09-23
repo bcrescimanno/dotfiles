@@ -7,7 +7,7 @@ import QtQuick.Layouts
 import qs.CheckUpdates as CheckUpdates
 
 Scope {
-    id: topBar
+    id: root
 
     SystemClock {
         id: clock
@@ -39,25 +39,10 @@ Scope {
 
             // Left side
             RowLayout {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
+                anchors.fill: parent
                 spacing: 24
 
-                WrapperMouseArea {
-                    Text {
-                        id: arch
-                        text: "\u{f08c7}"
-                        color: "#f8f9f2ff"
-                        font.pixelSize: 24
-                        font.family: "JetBrainsMono Nerd Font"
-                        leftPadding: 20
-                    }
-                    onClicked: CheckUpdates.ArchService.checkForUpdates()
-                }
-
-                Text {
-                    text: CheckUpdates.ArchService.updatesList.length
-                }
+                CheckUpdates.Indicator {}
             }
 
             // Right side?
