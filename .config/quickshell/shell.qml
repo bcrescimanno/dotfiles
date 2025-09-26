@@ -37,12 +37,18 @@ Scope {
             radius: 10
             color: "#cc282A36"
 
+            CheckUpdates.UpdatesMenu {
+                id: updatesMenu
+            }
+
             // Left side
             RowLayout {
                 anchors.fill: parent
                 spacing: 24
 
-                CheckUpdates.Indicator {}
+                CheckUpdates.Indicator {
+                    onClicked: updatesMenu.visible = !updatesMenu.visible
+                }
             }
 
             // Right side?
