@@ -14,9 +14,10 @@ export XCURSOR_THEME=macOS
 # Try to use Wayland
 export SDL_VIDEODRIVER=wayland
 export MOZ_ENABLE_WAYLAND=1
+export QT_QPA_PLATFORM=wayland
+# 1Password breaks with these settings for now
 #export ELECTRON_OZONE_PLATFORM_HINT=wayland
 #export OZONE_PLATFORM=wayland
-export QT_QPA_PLATFORM=wayland
 
 # Qt
 export QT_QPA_PLATFORMTHEME=qt6ct
