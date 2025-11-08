@@ -1,0 +1,30 @@
+* {
+  font-size: 16px;
+  font-family: JetBrains Mono Nerd;
+  color: #f8f8f2;
+}
+
+window#waybar {
+  border: 2px;
+  border-radius: 10px;
+  background: rgba(40, 42, 54, 0.8);
+  color: #f8f8f2;
+}
+
+#clock {
+  margin-right: 18px;
+}
+
+#custom-updates {
+  font-size: 18px;
+  margin-left: 15px;
+}
+
+#bluetooth,
+#network,
+#battery,
+#pulseaudio,
+#cpu{
+  font-size: 18px;
+  padding: 0 5px;
+}
