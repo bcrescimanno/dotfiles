@@ -1,0 +1,11 @@
+[Unit]
+Description=Arcdps Updater Timer
+Requires=arcdps-update.service
+
+[Timer]
+OnBootSec=5s
+OnUnitActiveSec=4h
+Persistent=no
+
+[Install]
+WantedBy=default.target
