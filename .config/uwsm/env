@@ -2,8 +2,6 @@
 # see: https://wiki.hypr.land/Nvidia/ for latest information
 export LIBVA_DRIVER_NAME=nvidia
 export __GLX_VENDOR_LIBRARY_NAME=nvidia
-export __GL_GSYNC_ALLOWED=true
-export __GL_VRR_ALLOWED=0
 
 # Cursors
 export HYPRCURSOR_THEME=macOS-hyper
