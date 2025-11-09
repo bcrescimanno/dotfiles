@@ -1,7 +1,5 @@
 [Unit]
 Description=Keep arcpds for Guild Wars 2 up to date
-After=graphical-session.target
-Requires=graphical-session.target
 
 [Service]
 Type=oneshot

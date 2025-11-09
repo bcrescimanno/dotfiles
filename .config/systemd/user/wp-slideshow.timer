@@ -1,6 +1,7 @@
 [Unit]
 Description=Wallpaper Slideshow Timer
 Requires=wp-slideshow.service
+After=wayland-session@hyprland.desktop.target
 
 [Timer]
 OnBootSec=5s
@@ -9,4 +10,4 @@ Persistent=no
 AccuracySec=1
 
 [Install]
-WantedBy=graphical-session.target
+WantedBy=wayland-session@hyprland.desktop.target
