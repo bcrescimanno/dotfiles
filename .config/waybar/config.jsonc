@@ -11,6 +11,7 @@
   "modules-left": ["custom/updates", "hyprland/workspaces"],
   "modules-center": [],
   "modules-right": [
+    "custom/weather",
     "tray",
     "bluetooth",
     "network",
@@ -39,6 +40,12 @@
       "2": [],
       "3": []
     }
+  },
+  "custom/weather": {
+    "format": "{text}",
+    "restart-interval": 900,
+    "return-type": "json",
+    "exec": "$HOME/dotfiles/.config/bin/weather.sh"
   },
   "custom/updates": {
     "format": "{icon} {0}",
