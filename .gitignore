@@ -4,3 +4,4 @@ vim/bundle
 vim/.netrwhist
 .DS_Store
 .qmlls.ini
+secrets
