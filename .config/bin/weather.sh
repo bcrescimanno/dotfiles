@@ -25,6 +25,7 @@ to_night_emoji() {
     case "$1" in
         "☀️") echo "🌙" ;;
         "🌤️") echo "🌙" ;;
+        "⛅️") echo "🌙" ;;
         "⛅") echo "☁️" ;;
         "🌥️") echo "☁️" ;;
         "🌦️") echo "🌧️" ;;
