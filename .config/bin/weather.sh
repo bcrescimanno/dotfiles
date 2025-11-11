@@ -15,9 +15,9 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
-sunrise=$(awk '{print $4}' <<< $weather)
+sunrise=$(awk '{print $(NF-1)}' <<< $weather)
 sunrise=$(date -d "$sunrise" +%s)
-sunset=$(awk '{print $5}' <<< $weather)
+sunset=$(awk '{print $NF}' <<< $weather)
 sunset=$(date -d "$sunset" +%s)
 now=$(date +%s)
 
@@ -44,7 +44,12 @@ if (( now < sunrise || now > sunset)); then
     weather=${weather//$emoji/$final_emoji}
 fi
 
-weather=$(awk '{print $1, $2, $3}' <<< $weather)
+# Always ignore the last two fields as they are the timestamps
+weather=$(awk '{
+    for (i = 1; i <= NF-2; i++) {
+        printf"%s%s", $i, (i < NF-2 ? OFS :ORS)
+    }
+}' <<< $weather)
 
 # I think having +70F is silly
 weather=${weather//\+/}
