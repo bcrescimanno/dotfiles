@@ -1,6 +1,7 @@
-font-size = 14
+font-size = 15
 font-family = JetBrainsMono Nerd Font Mono
 
 background-opacity = 0.95
+background-blur = true
 
 theme = dracula
