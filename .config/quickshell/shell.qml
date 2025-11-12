@@ -1,107 +1,104 @@
 import Quickshell
-import Quickshell.Io
 import Quickshell.Widgets
-import Quickshell.Services.SystemTray
+import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
-import qs.CheckUpdates as CheckUpdates
 
-Scope {
-    id: root
+FloatingWindow {
+    id: mainWindow
 
-    SystemClock {
-        id: clock
-        precision: SystemClock.Seconds
-    }
+    property var updateData: []
 
-    PanelWindow {
-        id: toplevel
-        anchors {
-            top: true
-            left: true
-            right: true
-        }
-
-        implicitHeight: 40
-        color: "transparent"
-
-        margins {
-            top: 10
-            left: 20
-            right: 20
-        }
-
-        // Renders the main panel
-        Rectangle {
-            anchors.fill: parent
-            radius: 10
-            color: "#cc282A36"
-
-            CheckUpdates.UpdatesMenu {
-                id: updatesMenu
+    ClippingRectangle {
+        anchors.fill: parent
+        anchors.margins: 10
+        ColumnLayout {
+            id: testTable
+            spacing: 10
+            anchors {
+                left: parent.left
+                right: parent.right
+                top: parent.top
             }
 
-            // Left side
-            RowLayout {
-                anchors.fill: parent
-                spacing: 24
+            Repeater {
+                model: updateData
+                Item {
 
-                CheckUpdates.Indicator {
-                    onClicked: updatesMenu.visible = !updatesMenu.visible
+                    Layout.preferredHeight: updateName.implicitHeight
+                    Layout.fillWidth: true
+
+                    Text {
+                        id: updateName
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        font: "JetBrains Nerd Mono"
+                        text: modelData.name
+                    }
+                    Text {
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        font: "JetBrains Nerd Mono"
+                        text: modelData.version
+                    }
                 }
             }
 
-            // Right side?
-            RowLayout {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: parent.right
-                spacing: 24
-                Row {
-                    spacing: 12
-                    Repeater {
-                        model: SystemTray.items
-
-                        Item {
-                            width: 16
-                            height: 16
-
-                            IconImage {
-                                anchors.fill: parent
-                                source: modelData.icon
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                onClicked: {
-                                    modelData.activate();
-                                }
-                            }
+            Rectangle {
+                property bool hovered: false
+                color: hovered ? "steelblue" : "darkblue"
+                implicitWidth: children[0].implicitWidth
+                implicitHeight: children[0].implicitHeight
+                radius: 8
+                RowLayout {
+                    WrapperMouseArea {
+                        hoverEnabled: true
+                        onClicked: updateTimer.running = true
+                        onEntered: parent.parent.hovered = true
+                        onExited: parent.parent.hovered = false
+                        Layout.margins: 10
+                        Text {
+                            anchors.fill: parent
+                            text: "Refresh Updates " + updateData.length
+                            color: "#ffffff"
                         }
                     }
                 }
-
-                Item {
-                    id: textBox
-                    Layout.fillWidth: true
-                    height: sample.implicitHeight
-                    width: fixedWidth
-                    Layout.rightMargin: 20
-
-                    property int fixedWidth: sample.implicitWidth
-
-                    // TODO: Fix the am/pm showing relative to the rest of the string
-                    // It's hard to see without the seconds--but it's definitely a thing
-                    // It also doesn't happen with a fixed-width font...
-                    Text {
-                        id: sample
-                        font.family: "JetBrainsMono Nerd Font"
-                        font.pixelSize: 16
-                        color: "#f8f9f2ff"
-                        width: textBox.fixedWidth
-                        text: Qt.formatDateTime(clock.date, "MMM dd h:mm ap")
-                    }
-                }
             }
         }
+    }
+
+    Process {
+        id: updateChecker
+        command: ["checkupdates"]
+        running: false
+
+        stdout: StdioCollector {
+            onStreamFinished: updateData = formatUpdates(this.text)
+        }
+    }
+
+    Timer {
+        id: updateTimer
+        interval: 30000
+        running: false
+        repeat: false
+        triggeredOnStart: true
+        onTriggered: updateChecker.running = true
+    }
+
+    function formatUpdates(updates: string): var {
+        return updates.trim().split("\n").map(update => {
+            update = update.replace(/->/g, "→");
+            let index = update.indexOf(" ");
+            let name, version;
+
+            if (index !== -1) {
+                return {
+                    name: update.substr(0, index),
+                    version: update.substr(++index)
+                };
+            }
+        });
     }
 }
