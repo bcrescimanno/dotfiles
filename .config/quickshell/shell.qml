@@ -7,9 +7,13 @@ import QtQuick.Layouts
 FloatingWindow {
     id: mainWindow
 
+    color: "#ed282A36"
+
     property var updateData: []
+    property var nextCheck: -1
 
     ClippingRectangle {
+        color: "#00282A36"
         anchors.fill: parent
         anchors.margins: 10
         ColumnLayout {
@@ -32,14 +36,24 @@ FloatingWindow {
                         id: updateName
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
-                        font: "JetBrains Nerd Mono"
+                        font {
+                            pointSize: 13
+                            family: "JetBrainsMono Nerd Font"
+                            letterSpacing: 0
+                        }
                         text: modelData.name
+                        color: "#f8f8f2"
                     }
                     Text {
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        font: "JetBrains Nerd Mono"
+                        font {
+                            pointSize: 13
+                            family: "JetBrainsMono Nerd Font"
+                            letterSpacing: 0
+                        }
                         text: modelData.version
+                        color: "#f8f8f2"
                     }
                 }
             }
@@ -65,12 +79,16 @@ FloatingWindow {
                     }
                 }
             }
+
+            Text {
+                text: nextCheck > -1 ? "Next Check at " + Qt.formatDateTime(nextCheck, "hh:mm:ss") : ""
+            }
         }
     }
 
     Process {
         id: updateChecker
-        command: ["checkupdates"]
+        command: ["checkupdates", "--nocolor"]
         running: false
 
         stdout: StdioCollector {
@@ -88,6 +106,9 @@ FloatingWindow {
     }
 
     function formatUpdates(updates: string): var {
+        // Side effects suck
+        nextCheck = new Date(Date.now() + updateTimer.interval);
+
         return updates.trim().split("\n").map(update => {
             update = update.replace(/->/g, "→");
             let index = update.indexOf(" ");
