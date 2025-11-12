@@ -8,3 +8,6 @@ theme = dracula
 
 window-padding-x = 10
 window-padding-y = 10
+
+window-height = 40
+window-width = 90
