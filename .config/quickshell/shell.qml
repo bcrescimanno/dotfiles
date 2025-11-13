@@ -12,6 +12,8 @@ ShellRoot {
 
         implicitHeight: 40
 
+        backgroundColor: "#ed282A36"
+
         SystemClock {
             id: clock
             precision: SystemClock.Minutes
@@ -21,7 +23,8 @@ ShellRoot {
             Text {
                 id: clockView
                 text: Qt.formatDateTime(clock.date, "h:mm ap")
-                color: "#ffffff"
+                color: "#f8f8f2"
+                font.family: "JetBrainsMono Nerd Font"
                 font.pixelSize: 16
             }
         ]

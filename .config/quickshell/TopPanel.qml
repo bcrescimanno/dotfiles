@@ -15,8 +15,10 @@ PanelWindow {
     default property alias left: leftPane.data
     property alias right: rightPane.data
     property alias center: centerPane.data
+    property alias backgroundColor: background.color
 
     Rectangle {
+        id: background
         color: "#000000"
         anchors.fill: parent
 
