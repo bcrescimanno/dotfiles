@@ -2,6 +2,7 @@ import Quickshell
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
+import Quickshell.Services.SystemTray
 import qs.CheckUpdates as CheckUpdates
 
 ShellRoot {
@@ -39,6 +40,25 @@ ShellRoot {
         ]
 
         right: [
+            RowLayout {
+                id: systemTray
+                spacing: 10
+                Repeater {
+                    model: SystemTray.items
+
+                    WrapperMouseArea {
+                        IconImage {
+                            implicitHeight: 16
+                            implicitWidth: 16
+                            anchors.fill: parent
+                            source: modelData.icon
+                        }
+                        onClicked: {
+                            modelData.activate();
+                        }
+                    }
+                }
+            },
             Text {
                 id: clockView
                 text: Qt.formatDateTime(clock.date, "h:mm ap")
