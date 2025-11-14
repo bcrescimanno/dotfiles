@@ -3,6 +3,7 @@ import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
 import qs.ArchUpdates as ArchUpdates
+import qs.CheckUpdates as CheckUpdates
 
 ShellRoot {
     TopPanel {
@@ -23,25 +24,7 @@ ShellRoot {
         }
 
         left: [
-            WrapperMouseArea {
-                RowLayout {
-                    Text {
-                        text: "󰣇"
-                        color: "#f8f8f2"
-                        font.family: "JetBrainsMono Nerd Font"
-                        font.pixelSize: 24
-                    }
-                }
-                onClicked: () => {
-                    ArchService.checkUpdates();
-                }
-            },
-            Text {
-                color: "#f8f8f2"
-                font.family: "JetBrainsMono Nerd Font"
-                font.pixelSize: 16
-                text: ArchService.updateData.length
-            },
+            CheckUpdates.Indicator {},
             LazyLoader {
                 id: updatesLoader
                 loading: true

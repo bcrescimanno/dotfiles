@@ -1,5 +1,4 @@
 pragma Singleton
-pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
@@ -7,18 +6,18 @@ import Quickshell.Io
 
 Singleton {
     id: root
-
-    property var updatesList: []
-    property int numUpdates: 0
+    property var updateData: []
+    property var nextCheck: -1
     property bool hasRun: false
+    property string test: "This is a test string"
 
     Process {
-        id: updateScript
-        command: ['checkupdates']
+        id: checkupdates
+        command: ['checkupdates', '--nocolor']
 
         onExited: exitCode => {
             if (exitCode === 0 || exitCode === 1) {
-                parseUpdates(stdout.text);
+                updateData = formatUpdates(stdout.text);
             } else {
                 console.error("Error when checking for updates");
             }
@@ -28,25 +27,38 @@ Singleton {
     }
 
     Timer {
-        // TODO: Understand why this can't run in advance
-        // TODO: make configurable
-        interval: hasRun ? 3600000 : 1000
-        running: true
+        id: updateTimer
+        // TODO: Why is this delay required?
+        interval: hasRun ? 86400 : 1000
+        running: false
         repeat: false
-        onTriggered: checkForUpdates()
-    }
-
-    function checkForUpdates() {
-        hasRun = true;
-        updateScript.running = true;
-    }
-
-    function parseUpdates(text: string) {
-        if (text) {
-            updatesList = text.trim().split("\n");
-            numUpdates = updatesList.length;
-        } else {
-            console.log("Zero updates found");
+        onTriggered: () => {
+            hasRun = true;
+            checkupdates.running = true;
         }
+    }
+
+    function checkUpdates() {
+        if (!updateTimer.running) {
+            updateTimer.running = true;
+        }
+    }
+
+    function formatUpdates(updates: string): var {
+        // Side effects suck
+        nextCheck = new Date(Date.now() + updateTimer.interval);
+
+        return updates.trim().split("\n").map(update => {
+            update = update.replace(/->/g, "→");
+            let index = update.indexOf(" ");
+            let name, version;
+
+            if (index !== -1) {
+                return {
+                    name: update.substr(0, index),
+                    version: update.substr(++index)
+                };
+            }
+        });
     }
 }
