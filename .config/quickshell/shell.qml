@@ -1,6 +1,7 @@
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
+import QtQuick.Layouts
 import qs.ArchUpdates as ArchUpdates
 
 ShellRoot {
@@ -23,18 +24,23 @@ ShellRoot {
 
         left: [
             WrapperMouseArea {
-                Text {
-                    text: "󰣇"
-                    color: "#f8f8f2"
-                    font.family: "JetBrainsMono Nerd Font"
-                    font.pixelSize: 24
+                RowLayout {
+                    Text {
+                        text: "󰣇"
+                        color: "#f8f8f2"
+                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: 24
+                    }
                 }
-
                 onClicked: () => {
-                    console.log(updatesLoader.item.updateData[0]);
-                    updatesLoader.loading = true;
-                    updatesLoader.item.visible = !updatesLoader.item.visible;
+                    ArchService.checkUpdates();
                 }
+            },
+            Text {
+                color: "#f8f8f2"
+                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 16
+                text: ArchService.updateData.length
             },
             LazyLoader {
                 id: updatesLoader
