@@ -42,7 +42,7 @@ PopupWindow {
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         font {
-                            pointSize: 13
+                            pixelSize: 14
                             family: "JetBrainsMono Nerd Font"
                             letterSpacing: 0
                         }
@@ -53,7 +53,7 @@ PopupWindow {
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
                         font {
-                            pointSize: 13
+                            pixelSize: 14
                             family: "JetBrainsMono Nerd Font"
                             letterSpacing: 0
                         }
@@ -72,13 +72,10 @@ PopupWindow {
                 RowLayout {
                     WrapperMouseArea {
                         hoverEnabled: true
-                        onClicked: updateTimer.running = true
-                        onEntered: parent.parent.hovered = true
-                        onExited: parent.parent.hovered = false
                         Layout.margins: 10
                         Text {
                             anchors.fill: parent
-                            text: "Refresh Updates " + updateData.length
+                            text: "Refresh Updates "
                             color: "#ffffff"
                         }
                     }
@@ -89,42 +86,5 @@ PopupWindow {
                 text: nextCheck > -1 ? "Next Check at " + Qt.formatDateTime(nextCheck, "hh:mm:ss") : ""
             }
         }
-    }
-
-    Process {
-        id: updateChecker
-        command: ["checkupdates", "--nocolor"]
-        running: false
-
-        stdout: StdioCollector {
-            onStreamFinished: updateData = formatUpdates(this.text)
-        }
-    }
-
-    Timer {
-        id: updateTimer
-        interval: 30000
-        running: false
-        repeat: false
-        triggeredOnStart: true
-        onTriggered: updateChecker.running = true
-    }
-
-    function formatUpdates(updates: string): var {
-        // Side effects suck
-        nextCheck = new Date(Date.now() + updateTimer.interval);
-
-        return updates.trim().split("\n").map(update => {
-            update = update.replace(/->/g, "→");
-            let index = update.indexOf(" ");
-            let name, version;
-
-            if (index !== -1) {
-                return {
-                    name: update.substr(0, index),
-                    version: update.substr(++index)
-                };
-            }
-        });
     }
 }

@@ -2,7 +2,6 @@ import Quickshell
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
-import qs.ArchUpdates as ArchUpdates
 import qs.CheckUpdates as CheckUpdates
 
 ShellRoot {
@@ -15,7 +14,6 @@ ShellRoot {
         }
 
         implicitHeight: 40
-
         backgroundColor: "#ed282A36"
 
         SystemClock {
@@ -24,12 +22,16 @@ ShellRoot {
         }
 
         left: [
-            CheckUpdates.Indicator {},
-            LazyLoader {
-                id: updatesLoader
-                loading: true
-                ArchUpdates.UpdateWindow {
+            CheckUpdates.Indicator {
+                id: updatesIndicator
+                onClicked: () => {
+                    if (updateData.length > 0) {
+                        archUpdates.visible = !archUpdates.visible;
+                    }
+                }
+                CheckUpdates.UpdateWindow {
                     id: archUpdates
+                    updateData: updatesIndicator.updateData
                     anchor.window: topPanel
                     anchor.rect.y: 40
                 }

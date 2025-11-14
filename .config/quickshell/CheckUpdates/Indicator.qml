@@ -5,12 +5,14 @@ import Quickshell.Widgets
 import QtQuick.Layouts
 
 WrapperMouseArea {
+    property var updateData: ArchService.updateData
+
     RowLayout {
         Text {
             id: osIcon
             text: "\u{f08c7}"
             color: "#f8f9f2"
-            opacity: ArchService.updateData.length > 0 ? 1 : 0.5
+            opacity: updateData.length > 0 ? 1 : 0.5
             font.pixelSize: 24
             font.family: "JetBrainsMono Nerd Font"
 
@@ -26,8 +28,8 @@ WrapperMouseArea {
             color: "#f8f9f2"
             font.pixelSize: 16
             font.family: "JetBrainsMono Nerd Font"
-            opacity: ArchService.updateData.length > 0 ? 1 : 0.5
-            text: ArchService.updateData.length > 0 ? ArchService.updateData.length : ""
+            opacity: updateData.length > 0 ? 1 : 0.5
+            text: updateData.length > 0 ? updateData.length : ""
 
             Behavior on opacity {
                 NumberAnimation {
@@ -37,8 +39,9 @@ WrapperMouseArea {
         }
     }
 
+    hoverEnabled: true
+
     Component.onCompleted: () => {
-        console.log("Indicator loaded");
         ArchService.checkUpdates();
     }
 }

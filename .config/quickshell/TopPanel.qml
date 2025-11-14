@@ -1,7 +1,6 @@
 import Quickshell
 import QtQuick
 import QtQuick.Layouts
-import qs.ArchUpdates as ArchUpdates
 
 PanelWindow {
     anchors {
