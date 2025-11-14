@@ -27,7 +27,8 @@ PanelWindow {
         RowLayout {
             id: leftPane
             anchors.left: parent.left
-            anchors.leftMargin: 10
+            anchors.leftMargin: 20
+            anchors.verticalCenter: parent.verticalCenter
         }
 
         RowLayout {

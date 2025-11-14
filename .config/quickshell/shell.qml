@@ -1,9 +1,11 @@
 import Quickshell
+import Quickshell.Widgets
 import QtQuick
 import qs.ArchUpdates as ArchUpdates
 
 ShellRoot {
     TopPanel {
+        id: topPanel
         margins {
             top: 10
             left: 20
@@ -19,6 +21,32 @@ ShellRoot {
             precision: SystemClock.Minutes
         }
 
+        left: [
+            WrapperMouseArea {
+                Text {
+                    text: "󰣇"
+                    color: "#f8f8f2"
+                    font.family: "JetBrainsMono Nerd Font"
+                    font.pixelSize: 24
+                }
+
+                onClicked: () => {
+                    console.log(updatesLoader.item.updateData[0]);
+                    updatesLoader.loading = true;
+                    updatesLoader.item.visible = !updatesLoader.item.visible;
+                }
+            },
+            LazyLoader {
+                id: updatesLoader
+                loading: true
+                ArchUpdates.UpdateWindow {
+                    id: archUpdates
+                    anchor.window: topPanel
+                    anchor.rect.y: 40
+                }
+            }
+        ]
+
         right: [
             Text {
                 id: clockView
@@ -28,9 +56,5 @@ ShellRoot {
                 font.pixelSize: 16
             }
         ]
-    }
-
-    LazyLoader {
-        ArchUpdates.UpdateWindow {}
     }
 }

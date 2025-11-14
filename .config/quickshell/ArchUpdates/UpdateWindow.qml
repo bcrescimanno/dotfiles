@@ -4,20 +4,25 @@ import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 
-FloatingWindow {
+PopupWindow {
     id: mainWindow
 
-    color: "#ed282A36"
+    color: "transparent"
+
+    implicitHeight: 500
+    implicitWidth: 500
 
     property var updateData: []
     property var nextCheck: -1
 
-    ClippingRectangle {
-        color: "#00282A36"
+    ClippingWrapperRectangle {
+        color: "#ed282A36"
         anchors.fill: parent
-        anchors.margins: 10
+        radius: 10
         ColumnLayout {
             id: testTable
+            anchors.margins: 10
+            anchors.fill: parent
             spacing: 10
             anchors {
                 left: parent.left
