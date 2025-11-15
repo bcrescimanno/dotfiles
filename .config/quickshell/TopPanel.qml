@@ -1,6 +1,7 @@
 import Quickshell
 import QtQuick
 import QtQuick.Layouts
+import qs.Config as Config
 
 PanelWindow {
     anchors {
@@ -18,10 +19,9 @@ PanelWindow {
 
     Rectangle {
         id: background
-        color: "#000000"
         anchors.fill: parent
 
-        radius: 10
+        radius: Config.Style.radius.normal
 
         RowLayout {
             id: leftPane

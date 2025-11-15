@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.Pipewire
-import qs.Util as Util
+import qs.Config as Config
 
 WrapperMouseArea {
     id: volumeWidget
@@ -22,9 +22,9 @@ WrapperMouseArea {
 
     Text {
         id: volumeIcon
-        color: "#f8f8f2"
-        font.family: "JetBrainsMono Nerd Font"
-        font.pixelSize: 24
+        color: Config.Style.colors.fg
+        font.family: Config.Style.fontFamily.nerd
+        font.pixelSize: Config.Style.fontSize.larger
         text: getVolume()
     }
 
@@ -40,8 +40,8 @@ WrapperMouseArea {
             bottomMargin: 10
             leftMargin: 20
             rightMargin: 20
-            color: "#ed282a36"
-            radius: 8
+            color: Config.Style.colors.bg
+            radius: Config.Style.radius.normal
             border {
                 color: "#eed6acff"
                 width: 2
@@ -49,7 +49,7 @@ WrapperMouseArea {
             Text {
                 id: volumeLabelText
                 text: "Volume: " + Math.floor(currentSink.audio.volume * 100) + "%"
-                color: "#f8f8f2"
+                color: Config.Style.colors.fg
             }
         }
         anchor {

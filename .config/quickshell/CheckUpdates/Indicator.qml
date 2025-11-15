@@ -3,6 +3,7 @@ import QtQml
 import Quickshell
 import Quickshell.Widgets
 import QtQuick.Layouts
+import qs.Config as Config
 
 WrapperMouseArea {
     property var updateData: ArchService.updateData
@@ -11,14 +12,14 @@ WrapperMouseArea {
         Text {
             id: osIcon
             text: "\u{f08c7}"
-            color: "#f8f9f2"
+            color: Config.Style.colors.fg
             opacity: updateData.length > 0 ? 1 : 0.5
-            font.pixelSize: 24
-            font.family: "JetBrainsMono Nerd Font"
+            font.pixelSize: Config.Style.fontSize.larger
+            font.family: Config.Style.fontFamily.nerd
 
             Behavior on opacity {
                 NumberAnimation {
-                    duration: 125
+                    duration: Config.Style.animationDuration.fast
                     easing.type: Easing.OutCubic
                 }
             }
@@ -26,15 +27,15 @@ WrapperMouseArea {
 
         Text {
             id: updateCount
-            color: "#f8f9f2"
-            font.pixelSize: 16
-            font.family: "JetBrainsMono Nerd Font"
+            color: Config.Style.colors.fg
+            font.pixelSize: Config.Style.fontSize.normal
+            font.family: Config.Style.fontFamily.nerd
             opacity: updateData.length > 0 ? 1 : 0.5
             text: updateData.length > 0 ? updateData.length : ""
 
             Behavior on opacity {
                 NumberAnimation {
-                    duration: 125
+                    duration: Config.Style.animationDuration.fast
                     easing.type: Easing.OutCubic
                 }
             }

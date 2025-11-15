@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.Config as Config
 
 Item {
     id: weatherWidget
@@ -11,9 +12,9 @@ Item {
 
     Text {
         text: weatherWidget.text
-        color: "#f8f8f2"
-        font.family: "JetBrainsMono Nerd Font"
-        font.pixelSize: 16
+        color: Config.Style.colors.fg
+        font.family: Config.Style.fontFamily.sans
+        font.pixelSize: Config.Style.fontSize.normal
     }
 
     Timer {
