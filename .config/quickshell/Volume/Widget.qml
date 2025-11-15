@@ -1,18 +1,34 @@
 import QtQuick
 import Quickshell
+import Quickshell.Widgets
 import Quickshell.Services.Pipewire
 
-Text {
+WrapperMouseArea {
+
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
     }
 
     property var currentSink: Pipewire.defaultAudioSink
 
-    color: "#f8f8f2"
-    font.family: "JetBrainsMono Nerd Font"
-    font.pixelSize: 24
-    text: getVolume()
+    Text {
+        color: "#f8f8f2"
+        font.family: "JetBrainsMono Nerd Font"
+        font.pixelSize: 24
+        text: getVolume()
+    }
+
+    onWheel: event => {
+        event.accepted = true;
+
+        let distance = event.angleDelta.y;
+
+        if (distance < 0) {
+            volumeDown();
+        } else {
+            volumeUp();
+        }
+    }
 
     function getVolume(): string {
         if (currentSink && currentSink.isSink) {
@@ -20,6 +36,21 @@ Text {
         }
 
         return "Invalid Sink";
+    }
+
+    function volumeUp() {
+        setVolume(2);
+    }
+
+    function volumeDown() {
+        setVolume(-2);
+    }
+
+    function setVolume(delta: int): void {
+        delta = delta / 100;
+        if (currentSink && currentSink.isSink) {
+            currentSink.audio.volume += delta;
+        }
     }
 
     function volumeToEmoji(vol: real): string {
