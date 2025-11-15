@@ -2,6 +2,7 @@ import Quickshell
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
+import qs.Config as Config
 
 PopupWindow {
     id: mainWindow
@@ -21,9 +22,9 @@ PopupWindow {
         visible = true
 
     ClippingWrapperRectangle {
-        color: "#ed282A36"
+        color: Config.Style.colors.bg
         anchors.fill: parent
-        radius: 10
+        radius: Config.Style.radius.normal
         opacity: mainWindow.opened ? 1 : 0
         scale: mainWindow.opened ? 1 : 0.8
 
@@ -35,14 +36,14 @@ PopupWindow {
 
         Behavior on opacity {
             NumberAnimation {
-                duration: 250
+                duration: Config.Style.animationDuration.normal
                 easing.type: Easing.OutCubic
             }
         }
 
         Behavior on scale {
             NumberAnimation {
-                duration: 250
+                duration: Config.Style.animationDuration.normal
                 easing.type: Easing.OutBack
             }
         }
@@ -74,22 +75,22 @@ PopupWindow {
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         font {
-                            pixelSize: 16
-                            family: "JetBrainsMono Nerd Font"
+                            pixelSize: Config.Style.fontSize.normal
+                            family: Config.Style.fontFamily.mono
                         }
                         text: modelData.name
-                        color: "#f8f8f2"
+                        color: Config.Style.colors.fg
                     }
                     Text {
                         id: updateVersion
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
                         font {
-                            pixelSize: 16
-                            family: "JetBrainsMono Nerd Font"
+                            pixelSize: Config.Style.fontSize.normal
+                            family: Config.Style.fontFamily.mono
                         }
                         text: modelData.version
-                        color: "#f8f8f2"
+                        color: Config.Style.colors.fg
                     }
                 }
             }
