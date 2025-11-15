@@ -28,12 +28,14 @@ PanelWindow {
             anchors.left: parent.left
             anchors.leftMargin: 20
             anchors.verticalCenter: parent.verticalCenter
+            spacing: 20
         }
 
         RowLayout {
             id: centerPane
             anchors.centerIn: parent
             anchors.verticalCenter: parent.verticalCenter
+            spacing: 20
         }
 
         RowLayout {
@@ -41,6 +43,7 @@ PanelWindow {
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.verticalCenter: parent.verticalCenter
+            spacing: 20
         }
     }
 }
