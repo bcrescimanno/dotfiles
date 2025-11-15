@@ -1,21 +1,57 @@
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.Pipewire
+import qs.Util as Util
 
 WrapperMouseArea {
+    id: volumeWidget
+    hoverEnabled: true
+
+    implicitWidth: volumeIcon.implicitWidth
+    implicitHeight: volumeIcon.implicitHeight
 
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
     }
 
     property var currentSink: Pipewire.defaultAudioSink
+    property real tooltipX: 0
+    property real tooltipY: 0
 
     Text {
+        id: volumeIcon
         color: "#f8f8f2"
         font.family: "JetBrainsMono Nerd Font"
         font.pixelSize: 24
         text: getVolume()
+    }
+
+    PopupWindow {
+        id: volumeLabel
+        visible: false
+        color: "transparent"
+        implicitWidth: testwrap.implicitWidth
+        implicitHeight: testwrap.implicitHeight
+        WrapperRectangle {
+            id: testwrap
+            margin: 20
+            color: "#ed282a36"
+            radius: 8
+            Text {
+                id: volumeLabelText
+                text: "Volume: " + Math.floor(currentSink.audio.volume * 100) + "%"
+                color: "#f8f8f2"
+            }
+        }
+        anchor {
+            item: volumeWidget
+            rect {
+                y: tooltipY
+                x: tooltipX
+            }
+        }
     }
 
     onWheel: event => {
@@ -28,6 +64,19 @@ WrapperMouseArea {
         } else {
             volumeUp();
         }
+    }
+
+    onEntered: event => {
+        volumeLabel.visible = true;
+    }
+
+    onExited: event => {
+        volumeLabel.visible = false;
+    }
+
+    onPositionChanged: event => {
+        tooltipX = event.x + 5;
+        tooltipY = event.y + 10;
     }
 
     function getVolume(): string {
@@ -47,7 +96,7 @@ WrapperMouseArea {
     }
 
     function setVolume(delta: int): void {
-        delta = Math.max(0, Math.min(100, delta));
+        delta = Math.max(-100, Math.min(100, delta));
         delta = delta / 100;
         if (currentSink && currentSink.isSink) {
             currentSink.audio.volume += delta;
