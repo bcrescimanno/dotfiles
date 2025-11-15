@@ -9,7 +9,6 @@ Singleton {
     property var updateData: []
     property var nextCheck: -1
     property bool hasRun: false
-    property string test: "This is a test string"
 
     Process {
         id: checkupdates
@@ -29,9 +28,9 @@ Singleton {
     Timer {
         id: updateTimer
         // TODO: Why is this delay required?
-        interval: hasRun ? 86400 : 1000
+        interval: hasRun ? (3600 * 1000) : 1000
         running: false
-        repeat: false
+        repeat: true
         onTriggered: () => {
             hasRun = true;
             checkupdates.running = true;

@@ -9,7 +9,7 @@ Modules.AnimatedPopupWindow {
     id: mainWindow
 
     property var updateData: []
-    property var nextCheck: -1
+    property var nextCheck: ArchService.nextCheck
 
     topMargin: 10
     rightMargin: 20
@@ -36,7 +36,7 @@ Modules.AnimatedPopupWindow {
                     anchors.verticalCenter: parent.verticalCenter
                     font {
                         pixelSize: Config.Style.fontSize.normal
-                        family: Config.Style.fontFamily.mono
+                        family: Config.Style.fontFamily.sans
                     }
                     text: modelData.name
                     color: Config.Style.colors.fg
@@ -47,12 +47,21 @@ Modules.AnimatedPopupWindow {
                     anchors.verticalCenter: parent.verticalCenter
                     font {
                         pixelSize: Config.Style.fontSize.normal
-                        family: Config.Style.fontFamily.mono
+                        family: Config.Style.fontFamily.sans
                     }
                     text: modelData.version
                     color: Config.Style.colors.fg
                 }
             }
+        }
+
+        Text {
+            color: Config.Style.colors.fg
+            font {
+                family: Config.Style.fontFamily.sans
+                pixelSize: Config.Style.fontSize.normal
+            }
+            text: "Next update at " + Qt.formatDateTime(nextCheck, "h:mm ap")
         }
     }
 }
