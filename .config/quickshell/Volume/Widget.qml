@@ -91,7 +91,7 @@ WrapperMouseArea {
             return volumeToEmoji(currentSink.audio.volume);
         }
 
-        return "Invalid Sink";
+        return "";
     }
 
     function volumeUp(): void {
