@@ -7,18 +7,22 @@ Text {
         objects: [Pipewire.defaultAudioSink]
     }
 
+    property var currentSink: Pipewire.defaultAudioSink
+
     color: "#f8f8f2"
     font.family: "JetBrainsMono Nerd Font"
     font.pixelSize: 24
-    text: volumeToEmoji(getVolume(Pipewire.defaultAudioSink))
+    text: getVolume()
 
-    function getVolume(sink) {
-        if (sink && sink.isSink) {
-            return sink.audio.volume;
+    function getVolume(): string {
+        if (currentSink && currentSink.isSink) {
+            return volumeToEmoji(currentSink.audio.volume);
         }
+
+        return "Invalid Sink";
     }
 
-    function volumeToEmoji(vol) {
+    function volumeToEmoji(vol: real): string {
         vol = Math.max(0, Math.min(1, vol));
 
         if (vol === 0) {
