@@ -25,7 +25,7 @@ Singleton {
     component FontFamily: JsonObject {
         property string mono: "JetBrains Mono Nerd Font"
         property string sans: "Inter Variable"
-        property string icon: "JetBrains Mono Nerd Font"
+        property string icon: "Material Symbols Outlined"
         property string nerd: "JetBrains Mono Nerd Font"
     }
 

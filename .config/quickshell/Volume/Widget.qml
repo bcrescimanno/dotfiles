@@ -23,7 +23,7 @@ WrapperMouseArea {
     Text {
         id: volumeIcon
         color: Config.Style.colors.fg
-        font.family: Config.Style.fontFamily.nerd
+        font.family: Config.Style.fontFamily.icon
         font.pixelSize: Config.Style.fontSize.larger
         text: getVolume()
     }
@@ -114,13 +114,13 @@ WrapperMouseArea {
         vol = Math.max(0, Math.min(1, vol));
 
         if (vol === 0) {
-            return "\u{f0581}";
-        } else if (vol <= 0.33) {
-            return "\u{f057f}";
-        } else if (vol <= 0.66) {
-            return "\u{f0580}";
+            return "\ue04f";
+        } else if (vol <= 0.25) {
+            return "\ue04e";
+        } else if (vol <= 0.50) {
+            return "\ue04d";
         } else {
-            return "\u{f057e}";
+            return "\ue050";
         }
     }
 }
