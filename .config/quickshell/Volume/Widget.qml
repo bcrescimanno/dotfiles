@@ -36,9 +36,16 @@ WrapperMouseArea {
         implicitHeight: testwrap.implicitHeight
         WrapperRectangle {
             id: testwrap
-            margin: 20
+            topMargin: 10
+            bottomMargin: 10
+            leftMargin: 20
+            rightMargin: 20
             color: "#ed282a36"
             radius: 8
+            border {
+                color: "#eed6acff"
+                width: 2
+            }
             Text {
                 id: volumeLabelText
                 text: "Volume: " + Math.floor(currentSink.audio.volume * 100) + "%"
