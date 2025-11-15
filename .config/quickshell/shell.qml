@@ -29,7 +29,7 @@ ShellRoot {
                 id: updatesIndicator
                 onClicked: () => {
                     if (updateData.length > 0) {
-                        archUpdates.visible = !archUpdates.visible;
+                        archUpdates.opened = !archUpdates.opened;
                     }
                 }
                 CheckUpdates.UpdateWindow {
