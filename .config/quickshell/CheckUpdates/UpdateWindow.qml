@@ -9,8 +9,9 @@ PopupWindow {
 
     color: "transparent"
 
-    implicitHeight: 500
-    implicitWidth: 500
+    // TODO: Use a Layout to make this automatic?
+    implicitHeight: updatesTable.implicitHeight + updatesTable.anchors.margins * 2
+    implicitWidth: updatesTable.implicitWidth + updatesTable.anchors.margins * 2
 
     property var updateData: []
     property var nextCheck: -1
@@ -20,7 +21,7 @@ PopupWindow {
         anchors.fill: parent
         radius: 10
         ColumnLayout {
-            id: testTable
+            id: updatesTable
             anchors.margins: 10
             anchors.fill: parent
             spacing: 10
@@ -35,6 +36,7 @@ PopupWindow {
                 Item {
 
                     Layout.preferredHeight: updateName.implicitHeight
+                    Layout.preferredWidth: updateName.implicitWidth + updateVersion.implicitWidth + 30
                     Layout.fillWidth: true
 
                     Text {
@@ -50,6 +52,7 @@ PopupWindow {
                         color: "#f8f8f2"
                     }
                     Text {
+                        id: updateVersion
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
                         font {
@@ -61,29 +64,6 @@ PopupWindow {
                         color: "#f8f8f2"
                     }
                 }
-            }
-
-            Rectangle {
-                property bool hovered: false
-                color: hovered ? "steelblue" : "darkblue"
-                implicitWidth: children[0].implicitWidth
-                implicitHeight: children[0].implicitHeight
-                radius: 8
-                RowLayout {
-                    WrapperMouseArea {
-                        hoverEnabled: true
-                        Layout.margins: 10
-                        Text {
-                            anchors.fill: parent
-                            text: "Refresh Updates "
-                            color: "#ffffff"
-                        }
-                    }
-                }
-            }
-
-            Text {
-                text: nextCheck > -1 ? "Next Check at " + Qt.formatDateTime(nextCheck, "hh:mm:ss") : ""
             }
         }
     }
