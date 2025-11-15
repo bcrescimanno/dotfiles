@@ -35,6 +35,7 @@ Modules.AnimatedPopupWindow {
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     font {
+                        bold: true
                         pixelSize: Config.Style.fontSize.normal
                         family: Config.Style.fontFamily.sans
                     }
