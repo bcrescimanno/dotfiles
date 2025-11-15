@@ -18,7 +18,8 @@ WrapperMouseArea {
 
             Behavior on opacity {
                 NumberAnimation {
-                    duration: 500
+                    duration: 125
+                    easing.type: Easing.OutCubic
                 }
             }
         }
@@ -33,7 +34,8 @@ WrapperMouseArea {
 
             Behavior on opacity {
                 NumberAnimation {
-                    duration: 500
+                    duration: 125
+                    easing.type: Easing.OutCubic
                 }
             }
         }

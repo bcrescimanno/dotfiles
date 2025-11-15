@@ -25,7 +25,7 @@ PopupWindow {
         anchors.fill: parent
         radius: 10
         opacity: mainWindow.opened ? 1 : 0
-        scale: mainWindow.opened ? 1 : 0.95
+        scale: mainWindow.opened ? 1 : 0.8
 
         onOpacityChanged: {
             if (!mainWindow.opened && opacity === 0) {
@@ -35,14 +35,14 @@ PopupWindow {
 
         Behavior on opacity {
             NumberAnimation {
-                duration: 120
+                duration: 250
                 easing.type: Easing.OutCubic
             }
         }
 
         Behavior on scale {
             NumberAnimation {
-                duration: 120
+                duration: 250
                 easing.type: Easing.OutBack
             }
         }
