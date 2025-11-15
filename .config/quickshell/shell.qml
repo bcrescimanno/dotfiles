@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import qs.CheckUpdates as CheckUpdates
 import qs.Weather as Weather
 import qs.SystemTray as SystemTray
+import qs.Volume as Volume
 
 import Quickshell.Io
 
@@ -43,6 +44,7 @@ ShellRoot {
         ]
 
         right: [
+            Volume.Widget {},
             SystemTray.Widget {},
             Weather.WeatherWidget {},
             Text {
