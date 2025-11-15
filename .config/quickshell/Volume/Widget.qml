@@ -24,7 +24,7 @@ WrapperMouseArea {
         color: Config.Style.colors.fg
         font.family: Config.Style.fontFamily.icon
         font.pixelSize: Config.Style.fontSize.larger
-        text: getVolume()
+        text: getVolumeIcon()
     }
 
     Modules.Tooltip {
@@ -39,24 +39,17 @@ WrapperMouseArea {
     onWheel: event => {
         event.accepted = true;
 
-        let distance = event.angleDelta.y;
-
-        if (distance < 0) {
+        if (event.angleDelta.y < 0) {
             volumeDown();
         } else {
             volumeUp();
         }
     }
 
-    onEntered: event => {
-        volumeLabel.open = true;
-    }
+    onEntered: volumeLabel.open = true
+    onExited: volumeLabel.open = false
 
-    onExited: event => {
-        volumeLabel.open = false;
-    }
-
-    function getVolume(): string {
+    function getVolumeIcon(): string {
         if (currentSink && currentSink.isSink) {
             return volumeToEmoji(currentSink.audio.volume);
         }
@@ -73,9 +66,9 @@ WrapperMouseArea {
     }
 
     function setVolume(delta: int): void {
-        delta = Math.max(-100, Math.min(100, delta));
-        delta = delta / 100;
         if (currentSink && currentSink.isSink) {
+            delta = Math.max(-100, Math.min(100, delta));
+            delta = delta / 100;
             currentSink.audio.volume += delta;
         }
     }
