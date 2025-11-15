@@ -38,15 +38,16 @@ WrapperMouseArea {
         return "Invalid Sink";
     }
 
-    function volumeUp() {
-        setVolume(2);
+    function volumeUp(): void {
+        setVolume(3);
     }
 
-    function volumeDown() {
-        setVolume(-2);
+    function volumeDown(): void {
+        setVolume(-3);
     }
 
     function setVolume(delta: int): void {
+        delta = Math.max(0, Math.min(100, delta));
         delta = delta / 100;
         if (currentSink && currentSink.isSink) {
             currentSink.audio.volume += delta;
