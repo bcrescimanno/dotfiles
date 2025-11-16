@@ -41,7 +41,8 @@ ShellRoot {
             Widgets.Volume {},
             Widgets.SystemTray {},
             Widgets.Weather {},
-            Widgets.Clock {}
+            Widgets.Clock {},
+            Widgets.Logout {}
         ]
     }
 }
