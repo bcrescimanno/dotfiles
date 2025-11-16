@@ -28,6 +28,8 @@ Modules.AnimatedPopupWindow {
         loadingLander.from = current;
         loadingLander.to = goal;
         loadingLander.start();
+
+        lastUpdatedText.text = "Last updated: " + Qt.formatDateTime(lastCheck, "h:mm ap");
     }
 
     topMargin: 10
@@ -79,6 +81,7 @@ Modules.AnimatedPopupWindow {
             Layout.preferredHeight: refreshButton.implicitHeight
             Layout.fillWidth: true
             Text {
+                id: lastUpdatedText
                 color: Config.Style.colors.fg
                 anchors.verticalCenter: parent.verticalCenter
                 font {
@@ -119,6 +122,7 @@ Modules.AnimatedPopupWindow {
                 onClicked: {
                     if (!loadingIndicator.running) {
                         Updates.refresh();
+                        lastUpdatedText.text = "Refreshing...";
                         loadingIndicator.start();
                     }
                 }
