@@ -28,8 +28,6 @@ Modules.AnimatedPopupWindow {
         loadingLander.from = current;
         loadingLander.to = goal;
         loadingLander.start();
-
-        lastUpdatedText.text = "Last updated: " + Qt.formatDateTime(lastCheck, "h:mm ap");
     }
 
     topMargin: 10
@@ -118,6 +116,7 @@ Modules.AnimatedPopupWindow {
                     id: loadingLander
                     target: refreshButton
                     property: "rotation"
+                    onFinished: lastUpdatedText.text = "Last updated: " + Qt.formatDateTime(lastCheck, "h:mm ap")
                 }
                 onClicked: {
                     if (!loadingIndicator.running) {
