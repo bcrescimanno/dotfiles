@@ -4,12 +4,13 @@ import QtQuick
 import QtQuick.Layouts
 import qs.Config as Config
 import qs.Modules as Modules
+import qs.services
 
 Modules.AnimatedPopupWindow {
     id: mainWindow
 
     property var updateData: []
-    property var nextCheck: ArchService.nextCheck
+    property var nextCheck: Updates.nextCheck
 
     topMargin: 10
     rightMargin: 20

@@ -7,7 +7,7 @@ import Quickshell.Io
 Singleton {
     id: root
     property var updateData: []
-    property var nextCheck: -1
+    property var nextCheck: new Date()
     property bool hasRun: false
 
     Process {
@@ -37,7 +37,7 @@ Singleton {
         }
     }
 
-    function checkUpdates() {
+    function refresh() {
         if (!updateTimer.running) {
             updateTimer.running = true;
         }

@@ -4,9 +4,10 @@ import Quickshell
 import Quickshell.Widgets
 import QtQuick.Layouts
 import qs.Config as Config
+import qs.services
 
 WrapperMouseArea {
-    property var updateData: ArchService.updateData
+    property var updateData: Updates.updateData
 
     RowLayout {
         Text {
@@ -45,6 +46,6 @@ WrapperMouseArea {
     hoverEnabled: true
 
     Component.onCompleted: () => {
-        ArchService.checkUpdates();
+        Updates.refresh();
     }
 }
