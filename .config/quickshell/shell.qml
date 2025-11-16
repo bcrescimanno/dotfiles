@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Layouts
 import qs.CheckUpdates as CheckUpdates
 import qs.SystemTray as SystemTray
-import qs.Volume as Volume
 import qs.services
 import qs.widgets as Widgets
 
@@ -40,7 +39,7 @@ ShellRoot {
         ]
 
         right: [
-            Volume.Widget {},
+            Widgets.Volume {},
             SystemTray.Widget {},
             Widgets.Weather {},
             Widgets.Clock {}
