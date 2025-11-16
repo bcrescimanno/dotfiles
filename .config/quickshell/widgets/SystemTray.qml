@@ -5,7 +5,7 @@ import QtQuick
 import QtQuick.Layouts
 
 RowLayout {
-    spacing: 10
+    spacing: 20
 
     Repeater {
         model: SystemTray.items
