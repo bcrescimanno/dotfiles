@@ -10,15 +10,17 @@ AnimatedPopupWindow {
     speed: Config.Style.animationDuration.fast
     delay: 250
 
+    property Item anchorTo
+
     border {
         color: "#eed6acff"
         width: 2
     }
 
     anchor {
-        item: parent
+        item: anchorTo
         rect {
-            y: parent.implicitHeight
+            y: anchorTo.implicitHeight
         }
     }
 }

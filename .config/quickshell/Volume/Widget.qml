@@ -29,6 +29,7 @@ WrapperMouseArea {
 
     Modules.Tooltip {
         id: volumeLabel
+        anchorTo: volumeWidget
         Text {
             id: volumeLabelText
             text: "Volume: " + Math.floor(currentSink.audio.volume * 100) + "%"

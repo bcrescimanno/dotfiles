@@ -6,6 +6,8 @@ import qs.CheckUpdates as CheckUpdates
 import qs.Weather as Weather
 import qs.SystemTray as SystemTray
 import qs.Volume as Volume
+import qs.services
+import qs.widgets as Widgets
 
 import Quickshell.Io
 
@@ -20,11 +22,6 @@ ShellRoot {
 
         implicitHeight: 40
         backgroundColor: "#ed282A36"
-
-        SystemClock {
-            id: clock
-            precision: SystemClock.Minutes
-        }
 
         left: [
             CheckUpdates.Indicator {
@@ -47,13 +44,7 @@ ShellRoot {
             Volume.Widget {},
             SystemTray.Widget {},
             Weather.WeatherWidget {},
-            Text {
-                id: clockView
-                text: Qt.formatDateTime(clock.date, "h:mm ap")
-                color: "#f8f8f2"
-                font.family: "JetBrainsMono Nerd Font"
-                font.pixelSize: 16
-            }
+            Widgets.Clock {}
         ]
     }
 }
