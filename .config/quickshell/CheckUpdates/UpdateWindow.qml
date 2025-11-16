@@ -1,6 +1,7 @@
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import qs.Config as Config
 import qs.Modules as Modules
@@ -10,7 +11,24 @@ Modules.AnimatedPopupWindow {
     id: mainWindow
 
     property var updateData: []
-    property var nextCheck: Updates.nextCheck
+    property var lastCheck: Updates.lastCheck
+
+    onLastCheckChanged: {
+        loadingIndicator.stop();
+        let current = refreshButton.rotation % -360;
+        if (current > 0)
+            current -= 360;
+
+        let goal = Math.abs(current - -180) < (Math.abs(current - -360)) ? -180 : -360;
+
+        let distance = Math.abs(current - goal);
+        let duration = (distance / 360) * 1000;
+
+        loadingLander.duration = duration;
+        loadingLander.from = current;
+        loadingLander.to = goal;
+        loadingLander.start();
+    }
 
     topMargin: 10
     rightMargin: 20
@@ -57,13 +75,54 @@ Modules.AnimatedPopupWindow {
             }
         }
 
-        Text {
-            color: Config.Style.colors.fg
-            font {
-                family: Config.Style.fontFamily.sans
-                pixelSize: Config.Style.fontSize.normal
+        Item {
+            Layout.preferredHeight: refreshButton.implicitHeight
+            Layout.fillWidth: true
+            Text {
+                color: Config.Style.colors.fg
+                anchors.verticalCenter: parent.verticalCenter
+                font {
+                    family: Config.Style.fontFamily.sans
+                    pixelSize: Config.Style.fontSize.normal
+                }
+                text: "Last updated: " + Qt.formatDateTime(lastCheck, "h:mm ap")
             }
-            text: "Next update at " + Qt.formatDateTime(nextCheck, "h:mm ap")
+
+            WrapperMouseArea {
+                id: refreshButton
+                anchors.right: parent.right
+
+                Text {
+                    anchors.right: parent.right
+                    color: Config.Style.colors.fg
+                    font {
+                        family: Config.Style.fontFamily.icon
+                        pixelSize: Config.Style.fontSize.larger
+                    }
+                    text: "\ue627"
+                }
+
+                NumberAnimation on rotation {
+                    id: loadingIndicator
+                    from: 0
+                    to: -360
+                    duration: 1000
+                    loops: Animation.Infinite
+                    running: false
+                }
+
+                NumberAnimation {
+                    id: loadingLander
+                    target: refreshButton
+                    property: "rotation"
+                }
+                onClicked: {
+                    if (!loadingIndicator.running) {
+                        Updates.refresh();
+                        loadingIndicator.start();
+                    }
+                }
+            }
         }
     }
 }

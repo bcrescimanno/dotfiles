@@ -8,6 +8,7 @@ Singleton {
     id: root
     property var updateData: []
     property var nextCheck: new Date()
+    property var lastCheck: new Date()
     property bool hasRun: false
 
     Process {
@@ -40,11 +41,15 @@ Singleton {
     function refresh() {
         if (!updateTimer.running) {
             updateTimer.running = true;
+        } else {
+            hasRun = false;
+            updateTimer.restart();
         }
     }
 
     function formatUpdates(updates: string): var {
         // Side effects suck
+        lastCheck = new Date(Date.now());
         nextCheck = new Date(Date.now() + updateTimer.interval);
 
         return updates.trim().split("\n").map(update => {
