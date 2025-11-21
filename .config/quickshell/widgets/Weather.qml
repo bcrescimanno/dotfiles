@@ -1,10 +1,13 @@
 import QtQuick
 import Quickshell
+import Quickshell.Widgets
 import Quickshell.Io
 import qs.Config as Config
 
-Item {
+WrapperMouseArea {
     id: weatherWidget
+    hoverEnabled: true
+
     property string text: ""
 
     implicitWidth: children[0].implicitWidth
@@ -18,6 +21,7 @@ Item {
     }
 
     Timer {
+        id: weatherTimer
         running: true
         interval: 15 * 60 * 1000
         triggeredOnStart: true
@@ -32,4 +36,11 @@ Item {
             onStreamFinished: weatherWidget.text = JSON.parse(this.text).text
         }
     }
+
+    onClicked: {
+        weatherWidget.text = "Refreshing...";
+        weatherTimer.restart();
+    }
+
+    cursorShape: Qt.CursorShape.PointingHandCursor
 }
