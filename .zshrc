@@ -56,6 +56,11 @@ alias grep='grep --color=auto'
 alias xclip='xclip -sel clip'
 alias vim='nvim'
 
+#
+if [ -d "$HOME/.config/bin" ]; then
+	export PATH="$PATH:$HOME/.config/bin"
+fi
+
 [[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)
 
 [ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
