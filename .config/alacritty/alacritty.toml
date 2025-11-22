@@ -2,6 +2,10 @@ general.import = [
   "~/.config/alacritty/themes/themes/dracula_plus.toml"
 ]
 
+[terminal.shell]
+program = "/usr/bin/zsh"
+args = ["-c", "tmux new-session -A -s alacritty_$(date +%s)", "exec $SHELL"]
+
 [window]
 dimensions = { columns = 90, lines = 40 }
 padding = { x = 10, y = 10 }
