@@ -26,6 +26,8 @@ ShellRoot {
                 onClicked: () => {
                     if (updateData.length > 0) {
                         archUpdates.opened = !archUpdates.opened;
+                    } else {
+                        Updates.refresh();
                     }
                 }
                 CheckUpdates.UpdateWindow {
