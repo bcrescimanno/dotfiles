@@ -61,7 +61,9 @@ if [ -d "$HOME/.config/bin" ]; then
 	export PATH="$PATH:$HOME/.config/bin"
 fi
 
-# I need to move these into overrides
-#[[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)
-#[ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
-#[[ -f /opt/dev/sh/chruby/chruby.sh ]] && { type chruby >/dev/null 2>&1 || chruby () { source /opt/dev/sh/chruby/chruby.sh; chruby "$@"; } }
+# Only load this on MacOS
+if [ "$(uname -s)" = "Darwin" ]; then
+	[[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)
+	[ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
+	[[ -f /opt/dev/sh/chruby/chruby.sh ]] && { type chruby >/dev/null 2>&1 || chruby () { source /opt/dev/sh/chruby/chruby.sh; chruby "$@"; } }
+fi
