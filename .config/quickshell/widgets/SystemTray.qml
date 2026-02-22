@@ -5,6 +5,7 @@ import QtQuick
 import QtQuick.Layouts
 
 RowLayout {
+    id: testThing
     spacing: 20
 
     Repeater {
@@ -24,7 +25,10 @@ RowLayout {
                     return;
                 }
                 if (event.button === Qt.RightButton) {
-                    // TODO: Handle the menu for tray items
+                    if (modelData.hasMenu) {
+                        // TODO: better handling of position
+                        modelData.display(topPanel, 3400, 0)
+                    }
                     return;
                 }
             }
