@@ -2,6 +2,9 @@
 # see: https://wiki.hypr.land/Nvidia/ for latest information
 export LIBVA_DRIVER_NAME=nvidia
 export __GLX_VENDOR_LIBRARY_NAME=nvidia
+export CUDA_DISABLE_-PERF_BOOST=1
+
+export MOZ_DISABLE_RDD_SANDBOX=1
 
 # Cursors
 export HYPRCURSOR_THEME=macOS-hyper
