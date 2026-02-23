@@ -31,10 +31,11 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
-# Emacs keybindings
-bindkey -e
+# Vim keybindings
+bindkey -v
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
+bindkey '^f' autosuggest-accept
 
 # Completions
 autoload -Uz compinit && compinit
