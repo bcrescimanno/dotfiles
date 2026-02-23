@@ -29,6 +29,9 @@ final_space = true
     background = 'transparent'
     type = 'path'
     style = 'plain'
+      [blocks.segments.options]
+      max_depth = 3
+      style = 'agnoster_short'
 
   [[blocks.segments]]
     template = '  '
