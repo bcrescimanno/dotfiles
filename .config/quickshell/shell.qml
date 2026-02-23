@@ -1,13 +1,9 @@
 //@ pragma UseQApplication
 import Quickshell
-import Quickshell.Widgets
 import QtQuick
-import QtQuick.Layouts
 import qs.CheckUpdates as CheckUpdates
 import qs.services
 import qs.widgets as Widgets
-
-import Quickshell.Io
 
 ShellRoot {
     TopPanel {
