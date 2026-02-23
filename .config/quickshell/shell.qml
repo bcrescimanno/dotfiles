@@ -1,5 +1,6 @@
 //@ pragma UseQApplication
 import Quickshell
+import Quickshell.Wayland
 import QtQuick
 import qs.CheckUpdates as CheckUpdates
 import qs.services
@@ -17,14 +18,25 @@ ShellRoot {
         implicitHeight: 40
         backgroundColor: "#ed282A36"
 
+        focusable: true
+
         left: [
             CheckUpdates.Indicator {
                 id: updatesIndicator
+                focus: true
                 onClicked: () => {
                     if (updateData.length > 0) {
                         archUpdates.opened = !archUpdates.opened;
                     } else {
                         Updates.refresh();
+                    }
+                }
+
+                Keys.onPressed: event => {
+                    if (event.key === Qt.Key_Escape) {
+                        if (archUpdates.opened) {
+                            archUpdates.opened = false;
+                        }
                     }
                 }
                 CheckUpdates.UpdateWindow {

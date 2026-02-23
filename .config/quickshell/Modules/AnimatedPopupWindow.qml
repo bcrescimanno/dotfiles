@@ -8,8 +8,8 @@ PopupWindow {
     visible: false
     color: "transparent"
 
-    implicitWidth: body.implicitWidth
-    implicitHeight: body.implicitHeight
+    implicitWidth: body.implicitWidth + body.border.width * 2
+    implicitHeight: body.implicitHeight === 0 ? 1 : body.implicitHeight + body.border.width * 2
 
     property bool open: false
     property bool opened: false
@@ -29,6 +29,7 @@ PopupWindow {
     onOpenedChanged: {
         if (opened) {
             visible = true;
+            body.focus = true;
         }
     }
 
@@ -43,11 +44,17 @@ PopupWindow {
     ClippingWrapperRectangle {
         id: body
         color: Config.Style.colors.bg
-        anchors.fill: parent
 
         opacity: root.opened ? 1 : 0
         scale: root.opened ? 1 : 0.8
         radius: Config.Style.radius.normal
+
+        focus: true
+        Keys.onPressed: event => {
+            if (event.key === Qt.Key_Escape && opened) {
+                opened = false;
+            }
+        }
 
         onOpacityChanged: {
             if (!root.opened && opacity === 0) {
