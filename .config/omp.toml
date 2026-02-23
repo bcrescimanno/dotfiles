@@ -51,8 +51,11 @@ final_space = true
   type = 'rprompt'
 
   [[blocks.segments]]
-    template = '{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}'
+    template = ' {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }} {{ .Ahead }} ⇡{{ end }}</>'
     foreground = '#8c8c8c'
     background = 'transparent'
     type = 'git'
     style = 'plain'
+
+    [blocks.segments.options]
+    fetch_status = true
