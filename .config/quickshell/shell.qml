@@ -45,7 +45,8 @@ ShellRoot {
                     anchor.window: topPanel
                     anchor.rect.y: 40
                 }
-            }
+            },
+            Widgets.WorkspaceIndicators {}
         ]
 
         right: [
