@@ -108,7 +108,6 @@
 
   programs.oh-my-posh = {
     enable = true;
-    useTheme = "jandedobbeleer"; # fallback theme
     # Override with your actual omp.toml. home-manager will place the file
     # and pass its path to oh-my-posh automatically.
     settings = builtins.fromTOML (builtins.readFile ../.config/omp.toml);
