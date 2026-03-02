@@ -1,4 +1,4 @@
-# home/server.nix — headless server profile.
+# home/headless.nix — headless server profile.
 #
 # Imported by machines without a graphical environment (the Pi).
 # Contains only what makes sense on a headless server — no GUI app configs,

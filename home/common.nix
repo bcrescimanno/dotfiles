@@ -29,7 +29,6 @@
     # Shell tools
     ripgrep       # fast grep, used by neovim telescope
     fd            # fast find, used by neovim telescope
-    fzf           # fuzzy finder (also configured below via programs.fzf)
     jq            # JSON processing
   ];
 

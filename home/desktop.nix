@@ -7,10 +7,6 @@
 { config, pkgs, lib, ... }:
 
 {
-  # The archlinux OMZ plugin is desktop-only — it provides AUR helpers
-  # and pacman aliases that aren't relevant on a server.
-  programs.zsh.oh-my-zsh.plugins = [ "archlinux" ];
-
   # Place GUI app config directories using home.file.
   # These are symlinked from your dotfiles repo so edits are live.
 

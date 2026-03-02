@@ -3,6 +3,7 @@
 {
   imports = [
     ../home/common.nix
+    ../home/arch.nix
     ../home/desktop.nix
   ];
 
