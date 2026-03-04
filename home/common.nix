@@ -172,9 +172,47 @@
   # Tmux
   # ---------------------------------------------------------------------------
 
-  home.file.".config/tmux" = {
-    source = ../.config/tmux;
-    recursive = true;
+  programs.tmux = {
+    enable = true;
+    terminal = "tmux-256color";
+    historyLimit = 10000;
+    keyMode = "vi";
+    mouse = true;
+    prefix = "C-Space";
+    baseIndex = 1;
+    plugins = with pkgs.tmuxPlugins; [
+      sensible
+        vim-tmux-navigator
+        {
+          plugin = dracula;
+          extraConfig = ''
+            set -g @dracula-plugins "weather time"
+            set -g @dracula-refresh-rate 5
+            set -g @dracula-show-empty-plugins false
+            set -g @dracula-show-location false
+            set -g @dracula-weather-hide-errors true
+            set -g @dracula-fixed-location "San Jose"
+            set -g @dracula-time-format "%l:%M %P"
+            set -g @dracula-show-powerline true
+            set -g @dracula-show-edge-icons false
+            '';
+        }
+    ];
+    extraConfig = ''
+      set -g terminal-overrides ',xterm*:smcup@:rmcup@'
+      bind C-Space send-prefix
+      # Vim style pane selection
+      bind h select-pane -L
+      bind j select-pane -D
+      bind k select-pane -U
+      bind l select-pane -R
+      bind s split-window -v -c "#{pane_current_path}"
+      bind v split-window -h -c "#{pane_current_path}"
+      bind r source-file ~/.config/tmux/tmux.conf \; display-message "Tmux config reloaded"
+      set -g pane-base-index 1
+      set-window-option -g pane-base-index 1
+      set-option -g renumber-windows on
+      '';
   };
 
   # ---------------------------------------------------------------------------
