@@ -262,6 +262,6 @@
   home.file.".config/git/ignore".text = ''
     .envrc
     .direnv
-  ''
+  '';
   };
 }
