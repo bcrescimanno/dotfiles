@@ -8,6 +8,6 @@
     ../home/desktop.nix
   ];
 
-  home.username = "bcrescimanno";
-  home.homeDirectory = "/Users/bcrescimanno";  # macOS uses /Users not /home
+  home.username = "brian";
+  home.homeDirectory = "/Users/brian";  # macOS uses /Users not /home
 }
