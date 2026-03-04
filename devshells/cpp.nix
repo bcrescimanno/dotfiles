@@ -13,6 +13,7 @@ pkgs.mkShell {
     ccache
   ]);
   shellHook = ''
+    export NIX_DEVSHELL_NAME="cpp"
     echo "C++ shell activated (gcc $(gcc --version | head -1))"
-  '';
+  '' + common.shellHook;
 }

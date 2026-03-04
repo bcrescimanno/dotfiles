@@ -14,8 +14,9 @@ pkgs.mkShell {
     nodejs
   ]);
   shellHook = ''
+    export NIX_DEVSHELL_NAME="ruby"
     echo "Ruby $(ruby --version) shell activated"
     export GEM_HOME=$HOME/.gems
     export PATH=$GEM_HOME/bin:$PATH
-  '';
+  '' + common.shellHook;
 }

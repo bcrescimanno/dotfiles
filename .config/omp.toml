@@ -24,6 +24,13 @@ final_space = true
     type = 'session'
 
   [[blocks.segments]]
+    template = '{{if .Env.NIX_DEVSHELL_NAME}} 󱄅 {{.Env.NIX_DEVSHELL_NAME}} {{end}}'
+    foreground = 'cyan'
+    background = 'transparent'
+    type = 'text'
+    style = 'plain'
+
+  [[blocks.segments]]
     template = '{{ .Path }}'
     foreground = 'blue'
     background = 'transparent'

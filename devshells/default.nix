@@ -5,6 +5,7 @@ pkgs.mkShell {
   packages = common.packages ++ (with pkgs; [
   ]);
   shellHook = ''
+    export NIX_DEVSHELL_NAME="default"
     echo "Default shell activated"
-  '';
+  '' + common.shellHook;
 }

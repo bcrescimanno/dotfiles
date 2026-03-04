@@ -13,6 +13,7 @@ pkgs.mkShell {
     openssl
   ]);
   shellHook = ''
+    export NIX_DEVSHELL_NAME="rust"
     echo "Rust $(rustc --version) shell activated"
-  '';
+  '' + common.shellHook;
 }
