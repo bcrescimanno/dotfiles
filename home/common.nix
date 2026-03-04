@@ -263,4 +263,5 @@
     .envrc
     .direnv
   ''
+  };
 }
