@@ -109,7 +109,6 @@
       vim = "nvim";
       ls = "ls --color=auto";
       hms = "home-manager switch --flake github:bcrescimanno/dotfiles#brian@liquidark";
-      deploy-pirateship = "nixos-rebuild switch --flake ~/Code/homelab-nix#pirateship --target-host brian@pirateship --build-host brian@pirateship --use-remote-sudo";
     };
   };
 
@@ -206,7 +205,7 @@
   };
 
   programs.git = {
-    extraConfig = {
+    settings = {
       core.hooksPath = "~/.config/git/hooks";
     };
   };
