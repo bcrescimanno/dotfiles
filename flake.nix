@@ -12,18 +12,25 @@
 
   outputs = { self, nixpkgs, home-manager, ... }:
     let
+      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
+      forAllSystems = nixpkgs.lib.genAttrs systems;
+
+      pkgsFor = system: import nixpkgs {
+        inherit system;
+        config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
+          "claude-code"
+        ];
+      };
+
       # A helper that builds a home-manager configuration for a given
       # system architecture and list of modules. This avoids repeating
       # the same boilerplate for each machine.
       mkHome = system: modules:
         home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${system};
+          pkgs = pkgsFor system;
           modules = modules;
         };
 
-      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
-      forAllSystems = nixpkgs.lib.genAttrs systems;
-      pkgsFor = system: nixpkgs.legacyPackages.${system};
 
     in
     {

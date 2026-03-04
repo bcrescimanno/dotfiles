@@ -9,5 +9,6 @@
     fd
     tree
     nixpkgs-fmt
+    claude-code
   ];
 }
