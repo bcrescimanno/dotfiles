@@ -7,18 +7,8 @@
 
 {
   programs.zsh.initContent = ''
-    # Homebrew shell environment
-    [[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)
-
-    # Shopify dev toolchain
-    [ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
-
-    # chruby — lazy load to avoid slowing down shell startup
-    [[ -f /opt/dev/sh/chruby/chruby.sh ]] && {
-      type chruby >/dev/null 2>&1 || chruby () {
-        source /opt/dev/sh/chruby/chruby.sh
-        chruby "$@"
-      }
-    }
+	# Added by tec agent
+	  [[ -x /Users/brian/.local/state/tec/profiles/base/current/global/init ]] && eval "$(/Users/brian/.local/state/tec/profiles/base/current/global/init zsh)"
+# Homebrew shell environment
   '';
 }
