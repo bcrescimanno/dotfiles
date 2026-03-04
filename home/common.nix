@@ -92,6 +92,15 @@
       zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
       zstyle ':completion:*' menu no
       zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+
+      # Function for Homelab deploys
+      deploy() {
+        nixos-rebuild switch \
+          --flake ~/Code/homelab-nix#$1 \
+          --target-host brian@$1 \
+          --build-host brian@$1 \
+          --use-remote-sudo
+      }
     '';
 
     # Replaces the alias lines
@@ -99,6 +108,8 @@
       grep = "grep --color=auto";
       vim = "nvim";
       ls = "ls --color=auto";
+      hms = "home-manager switch --flake github:bcrescimanno/dotfiles#brian@liquidark";
+      deploy-pirateship = "nixos-rebuild switch --flake ~/Code/homelab-nix#pirateship --target-host brian@pirateship --build-host brian@pirateship --use-remote-sudo";
     };
   };
 
@@ -178,4 +189,25 @@
 
   # Ensure ~/.config/bin is in PATH — replaces the PATH block in .zshrc
   home.sessionPath = [ "${config.home.homeDirectory}/.config/bin" ];
+
+  home.file.".config/git/hooks/pre-commit" = {
+    executable = true;
+    text = ''
+      #!/bin/sh
+      if git rev-parse --show-toplevel 2>/dev/null | xargs -I{} test -f {}/flake.nix; then
+        echo "Checking flake..."
+        nix flake check --no-build
+        if [ $? -ne 0 ]; then
+          echo "Flake check failed, aborting commit"
+          exit 1
+        fi
+      fi
+    '';
+  };
+
+  programs.git = {
+    extraConfig = {
+      core.hooksPath = "~/.config/git/hooks";
+    };
+  };
 }
