@@ -1,6 +1,6 @@
 #!/bin/bash
 
-read -r DIR < "$HOME/dotfiles/secrets/gw2_directory"
+DIR="/home/brian/Games/guild-wars-2/drive_c/Program Files/Guild Wars 2"
 
 if [ -d "$DIR" ]; then
 	FILE="$DIR/d3d11.dll"

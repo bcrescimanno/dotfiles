@@ -1,6 +1,7 @@
 #!/bin/bash
 
-location=$(cat "$HOME/dotfiles/secrets/location")
+location="37.22141,-121.87575"
+
 service="wttr.in/$location"
 
 # Format guide for wttr.in: https://github.com/chubin/wttr.in?tab=readme-ov-file#one-line-output
