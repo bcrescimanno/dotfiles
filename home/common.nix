@@ -100,6 +100,7 @@
           --target-host brian@$1 \
           --build-host brian@$1 \
           --use-remote-sudo
+          --refresh
       }
     '';
 
@@ -108,7 +109,7 @@
       grep = "grep --color=auto";
       vim = "nvim";
       ls = "ls --color=auto";
-      hms = "home-manager switch --flake github:bcrescimanno/dotfiles#brian@liquidark";
+      hms = "home-manager switch --flake github:bcrescimanno/dotfiles#brian@liquidark --refresh";
     };
   };
 
