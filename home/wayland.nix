@@ -16,9 +16,13 @@
     recursive = true;
   };
 
+  # Quickshell lives in its own repo (~/code/liquidark-shell) and is
+  # symlinked live so edits take effect without re-running home-manager.
+  #
+  # SETUP REQUIRED: clone before running home-manager switch:
+  #   git clone https://github.com/bcrescimanno/liquidark-shell ~/code/liquidark-shell
   home.file.".config/quickshell" = {
-    source = ../.config/quickshell;
-    recursive = true;
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/code/liquidark-shell";
   };
 
   home.file.".config/wleave" = {
