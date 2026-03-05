@@ -109,7 +109,6 @@
       grep = "grep --color=auto";
       vim = "nvim";
       ls = "ls --color=auto";
-      hms = "home-manager switch --flake github:bcrescimanno/dotfiles#brian@liquidark --refresh";
     };
   };
 

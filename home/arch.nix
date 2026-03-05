@@ -4,5 +4,8 @@
 
   {
     programs.zsh.oh-my-zsh.plugins = [ "archlinux" ];
+    programs.zsh.shellAliases = {
+      hms = "home-manager switch --flake github:bcrescimanno/dotfiles#brian@liquidark --refresh";
+    };
   }
 
