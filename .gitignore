@@ -5,4 +5,3 @@ vim/.netrwhist
 .DS_Store
 .qmlls.ini
 secrets
-.config/tmux/plugins

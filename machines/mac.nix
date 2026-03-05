@@ -5,7 +5,7 @@
     ../home/common.nix
     ../home/darwin.nix
     ../home/dev-tools.nix
-    ../home/desktop.nix
+    ../home/terminal.nix
   ];
 
   home.username = "brian";

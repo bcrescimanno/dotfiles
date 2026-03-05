@@ -4,7 +4,8 @@
   imports = [
     ../home/common.nix
     ../home/arch.nix
-    ../home/desktop.nix
+    ../home/terminal.nix
+    ../home/wayland.nix
   ];
 
   home.username = "brian";
