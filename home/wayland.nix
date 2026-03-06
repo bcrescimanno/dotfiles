@@ -5,39 +5,9 @@
 
 { config, pkgs, lib, ... }:
 
-{
-  home.file.".config/hypr" = {
-    source = ../.config/hypr;
-    recursive = true;
-  };
-
-  home.file.".config/mako" = {
-    source = ../.config/mako;
-    recursive = true;
-  };
-
-  # Quickshell lives in its own repo (~/code/liquidark-shell) and is
-  # symlinked live so edits take effect without re-running home-manager.
-  #
-  # SETUP REQUIRED: clone before running home-manager switch:
-  #   git clone https://github.com/bcrescimanno/liquidark-shell ~/code/liquidark-shell
-  home.file.".config/quickshell" = {
-    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/code/liquidark-shell";
-  };
-
-  # Generate walker config with configurable theme
-  # Theme can be "dracula" or "catppuccin-mocha"
+let
   walkerTheme = "dracula";
 
-  home.file.".config/walker/config.toml" = {
-    text = "theme = \"${walkerTheme}\"\n";
-  };
-
-  home.file.".config/walker/themes/${walkerTheme}/style.css" = {
-    source = ../.config/walker/themes/${walkerTheme}/style.css;
-  };
-
-  # Generate wleave CSS with configurable theme
   wleaveTheme = "dracula";
 
   wleaveThemeColors = {
@@ -64,7 +34,38 @@
   };
 
   wleaveCurrentTheme = wleaveThemeColors.${wleaveTheme};
+in
+{
+  home.file.".config/hypr" = {
+    source = ../.config/hypr;
+    recursive = true;
+  };
 
+  home.file.".config/mako" = {
+    source = ../.config/mako;
+    recursive = true;
+  };
+
+  # Quickshell lives in its own repo (~/code/liquidark-shell) and is
+  # symlinked live so edits take effect without re-running home-manager.
+  #
+  # SETUP REQUIRED: clone before running home-manager switch:
+  #   git clone https://github.com/bcrescimanno/liquidark-shell ~/code/liquidark-shell
+  home.file.".config/quickshell" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/code/liquidark-shell";
+  };
+
+  # Generate walker config with configurable theme
+  # Theme can be "dracula" or "catppuccin-mocha"
+  home.file.".config/walker/config.toml" = {
+    text = "theme = \"${walkerTheme}\"\n";
+  };
+
+  home.file.".config/walker/themes/${walkerTheme}/style.css" = {
+    source = ../.config/walker/themes/${walkerTheme}/style.css;
+  };
+
+  # Generate wleave CSS with configurable theme
   home.file.".config/wleave/style.css" = {
     text = ''
       /* ${wleaveTheme} theme for wleave */
