@@ -39,4 +39,9 @@
     source = ../.config/elephant;
     recursive = true;
   };
+
+  home.file.".config/walker" = {
+    source = ../.config/walker;
+    recursive = true;
+  };
 }
