@@ -20,6 +20,12 @@ let
       btn_focus = "#bd93f9";
       btn_active = "#bd93f9";
       btn_active_text = "#282a36";
+      shutdown = "#ff5555";
+      hibernate = "#8be9fd";
+      reboot = "#50fa7b";
+      lock = "#f1fa8c";
+      logout = "#ffb86c";
+      suspend = "#ff79c6";
     };
     catppuccin-mocha = {
       window_bg = "rgba(30, 30, 46, 0.9)";
@@ -30,6 +36,12 @@ let
       btn_focus = "#b4befe";
       btn_active = "#b4befe";
       btn_active_text = "#1e1e2e";
+      shutdown = "#f38ba8";
+      hibernate = "#89b4fa";
+      reboot = "#a6e3a1";
+      lock = "#f9e2af";
+      logout = "#fab387";
+      suspend = "#f5c2e7";
     };
   };
 
@@ -65,7 +77,11 @@ in
     source = ../.config/walker/themes/${walkerTheme}/style.css;
   };
 
-  # Generate wleave CSS with configurable theme
+  # wleave layout (static) + generated theme CSS
+  home.file.".config/wleave/layout.json" = {
+    source = ../.config/wleave/layout.json;
+  };
+
   home.file.".config/wleave/style.css" = {
     text = ''
       /* ${wleaveTheme} theme for wleave */
@@ -114,27 +130,27 @@ in
       }
 
       button#shutdown {
-          color: #f38ba8;
+          color: ${wleaveCurrentTheme.shutdown};
       }
 
       button#hibernate {
-          color: #89b4fa;
+          color: ${wleaveCurrentTheme.hibernate};
       }
 
       button#reboot {
-          color: #a6e3a1;
+          color: ${wleaveCurrentTheme.reboot};
       }
 
       button#lock {
-          color: #f9e2af;
+          color: ${wleaveCurrentTheme.lock};
       }
 
       button#logout {
-          color: #fab387;
+          color: ${wleaveCurrentTheme.logout};
       }
 
       button#suspend {
-          color: #f5c2e7;
+          color: ${wleaveCurrentTheme.suspend};
       }
     '';
   };
