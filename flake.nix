@@ -48,6 +48,18 @@
         ];
       };
 
+      # Expose home configurations as checks so `nix flake check` evaluates
+      # them and catches Nix errors (undefined variables, type errors, etc.)
+      # even with --no-build.
+      checks = {
+        x86_64-linux."brian@liquidark" =
+          self.homeConfigurations."brian@liquidark".activationPackage;
+        aarch64-darwin."brian@mac" =
+          self.homeConfigurations."brian@mac".activationPackage;
+        aarch64-linux."brian@pirateship" =
+          self.homeConfigurations."brian@pirateship".activationPackage;
+      };
+
       devShells = forAllSystems (system:
           let pkgs = pkgsFor system;
           in {
