@@ -1,17 +1,18 @@
-/**
- * See https://gnome.pages.gitlab.gnome.org/libadwaita/doc/main/css-variables.html for more CSS variables.
- * Or use your own colors. Both work, but using your own colors may break the automatic light/dark theme function.
- */
+/* Dracula theme for wleave */
 
+* {
+    font-family: monospace;
+}
 
 window {
-    background-color: rgba(12, 12, 12, 0.8);
+    background-color: rgba(40, 42, 54, 0.9);
 }
 
 button {
-    color: oklab(from var(--view-fg-color) var(--standalone-color-oklab));
-    background-color: var(--view-bg-color);
-    border: none;
+    color: #f8f8f2;
+    background-color: #44475a;
+    border: 2px solid #6272a4;
+    border-radius: 8px;
     padding: 10px;
 }
 
@@ -22,42 +23,46 @@ button label.action-name {
 button label.keybind {
     font-size: 20px;
     font-family: monospace;
+    color: #6272a4;
 }
 
-button:hover label.keybind, button:focus label.keybind {
+button:hover label.keybind,
+button:focus label.keybind {
     opacity: 1;
+    color: #f8f8f2;
 }
 
 button:focus,
 button:hover {
-    background-color: color-mix(in srgb, var(--accent-bg-color), var(--view-bg-color));
+    background-color: #6272a4;
+    border-color: #bd93f9;
 }
 
 button:active {
-    color: var(--accent-fg-color);
-    background-color: var(--accent-bg-color);
+    background-color: #bd93f9;
+    color: #282a36;
 }
 
 button#shutdown {
-    --view-fg-color: #ff8d8d;
+    color: #ff5555;
 }
 
 button#hibernate {
-    --view-fg-color: #a8c0ff;
+    color: #8be9fd;
 }
 
 button#reboot {
-    --view-fg-color: #84ffaa;
+    color: #50fa7b;
 }
 
 button#lock {
-    --view-fg-color: #ffe8b6;
+    color: #f1fa8c;
 }
 
 button#logout {
-    --view-fg-color: #ffcca8;
+    color: #ffb86c;
 }
 
 button#suspend {
-    --view-fg-color: #caaff9;
+    color: #ff79c6;
 }
