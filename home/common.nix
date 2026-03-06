@@ -93,6 +93,19 @@
       zstyle ':completion:*' menu no
       zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 
+      # Enter a nix devshell by type (ruby, cpp, rust, default)
+      devshell() {
+        local type="''${1:-default}"
+        nix develop ~/code/dotfiles#"$type"
+      }
+      # Tab completion for devshell
+      _devshell_completions() {
+        local -a shells
+        shells=(ruby cpp rust default)
+        _describe 'devshell type' shells
+      }
+      compdef _devshell_completions devshell
+
       # Function for Homelab deploys
       deploy() {
         nixos-rebuild switch \
