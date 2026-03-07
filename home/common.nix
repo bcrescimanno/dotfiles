@@ -109,10 +109,10 @@
       # Function for Homelab deploys
       deploy() {
         nix run nixpkgs#nixos-rebuild -- switch \
-          --flake ~/Code/homelab-nix#$1 \
+          --flake ~/code/homelab-nix#$1 \
           --target-host brian@$1 \
           --build-host brian@$1 \
-          --use-remote-sudo \
+          --sudo \
           --refresh
       }
     '';
