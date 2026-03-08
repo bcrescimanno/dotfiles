@@ -46,6 +46,10 @@
         "brian@pirateship" = mkHome "aarch64-linux" [
           ./machines/pirateship.nix
         ];
+
+        "brian@rivendell" = mkHome "aarch64-linux" [
+          ./machines/rivendell.nix
+        ];
       };
 
       # Expose home configurations as checks so `nix flake check` evaluates
@@ -58,6 +62,8 @@
           self.homeConfigurations."brian@mac".activationPackage;
         aarch64-linux."brian@pirateship" =
           self.homeConfigurations."brian@pirateship".activationPackage;
+        aarch64-linux."brian@rivendell" =
+          self.homeConfigurations."brian@rivendell".activationPackage;
       };
 
       devShells = forAllSystems (system:
