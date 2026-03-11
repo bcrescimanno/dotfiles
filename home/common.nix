@@ -84,9 +84,14 @@
 
     # Keybindings — replaces the bindkey lines
     initContent = ''
-      bindkey '^p' history-search-backward
-      bindkey '^n' history-search-forward
-      bindkey '^f' autosuggest-accept
+      # Re-assert vi mode after oh-my-zsh (which resets to emacs)
+      bindkey -v
+      # Reduce ESC timeout from 400ms to 10ms so command mode feels instant
+      KEYTIMEOUT=1
+
+      bindkey -M viins '^p' history-search-backward
+      bindkey -M viins '^n' history-search-forward
+      bindkey -M viins '^f' autosuggest-accept
 
       # Completion styling — replaces the zstyle lines
       zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
