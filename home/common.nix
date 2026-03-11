@@ -43,14 +43,11 @@
   programs.zsh = {
     enable = true;
 
-    # Replaces zinit light zsh-users/zsh-autosuggestions
-    autosuggestion.enable = true;
-
-    # Replaces zinit light zsh-users/zsh-syntax-highlighting
-    syntaxHighlighting.enable = true;
-
     # Replaces `bindkey -v` — sets vi keybindings
     defaultKeymap = "viins";
+
+    # Skip insecure directory check — Nix store paths trigger it spuriously
+    completionInit = "autoload -U compinit && compinit -u";
 
     # Replaces the HIST* variables and setopt lines
     history = {
@@ -62,30 +59,41 @@
       share = true;
     };
 
-    # Additional plugins that don't have dedicated home-manager options.
-    # Replaces zinit light Aloxaf/fzf-tab and zsh-users/zsh-completions.
+    # Plugin load order matters:
+    #   compinit → fzf-tab → zsh-autosuggestions → zsh-syntax-highlighting
+    # fzf-tab must come before autosuggestions/syntax-highlighting because those
+    # wrap zsh widgets and would prevent fzf-tab from intercepting completion.
+    # Using the plugins list (sourced after compinit) instead of the dedicated
+    # autosuggestion/syntaxHighlighting options (which are sourced too early).
     plugins = [
-      {
-        name = "fzf-tab";
-        src = "${pkgs.zsh-fzf-tab}/share/zsh/plugins/fzf-tab";
-      }
       {
         name = "zsh-completions";
         src = pkgs.zsh-completions;
       }
+      {
+        name = "fzf-tab";
+        src = "${pkgs.zsh-fzf-tab}/share/fzf-tab";
+      }
+      {
+        name = "zsh-autosuggestions";
+        src = "${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions";
+      }
+      {
+        name = "git";
+        src = "${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/git";
+      }
+      {
+        name = "sudo";
+        src = "${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/sudo";
+      }
+      {
+        name = "zsh-syntax-highlighting";
+        src = "${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting";
+      }
     ];
-
-    # Oh-my-zsh snippets — replaces the zinit snippet OMZP:: lines.
-    # Note: archlinux plugin is added in home/linux.nix since it's Linux-only.
-    oh-my-zsh = {
-      enable = true;
-      plugins = [ "git" "sudo" ];
-    };
 
     # Keybindings — replaces the bindkey lines
     initContent = ''
-      # Re-assert vi mode after oh-my-zsh (which resets to emacs)
-      bindkey -v
       # Reduce ESC timeout from 400ms to 10ms so command mode feels instant
       KEYTIMEOUT=1
 
