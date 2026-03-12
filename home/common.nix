@@ -119,14 +119,15 @@
       }
       compdef _devshell_completions devshell
 
-      # Function for Homelab deploys
+      # Function for Homelab deploys via deploy-rs
+      # Usage: deploy          — deploy all hosts
+      #        deploy <host>   — deploy a specific host
       deploy() {
-        nix run nixpkgs#nixos-rebuild -- switch \
-          --flake ~/code/homelab-nix#$1 \
-          --target-host brian@$1 \
-          --build-host brian@$1 \
-          --sudo \
-          --refresh
+        if [ -z "$1" ]; then
+          nix run github:serokell/deploy-rs -- ~/code/homelab-nix
+        else
+          nix run github:serokell/deploy-rs -- "~/code/homelab-nix#$1"
+        fi
       }
     '';
 
