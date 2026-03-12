@@ -126,7 +126,7 @@
         if [ -z "$1" ]; then
           nix run github:serokell/deploy-rs -- ~/code/homelab-nix
         else
-          nix run github:serokell/deploy-rs -- "~/code/homelab-nix#$1"
+          nix run github:serokell/deploy-rs -- "$HOME/code/homelab-nix#$1"
         fi
       }
     '';
