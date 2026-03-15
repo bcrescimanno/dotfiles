@@ -24,7 +24,7 @@
       Type = "oneshot";
       RemainAfterExit = "yes";
       ExecStart = "${pkgs.coreutils}/bin/true";
-      ExecStop = ''${pkgs.curl}/bin/curl -s -o /dev/null -X POST "http://ha.theshire.io/api/webhook/turn-on-office-monitor-jcSb2lDHuFG9AMsf-4ky8kbt"'';
+      ExecStop = ''${pkgs.curl}/bin/curl -s -o /dev/null -X POST "https://ha.theshire.io/api/webhook/turn-on-office-monitor-jcSb2lDHuFG9AMsf-4ky8kbt"'';
     };
     Install = {
       WantedBy = [ "sleep.target" ];
