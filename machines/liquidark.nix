@@ -11,12 +11,11 @@
   home.username = "brian";
   home.homeDirectory = "/home/brian";
 
-  # Watch for system wake-from-sleep via the org.freedesktop.login1 PrepareForSleep D-Bus
-  # signal (sleep.target is not propagated to user sessions). When PrepareForSleep fires
-  # with "boolean false", the system just woke — send the HA webhook to turn on the LG TV.
+  # Watch the org.freedesktop.login1 PrepareForSleep D-Bus signal (sleep.target is not
+  # propagated to user sessions) to turn the LG TV on/off with the PC's sleep state.
   systemd.user.services.ha-wake-office-monitor = {
     Unit = {
-      Description = "Wake office TV via Home Assistant on resume from sleep";
+      Description = "Sync office TV power with PC sleep state via Home Assistant";
       After = [ "graphical-session.target" ];
     };
     Service = {
@@ -31,10 +30,15 @@
             --object-path /org/freedesktop/login1 |
         while IFS= read -r line; do
           echo "gdbus: $line"
-          if [[ "$line" == *"PrepareForSleep"* && "$line" == *"(false,"* ]]; then
+          if [[ "$line" == *"PrepareForSleep"* && "$line" == *"(true,"* ]]; then
+            echo "System suspending, sending HA webhook to turn off TV"
+            ${pkgs.curl}/bin/curl -s -o /dev/null -X POST \
+              "https://ha.theshire.io/api/webhook/-w-w6s79g0HHEqzwzAojp0eFo" \
+              && echo "Webhook sent successfully" || echo "Webhook failed"
+          elif [[ "$line" == *"PrepareForSleep"* && "$line" == *"(false,"* ]]; then
             echo "System woke, waiting for network"
             /usr/bin/nm-online -q -t 60
-            echo "Network up, sending HA webhook"
+            echo "Network up, sending HA webhook to turn on TV"
             ${pkgs.curl}/bin/curl -s -o /dev/null -X POST \
               "https://ha.theshire.io/api/webhook/-1sWoVviIgzQKboQI2mJJfT20" \
               && echo "Webhook sent successfully" || echo "Webhook failed"
