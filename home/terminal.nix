@@ -37,4 +37,12 @@ in
   home.file.".config/ghostty/config" = {
     text = ghosttyConfig;
   };
+
+  home.file.".config/halloy/config.toml" = {
+    source = ../.config/halloy/config.toml;
+  };
+
+  home.file.".config/vesktop/settings.json" = {
+    source = ../.config/vesktop/settings.json;
+  };
 }

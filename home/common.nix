@@ -243,6 +243,29 @@
   };
 
   # ---------------------------------------------------------------------------
+  # Btop
+  # ---------------------------------------------------------------------------
+
+  programs.btop = {
+    enable = true;
+    settings = {
+      # Dracula theme — resolves to the Nix store path of the btop package
+      color_theme = "${pkgs.btop}/share/btop/themes/dracula.theme";
+      # Transparent background
+      theme_background = false;
+      # Custom box layout presets (cycle with 1/2/3 keys)
+      presets = "cpu:1:default,proc:0:default cpu:0:default,mem:0:default,net:0:default cpu:0:block,net:0:tty";
+      terminal_sync = true;
+      proc_sorting = "memory";
+      proc_per_core = true;
+      use_fstab = true;
+      # Must be false — home-manager generates a read-only Nix store symlink
+      # and btop cannot write back to it.
+      save_config_on_exit = false;
+    };
+  };
+
+  # ---------------------------------------------------------------------------
   # direnv
   # ---------------------------------------------------------------------------
 

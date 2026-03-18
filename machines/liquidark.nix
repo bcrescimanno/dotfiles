@@ -11,6 +11,33 @@
   home.username = "brian";
   home.homeDirectory = "/home/brian";
 
+  # Keep the Guild Wars 2 arcdps plugin up to date. Runs at boot (after 5s) and
+  # every 4h thereafter. Calls ~/.config/bin/arcdps.sh which handles the update logic.
+  systemd.user.services.arcdps-update = {
+    Unit = {
+      Description = "Keep arcdps for Guild Wars 2 up to date";
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = "/home/brian/.config/bin/arcdps.sh";
+    };
+  };
+
+  systemd.user.timers.arcdps-update = {
+    Unit = {
+      Description = "Arcdps Updater Timer";
+      Requires = [ "arcdps-update.service" ];
+    };
+    Timer = {
+      OnBootSec = "5s";
+      OnUnitActiveSec = "4h";
+      Persistent = false;
+    };
+    Install = {
+      WantedBy = [ "timers.target" ];
+    };
+  };
+
   # Watch the org.freedesktop.login1 PrepareForSleep D-Bus signal (sleep.target is not
   # propagated to user sessions) to turn the LG TV on/off with the PC's sleep state.
   systemd.user.services.ha-wake-office-monitor = {

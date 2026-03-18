@@ -1,0 +1,17 @@
+# Halloy config.
+#
+# For a complete list of available options,
+# please visit https://halloy.chat/configuration.html
+
+theme = "dracula"
+
+[font]
+family = "JetBrainsMono Nerd Font Mono"
+size = 16
+
+[servers.scratch-network]
+nickname = "Nalmusic"
+server = "irc.scratch-network.net"
+port = 6697
+use_tls = true
+channels = ["#RED-invites"]

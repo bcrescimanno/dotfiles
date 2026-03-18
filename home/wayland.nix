@@ -164,4 +164,10 @@ in
     source = ../.config/elephant;
     recursive = true;
   };
+
+  # Prevent ALSA audio devices from suspending after idle, which causes
+  # crackling/dropout on resume.
+  home.file.".config/wireplumber/wireplumber.conf.d/disable-suspension.conf" = {
+    source = ../.config/wireplumber/wireplumber.conf.d/disable-suspension.conf;
+  };
 }
