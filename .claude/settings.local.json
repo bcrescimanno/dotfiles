@@ -6,7 +6,19 @@
       "Bash(find:*)",
       "Bash(cat:*)",
       "Bash(walker:*)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(journalctl:*)",
+      "Bash(curl:*)",
+      "Bash(systemctl:*)",
+      "Bash(loginctl show-user:*)",
+      "Bash(timeout 5 gdbus monitor:*)",
+      "Read(//home/brian/.config/wireplumber/wireplumber.conf.d/**)",
+      "Read(//home/brian/.config/vesktop/**)",
+      "Bash(nix flake:*)",
+      "Bash(pacman -Qi input-remapper 2>/dev/null || yay -Qi input-remapper 2>/dev/null)",
+      "Bash(python3 -c \"\nwith open\\('/home/brian/code/dotfiles/.config/omp.toml', 'r'\\) as f:\n    content = f.read\\(\\)\nprint\\(repr\\(content.split\\('\\\\n'\\)[20]\\)\\)\n\")",
+      "Bash(python3 << 'EOF'\nwith open\\('/home/brian/code/dotfiles/.config/omp.toml', 'r'\\) as f:\n    lines = f.readlines\\(\\)\n\n# The original icon was a nerd font SSH icon, restore + add hostname\n# Line 21 \\(index 20\\) needs to be fixed\nfor i, line in enumerate\\(lines\\):\n    if 'SSHSession' in line:\n        # Replace the broken \\\\1 back to the original SSH icon \\(nf-md-ssh\\)\n        lines[i] = \"    template = '{{if .SSHSession}} \\\\uf817  {{.HostName}} {{end}}'\\\\n\"\n        print\\(f\"Fixed line {i+1}: {repr\\(lines[i]\\)}\"\\)\n\nwith open\\('/home/brian/code/dotfiles/.config/omp.toml', 'w'\\) as f:\n    f.writelines\\(lines\\)\nEOF)",
+      "Bash(python3 -c \"\nwith open\\('/home/brian/code/dotfiles/.config/omp.toml', 'r'\\) as f:\n    lines = f.readlines\\(\\)\n\nfor i, line in enumerate\\(lines\\):\n    if 'SSHSession' in line:\n        lines[i] = \\\\\"    template = '{{if .SSHSession}} \\\\ueba9  {{.HostName}} {{end}}'\\\\n\\\\\"\n        print\\(f'Fixed: {repr\\(lines[i]\\)}'\\)\n\nwith open\\('/home/brian/code/dotfiles/.config/omp.toml', 'w'\\) as f:\n    f.writelines\\(lines\\)\n\")"
     ]
   }
 }
