@@ -18,7 +18,7 @@ final_space = true
   newline = true
 
   [[blocks.segments]]
-    template = '{{if .SSHSession}}   {{end}}'
+    template = '{{if .SSHSession}}   {{.HostName}} {{end}}'
     foreground = 'green'
     background = 'transparent'
     type = 'session'
