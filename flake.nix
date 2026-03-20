@@ -54,6 +54,10 @@
         "brian@mirkwood" = mkHome "aarch64-linux" [
           ./machines/mirkwood.nix
         ];
+
+        "brian@terra" = mkHome "x86_64-linux" [
+          ./machines/terra.nix
+        ];
       };
 
       # Expose home configurations as checks so `nix flake check` evaluates
@@ -70,6 +74,8 @@
           self.homeConfigurations."brian@rivendell".activationPackage;
         aarch64-linux."brian@mirkwood" =
           self.homeConfigurations."brian@mirkwood".activationPackage;
+        x86_64-linux."brian@terra" =
+          self.homeConfigurations."brian@terra".activationPackage;
       };
 
       devShells = forAllSystems (system:
