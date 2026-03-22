@@ -1,4 +1,4 @@
-# machines/terra.nix — Arch Linux living room gaming PC (Gnome + Steam Big Picture)
+# machines/terra.nix — Arch Linux living room gaming PC (Hyprland + Steam Big Picture)
 { ... }:
 {
   imports = [

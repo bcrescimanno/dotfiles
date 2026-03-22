@@ -1,6 +1,0 @@
-[Unit]
-Description=Keep arcpds for Guild Wars 2 up to date
-
-[Service]
-Type=oneshot
-ExecStart=%h/.config/bin/arcdps.sh
