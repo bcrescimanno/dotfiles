@@ -189,6 +189,13 @@
     defaultEditor = true;
     vimAlias = true;
     viAlias = true;
+    # Suppress auto-generated init.lua. New HM renamed extraLuaConfig → initLua
+    # via mkRenamedOptionModule; the rename + types.lines interaction produces
+    # initLua = "\n" (two empty-string definitions merged), which triggers
+    # xdg.configFile."nvim/init.lua" generation. That conflicts with the
+    # home.file.".config/nvim" mkOutOfStoreSymlink below (the builder follows
+    # the symlink outside the nix store → "outside $HOME" error).
+    initLua = lib.mkForce "";
   };
 
   home.file.".config/nvim" = {
