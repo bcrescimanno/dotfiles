@@ -1,0 +1,19 @@
+# Best quality with merged video+audio
+-f bestvideo+bestaudio/best
+
+# Output to ~/Videos with clean filenames
+-o ~/Videos/%(title)s [%(id)s].%(ext)s
+
+# Embed metadata and thumbnail
+--embed-metadata
+--embed-thumbnail
+
+# Download English subtitles if available
+--embed-subs
+--sub-langs en
+
+# Merge into mkv (supports all codecs without re-encoding)
+--merge-output-format mkv
+
+# Limit concurrent fragment downloads
+--concurrent-fragments 4

@@ -1,0 +1,47 @@
+#!/bin/sh
+# ydl — quick video downloader using yt-dlp
+#
+# Usage:
+#   ydl <url>              Download video (default: best quality, mkv)
+#   ydl -a <url>           Download audio only (mp3)
+#   ydl -l <playlist-url>  Download entire playlist
+
+set -e
+
+usage() {
+    echo "Usage: ydl [-a|-l] <url>"
+    echo "  -a    Audio only (mp3)"
+    echo "  -l    Download playlist"
+    echo "  -h    Show this help"
+    exit 1
+}
+
+mode="video"
+
+while getopts "alh" opt; do
+    case "$opt" in
+        a) mode="audio" ;;
+        l) mode="playlist" ;;
+        h) usage ;;
+        *) usage ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+[ -z "$1" ] && usage
+
+url="$1"
+
+case "$mode" in
+    audio)
+        yt-dlp -x --audio-format mp3 --embed-metadata --embed-thumbnail \
+            -o "$HOME/Music/%(title)s [%(id)s].%(ext)s" "$url"
+        ;;
+    playlist)
+        yt-dlp --yes-playlist \
+            -o "$HOME/Videos/%(playlist_title)s/%(playlist_index)03d - %(title)s [%(id)s].%(ext)s" "$url"
+        ;;
+    video)
+        yt-dlp "$url"
+        ;;
+esac
