@@ -6,6 +6,7 @@
     ../home/arch.nix
     ../home/terminal.nix
     ../home/wayland.nix
+    ../home/red-tools.nix
   ];
 
   home.username = "brian";
