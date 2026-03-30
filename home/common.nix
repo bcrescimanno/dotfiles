@@ -122,16 +122,10 @@
       }
       compdef _devshell_completions devshell
 
-      # Function for Homelab deploys via deploy-rs
-      # Usage: deploy          — deploy all hosts
-      #        deploy <host>   — deploy a specific host
-      deploy() {
-        if [ -z "$1" ]; then
-          nix run github:serokell/deploy-rs -- ~/code/homelab-nix
-        else
-          nix run github:serokell/deploy-rs -- "$HOME/code/homelab-nix#$1"
-        fi
-      }
+      # Add homelab-nix scripts to PATH if the repo is present locally.
+      # The deploy script there wraps deploy-rs with the correct arguments.
+      # This is a no-op on machines that don't have the repo (Pis, mac).
+      [[ -d ~/code/homelab-nix/scripts ]] && path=("$HOME/code/homelab-nix/scripts" $path)
     '';
 
     # Replaces the alias lines
