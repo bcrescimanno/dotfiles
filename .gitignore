@@ -6,3 +6,4 @@ vim/.netrwhist
 .qmlls.ini
 secrets
 .config/.claude/
+.claude/settings.local.json
