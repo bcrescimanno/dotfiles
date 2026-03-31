@@ -1,5 +1,5 @@
 # machines/archdesktop.nix — Arch Linux desktop
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
   imports = [
     ../home/common.nix
@@ -11,6 +11,25 @@
 
   home.username = "brian";
   home.homeDirectory = "/home/brian";
+
+  services.mpd = {
+    enable = true;
+    musicDirectory = "${config.home.homeDirectory}/Music";
+    # dataDir defaults to ~/.local/share/mpd — kept local, not on the NFS mount
+    extraConfig = ''
+      audio_output {
+        type "pipewire"
+        name "PipeWire"
+      }
+
+    '';
+  };
+
+  services.mpdris2.enable = true;
+
+  home.packages = [ pkgs.rmpc ];
+
+  home.file.".config/rmpc/config.ron".source = ../.config/rmpc/config.ron;
 
   # Watch the org.freedesktop.login1 PrepareForSleep D-Bus signal (sleep.target is not
   # propagated to user sessions) to turn the LG TV on/off with the PC's sleep state.
