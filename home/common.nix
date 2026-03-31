@@ -21,6 +21,9 @@
   # Let home-manager manage itself.
   programs.home-manager.enable = true;
 
+  # Suppress the news/changelog notification on every switch.
+  news.display = "silent";
+
   # ---------------------------------------------------------------------------
   # Packages available in your user environment
   # ---------------------------------------------------------------------------
