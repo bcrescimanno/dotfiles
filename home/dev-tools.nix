@@ -16,5 +16,6 @@
     unzip
     tree
     nerd-fonts.jetbrains-mono
+    tree-sitter
   ];
 }
