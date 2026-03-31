@@ -33,7 +33,13 @@
       "Bash(pacman:*)",
       "Bash(yay -Ss gamescope)",
       "Bash(gh search:*)",
-      "Bash(gh auth:*)"
+      "Bash(gh auth:*)",
+      "Bash(rmpc config:*)",
+      "Read(//home/brian/.config/**)",
+      "Bash(rmpc --help)",
+      "Bash(rmpc debuginfo:*)",
+      "Bash(mpd --version)",
+      "WebFetch(domain:rmpc.mierak.dev)"
     ]
   }
 }
