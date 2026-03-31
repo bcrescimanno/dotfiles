@@ -17,6 +17,8 @@
     musicDirectory = "${config.home.homeDirectory}/Music";
     # dataDir defaults to ~/.local/share/mpd — kept local, not on the NFS mount
     extraConfig = ''
+      bind_to_address "/tmp/mpd_socket"
+
       audio_output {
         type "pipewire"
         name "PipeWire"
