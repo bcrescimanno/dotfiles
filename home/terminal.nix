@@ -26,6 +26,8 @@ let
 
     window-height = 40
     window-width = 90
+
+    confirm-close-surface = false
   '';
 in
 {
