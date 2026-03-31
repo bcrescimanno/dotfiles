@@ -31,6 +31,14 @@
 
   home.packages = [ pkgs.rmpc ];
 
+  programs.zsh.initContent = ''
+    # Clear the queue, add a YouTube stream URL, and play it immediately.
+    # Usage: addliveyt <youtube-url>
+    addliveyt() {
+      rmpc clear && yt-dlp -g -f 'bestaudio/best' "$1" | xargs rmpc add && rmpc play
+    }
+  '';
+
   home.file.".config/rmpc/config.ron".source = ../.config/rmpc/config.ron;
 
   # Watch the org.freedesktop.login1 PrepareForSleep D-Bus signal (sleep.target is not
