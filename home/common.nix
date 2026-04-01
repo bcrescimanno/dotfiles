@@ -34,6 +34,9 @@
     fd            # fast find, used by neovim telescope
     jq            # JSON processing
 
+    # Neovim dependencies
+    tree-sitter   # CLI required by nvim-treesitter to compile grammars at runtime
+
     # Nix tools
     nvd           # diff two store closures to see package version changes
   ];
