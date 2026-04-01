@@ -1,5 +1,5 @@
 # machines/archdesktop.nix — Arch Linux desktop
-{ pkgs, config, ... }:
+{ pkgs, config, lib, ... }:
 {
   imports = [
     ../home/common.nix
@@ -40,6 +40,27 @@
   '';
 
   home.file.".config/rmpc/config.ron".source = ../.config/rmpc/config.ron;
+
+  # Generate qbt-tui config at activation time by decrypting secrets/liquidark.env
+  # with sops. The non-secret parts live here; credentials stay encrypted in the repo.
+  # To create/update credentials: sops secrets/liquidark.env (add QBT_USERNAME, QBT_PASSWORD)
+  home.activation.qbtTuiConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    mkdir -p "${config.home.homeDirectory}/.config/qbt-tui"
+
+    secrets_file="${config.home.homeDirectory}/code/dotfiles/secrets/liquidark.env"
+    if [ -f "$secrets_file" ]; then
+      eval "$(/usr/bin/sops -d "$secrets_file")"
+    fi
+
+    cat > "${config.home.homeDirectory}/.config/qbt-tui/config.toml" << EOF
+[server]
+url = "http://pirateship:9091"
+username = "''${QBT_USERNAME:-}"
+password = "''${QBT_PASSWORD:-}"
+refresh_interval = 3
+EOF
+    chmod 600 "${config.home.homeDirectory}/.config/qbt-tui/config.toml"
+  '';
 
   # Watch the org.freedesktop.login1 PrepareForSleep D-Bus signal (sleep.target is not
   # propagated to user sessions) to turn the LG TV on/off with the PC's sleep state.
