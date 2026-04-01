@@ -60,13 +60,10 @@
             "gt":         NextTab,
             "<S-Tab>":    PreviousTab,
             "gT":         PreviousTab,
-            "1":          SwitchToTab("Queue"),
-            "2":          SwitchToTab("Directories"),
-            "3":          SwitchToTab("Artists"),
-            "4":          SwitchToTab("Album Artists"),
-            "5":          SwitchToTab("Albums"),
-            "6":          SwitchToTab("Playlists"),
-            "7":          SwitchToTab("Search"),
+            "1":          SwitchToTab("Playing"),
+            "2":          SwitchToTab("Artists"),
+            "3":          SwitchToTab("Albums"),
+            "4":          SwitchToTab("Search"),
             "<C-u>":      Update,
             "<C-U>":      Rescan,
             "R":          AddRandom,
@@ -147,7 +144,7 @@
     ),
     tabs: [
         (
-            name: "Queue",
+            name: "Playing",
             pane: Split(
                 direction: Horizontal,
                 panes: [
@@ -221,27 +218,7 @@
             ),
         ),
         (
-            name: "Directories",
-            borders: "ALL",
-            border_symbols: Rounded,
-            pane: Split(
-                size: "100%",
-                direction: Vertical,
-                panes: [(pane: Pane(Directories), size: "100%", borders: "ALL", border_symbols: Rounded)],
-            )
-        ),
-        (
             name: "Artists",
-            borders: "ALL",
-            border_symbols: Rounded,
-            pane: Split(
-                size: "100%",
-                direction: Vertical,
-                panes: [(pane: Pane(Artists), size: "100%", borders: "ALL", border_symbols: Rounded)],
-            )
-        ),
-        (
-            name: "Album Artists",
             borders: "ALL",
             border_symbols: Rounded,
             pane: Split(
@@ -258,16 +235,6 @@
                 size: "100%",
                 direction: Vertical,
                 panes: [(pane: Pane(Albums), size: "100%", borders: "ALL", border_symbols: Rounded)],
-            )
-        ),
-        (
-            name: "Playlists",
-            borders: "ALL",
-            border_symbols: Rounded,
-            pane: Split(
-                size: "100%",
-                direction: Vertical,
-                panes: [(pane: Pane(Playlists), size: "100%", borders: "ALL", border_symbols: Rounded)],
             )
         ),
         (
