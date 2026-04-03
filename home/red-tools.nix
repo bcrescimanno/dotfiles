@@ -21,6 +21,7 @@ in
 
 {
   home.packages = [
+    pkgs.chromaprint           # fpcalc binary — required by beets chroma plugin
     (wrapScript "eac-to-flac")
     (wrapScript "flac-to-mp3")
     (wrapScript "mktorrent-wrap")
@@ -37,9 +38,19 @@ in
         # important for private tracker accuracy.
         timid = true;
       };
-      plugins = [ "fetchart" "embedart" ];
+      plugins = [ "fetchart" "embedart" "chroma" "fromfilename" "musicbrainz" "discogs" ];
       fetchart.auto = true;
       embedart.auto = true;
+      # For EAC rips: files are untagged, so acoustic fingerprinting (chroma)
+      # is the primary match signal. Loosen thresholds so good fingerprint
+      # matches aren't discarded before you even see them.
+      match = {
+        # Default strong_rec_thresh is 0.04 (distance); raise it slightly so
+        # high-confidence chroma hits are auto-recommended.
+        strong_rec_thresh = 0.10;
+        # Show more candidates so you can pick the right edition/release.
+        candidates = 10;
+      };
     };
   };
 
