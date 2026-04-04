@@ -25,6 +25,7 @@ in
     (wrapScript "eac-to-flac")
     (wrapScript "flac-to-mp3")
     (wrapScript "mktorrent-wrap")
+    (wrapScript "rip-to-library")
   ];
 
   programs.beets = {
