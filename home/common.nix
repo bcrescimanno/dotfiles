@@ -193,6 +193,8 @@
     defaultEditor = true;
     vimAlias = true;
     viAlias = true;
+    withRuby = false;
+    withPython3 = false;
     # Suppress auto-generated init.lua. New HM renamed extraLuaConfig → initLua
     # via mkRenamedOptionModule; the rename + types.lines interaction produces
     # initLua = "\n" (two empty-string definitions merged), which triggers
