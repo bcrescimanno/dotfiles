@@ -10,6 +10,7 @@
     tree
     nixpkgs-fmt
     claude-code
+    cloudflared
   ];
 
   # Appended by each devshell after its own setup. Execs zsh so the user
