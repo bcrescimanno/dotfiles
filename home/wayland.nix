@@ -170,4 +170,11 @@ in
   home.file.".config/wireplumber/wireplumber.conf.d/disable-suspension.conf" = {
     source = ../.config/wireplumber/wireplumber.conf.d/disable-suspension.conf;
   };
+
+  # Route portal requests to hyprland (screenshots/screencasting) and gtk
+  # (file chooser, print, notifications, etc.) now that xdg-desktop-portal-gnome
+  # is no longer present.
+  home.file.".config/xdg-desktop-portal/portals.conf" = {
+    source = ../.config/xdg-desktop-portal/portals.conf;
+  };
 }
