@@ -1,0 +1,8 @@
+" Tridactyl config
+" ---------------------------------------------------------------------------
+
+" Bookmarks
+bind b fillcmdline bmarks
+
+" Tabs
+bind x tabclose
