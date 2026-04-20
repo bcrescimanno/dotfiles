@@ -11,7 +11,7 @@ let
   # macOS: JetBrainsMono Nerd Font Regular, size 14
   isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
   fontFamily = if isDarwin then "JetBrainsMono Nerd Font Regular" else "JetBrainsMono Nerd Font Mono";
-  fontSize = if isDarwin then "15" else "13";
+  fontSize = if isDarwin then "16" else "13";
   ghosttyConfig = ''
     font-size = ${fontSize}
     font-family = ${fontFamily}
