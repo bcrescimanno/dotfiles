@@ -333,4 +333,33 @@
     .envrc
     .direnv
   '';
+
+  # ---------------------------------------------------------------------------
+  # SSH
+  # ---------------------------------------------------------------------------
+  #
+  # Connection multiplexing (ControlMaster) reuses an existing authenticated
+  # connection for subsequent SSH sessions to the same host. This means tools
+  # like Claude Code that make multiple git operations only trigger one
+  # 1Password confirmation prompt per session instead of one per operation.
+
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
+    matchBlocks = {
+      "*" = {
+        identityAgent = "~/.1password/agent.sock";
+        extraOptions = {
+          ControlMaster = "auto";
+          ControlPath = "~/.ssh/sockets/%r@%h:%p";
+          ControlPersist = "30m";
+        };
+      };
+    };
+  };
+
+  home.activation.createSshSocketsDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    mkdir -p ${config.home.homeDirectory}/.ssh/sockets
+    chmod 700 ${config.home.homeDirectory}/.ssh/sockets
+  '';
 }
