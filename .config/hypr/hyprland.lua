@@ -181,8 +181,8 @@ hl.bind(mainMod .. " + TAB",        hl.dsp.window.cycle_next(),               { 
 hl.bind(mainMod .. " + SHIFT + L",  hl.dsp.exec_cmd("loginctl lock-session"), { description = "Lock Screen" })
 hl.bind(mainMod .. " + ALT + end",  hl.dsp.exec_cmd("systemctl suspend"),     { description = "Suspend" })
 hl.bind(mainMod .. " + escape",     hl.dsp.exec_cmd(exit),                    { description = "Exit Menu" })
-hl.bind("CTRL + left",  hl.dsp.focus({ workspace = "e-1" }), { description = "Previous Workspace" })
-hl.bind("CTRL + right", hl.dsp.focus({ workspace = "e+1" }), { description = "Next Workspace" })
+hl.bind("CTRL + left",  hl.dsp.focus({ workspace = "-1" }), { description = "Previous Workspace" })
+hl.bind("CTRL + right", hl.dsp.focus({ workspace = "+1" }), { description = "Next Workspace" })
 
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 
