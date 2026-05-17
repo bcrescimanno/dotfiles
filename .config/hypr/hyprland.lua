@@ -57,7 +57,7 @@ end)
 
 hl.config({
 	general = {
-		layout = "dwindle",
+		layout = "scrolling",
 
 		gaps_in = { top = 0, right = 5, bottom = 10, left = 5 },
 		gaps_out = { top = 10, right = 20, bottom = 20, left = 20 },
@@ -114,6 +114,14 @@ hl.config({
 		preserve_split = true,
 	},
 
+	scrolling = {
+		column_width = 0.32,
+		fullscreen_on_one_column = false,
+		focus_fit_method = 0,
+		follow_focus = true,
+		follow_min_visible = 0.6,
+	},
+
 	misc = {
 		disable_hyprland_logo = true,
 		disable_splash_rendering = true,
@@ -126,6 +134,13 @@ hl.config({
 	},
 })
 
+-----------------------
+---- WORKSPACE RULES ----
+-----------------------
+
+hl.workspace_rule({ workspace = "1", layout = "scrolling", persistent = true })
+hl.workspace_rule({ workspace = "2", layout = "monocle", persistent = true })
+
 --------------------
 ---- ANIMATIONS ----
 --------------------
@@ -137,7 +152,7 @@ hl.animation({ leaf = "windowsOut", enabled = true, speed = 7, bezier = "default
 hl.animation({ leaf = "border", enabled = true, speed = 10, bezier = "default" })
 hl.animation({ leaf = "borderangle", enabled = true, speed = 8, bezier = "default" })
 hl.animation({ leaf = "fade", enabled = true, speed = 7, bezier = "default" })
-hl.animation({ leaf = "workspaces", enabled = true, speed = 6, bezier = "default" })
+hl.animation({ leaf = "workspaces", enabled = true, speed = 4.5, bezier = "default", style = "slidevert" })
 
 -----------------
 ---- DEVICES ----
@@ -182,11 +197,15 @@ hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 
 -- Move focus
 hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + l", hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + h", hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + up", hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + down", hl.dsp.focus({ direction = "down" }))
+hl.bind(mainMod .. " + h", hl.dsp.layout("focus l"))
+hl.bind(mainMod .. " + l", hl.dsp.layout("focus r"))
+
+-- Switch workspaces
+hl.bind(mainMod .. " + j", hl.dsp.focus({ workspace = "+1" }), { description = "Next workspace" })
+hl.bind(mainMod .. " + k", hl.dsp.focus({ workspace = "-1" }), { description = "Previous workspace" })
 
 -- Switch workspaces / move windows to workspaces
 for i = 1, 10 do
