@@ -1,6 +1,9 @@
 {
     "buttons-per-row": "5/1",
-    "margin": 800,
+    "margin-top": 800,
+    "margin-bottom": 800,
+    "margin-left": 1400,
+    "margin-right": 1400,
     "buttons": [
         {
             "label": "lock",
