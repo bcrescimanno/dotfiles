@@ -187,7 +187,6 @@ hl.bind(mainMod .. " + Q", hl.dsp.window.close(), { description = "Close window"
 
 -- Windows and workspaces
 hl.bind(mainMod .. " + TAB", hl.dsp.window.cycle_next(), { description = "Cycle Windows" })
-hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("loginctl lock-session"), { description = "Lock Screen" })
 hl.bind(mainMod .. " + ALT + end", hl.dsp.exec_cmd("systemctl suspend"), { description = "Suspend" })
 hl.bind(mainMod .. " + escape", hl.dsp.exec_cmd(exit), { description = "Exit Menu" })
 hl.bind("CTRL + left", hl.dsp.focus({ workspace = "-1" }), { description = "Previous Workspace" })
@@ -202,6 +201,8 @@ hl.bind(mainMod .. " + up", hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + down", hl.dsp.focus({ direction = "down" }))
 hl.bind(mainMod .. " + h", hl.dsp.layout("focus l"))
 hl.bind(mainMod .. " + l", hl.dsp.layout("focus r"))
+hl.bind(mainMod .. " + SHIFT + h", hl.dsp.layout("swapcol l"))
+hl.bind(mainMod .. " + SHIFT + l", hl.dsp.layout("swapcol r"))
 
 -- Switch workspaces
 hl.bind(mainMod .. " + j", hl.dsp.focus({ workspace = "+1" }), { description = "Next workspace" })
