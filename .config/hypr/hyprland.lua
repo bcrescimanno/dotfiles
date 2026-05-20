@@ -136,6 +136,17 @@ hl.config({
 	},
 })
 
+---------------------
+---- GESTURES ----
+---------------------
+
+-- 4-finger horizontal swipe to move between windows in the scrolling layout.
+hl.gesture({
+	fingers = 4,
+	direction = "horizontal",
+	action = "scroll_move",
+})
+
 -----------------------
 ---- WORKSPACE RULES ----
 -----------------------
