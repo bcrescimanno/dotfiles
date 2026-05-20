@@ -15,10 +15,10 @@ require("rules.rmpc")
 -- Built-in laptop display. eDP-1 is the standard DRM name; adjust if yours differs.
 -- Use `hyprctl monitors` to confirm the output name after first boot.
 hl.monitor({
-	output = "eDP-1",
+	output = "eDP-2",
 	mode = "preferred",
 	position = "0x0",
-	scale = 1,
+	scale = 1.5,
 })
 
 -------------------
@@ -97,9 +97,9 @@ hl.config({
 	-- column_width at 0.45 works better on laptop-sized displays than the
 	-- 0.32 used on the ultrawide liquidark setup.
 	scrolling = {
-		column_width = 0.45,
+		column_width = 0.5,
 		fullscreen_on_one_column = false,
-		focus_fit_method = 0,
+		focus_fit_method = 1,
 		follow_focus = true,
 		follow_min_visible = 0.6,
 	},
