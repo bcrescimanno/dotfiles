@@ -13,6 +13,10 @@
 
   home.file.".config/hypr/hyprland.lua".source = ../.config/hypr/hyprland-celes.lua;
 
+  # AMD-primary hybrid laptop: no global NVIDIA GLX vars (those activate the dGPU
+  # for every GTK4 app). Use __NV_PRIME_RENDER_OFFLOAD=1 per-launch for games.
+  home.file.".config/uwsm/env".source = ../.config/uwsm/env-celes;
+
   services.mpd = {
     enable = true;
     musicDirectory = "${config.home.homeDirectory}/Music";

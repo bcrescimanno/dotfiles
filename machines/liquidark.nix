@@ -13,6 +13,7 @@
   home.homeDirectory = "/home/brian";
 
   home.file.".config/hypr/hyprland.lua".source = ../.config/hypr/hyprland.lua;
+  home.file.".config/uwsm/env".source = ../.config/uwsm/env;
 
   services.mpd = {
     enable = true;

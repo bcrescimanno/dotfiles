@@ -161,11 +161,6 @@ in
     '';
   };
 
-  home.file.".config/uwsm" = {
-    source = ../.config/uwsm;
-    recursive = true;
-  };
-
   home.file.".config/elephant" = {
     source = ../.config/elephant;
     recursive = true;
