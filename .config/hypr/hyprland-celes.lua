@@ -7,6 +7,7 @@ require("rules.lutris")
 require("rules.rpi-imager")
 require("rules.steam")
 require("rules.rmpc")
+require("rules.browser")
 
 --------------------
 ---- MONITORS ----
