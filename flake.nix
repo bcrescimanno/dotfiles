@@ -62,6 +62,10 @@
         "brian@orthanc" = mkHome "x86_64-linux" [
           ./machines/orthanc.nix
         ];
+
+        "brian@celes" = mkHome "x86_64-linux" [
+          ./machines/celes.nix
+        ];
       };
 
       # Expose home configurations as checks so `nix flake check` evaluates
@@ -82,6 +86,8 @@
           self.homeConfigurations."brian@terra".activationPackage;
         x86_64-linux."brian@orthanc" =
           self.homeConfigurations."brian@orthanc".activationPackage;
+        x86_64-linux."brian@celes" =
+          self.homeConfigurations."brian@celes".activationPackage;
       };
 
       devShells = forAllSystems (system:

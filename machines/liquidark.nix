@@ -12,6 +12,8 @@
   home.username = "brian";
   home.homeDirectory = "/home/brian";
 
+  home.file.".config/hypr/hyprland.lua".source = ../.config/hypr/hyprland.lua;
+
   services.mpd = {
     enable = true;
     musicDirectory = "${config.home.homeDirectory}/Music";
@@ -32,8 +34,14 @@
   home.packages = [ pkgs.rmpc ];
 
   programs.zsh.initContent = ''
-    # Clear the queue, add a YouTube stream URL, and play it immediately.
-    # Usage: addliveyt <youtube-url>
+    hms() {
+      if [[ -f ~/code/dotfiles/flake.nix ]]; then
+        home-manager switch --flake ~/code/dotfiles#brian@liquidark
+      else
+        home-manager switch --flake github:bcrescimanno/dotfiles#brian@liquidark --refresh
+      fi
+    }
+
     addliveyt() {
       rmpc clear && yt-dlp -g -f 'bestaudio/best' "$1" | xargs rmpc add && rmpc play
     }

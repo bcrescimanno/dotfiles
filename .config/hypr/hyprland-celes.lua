@@ -1,45 +1,25 @@
--- Hyprland configuration (Lua, 0.55+)
+-- Hyprland configuration for celes (laptop)
 -- https://wiki.hypr.land/0.55.0/
 
 -- Window rules — one file per application
 require("rules.1password")
-require("rules.battlenet")
-require("rules.eden-daoc")
-require("rules.guild-wars-2")
 require("rules.lutris")
 require("rules.rpi-imager")
 require("rules.steam")
-require("rules.wow-classic")
 require("rules.rmpc")
 
 --------------------
 ---- MONITORS ----
 --------------------
 
--- LG C4 TV Monitor in SDR Mode
+-- Built-in laptop display. eDP-1 is the standard DRM name; adjust if yours differs.
+-- Use `hyprctl monitors` to confirm the output name after first boot.
 hl.monitor({
-	output = "HDMI-A-1",
-	mode = "5120x2160@165",
+	output = "eDP-1",
+	mode = "preferred",
 	position = "0x0",
 	scale = 1,
-	transform = 0,
-	bitdepth = 10,
-	cm = "wide",
-	vrr = 0,
 })
-
--- LG C4 TV Monitor in HDR Mode
--- hl.monitor({
---     output        = "HDMI-A-1",
---     mode          = "3840x2160@143.99",
---     position      = "0x0",
---     scale         = 1,
---     transform     = 0,
---     bitdepth      = 10,
---     cm            = "hdr",
---     sdrbrightness = 1.1,
---     sdrsaturation = 1.0,
--- })
 
 -------------------
 ---- AUTOSTART ----
@@ -114,8 +94,10 @@ hl.config({
 		preserve_split = true,
 	},
 
+	-- column_width at 0.45 works better on laptop-sized displays than the
+	-- 0.32 used on the ultrawide liquidark setup.
 	scrolling = {
-		column_width = 0.32,
+		column_width = 0.45,
 		fullscreen_on_one_column = false,
 		focus_fit_method = 0,
 		follow_focus = true,
@@ -153,15 +135,6 @@ hl.animation({ leaf = "border", enabled = true, speed = 10, bezier = "default" }
 hl.animation({ leaf = "borderangle", enabled = true, speed = 8, bezier = "default" })
 hl.animation({ leaf = "fade", enabled = true, speed = 7, bezier = "default" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 4.5, bezier = "default", style = "slidevert" })
-
------------------
----- DEVICES ----
------------------
-
-hl.device({ name = "razer-razer-mouse-dock-pro-mouse", enabled = false }) -- event4
-hl.device({ name = "razer-razer-mouse-dock-pro-keyboard-1", enabled = false }) -- event3
-hl.device({ name = "razer-razer-mouse-dock-pro-1", enabled = true }) -- event7
-hl.device({ name = "razer-razer-mouse-dock-pro-keyboard", enabled = false })
 
 ---------------------
 ---- KEYBINDINGS ----

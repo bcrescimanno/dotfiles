@@ -1,0 +1,69 @@
+# machines/celes.nix — Arch Linux laptop
+{ pkgs, config, lib, ... }:
+{
+  imports = [
+    ../home/common.nix
+    ../home/arch.nix
+    ../home/terminal.nix
+    ../home/wayland.nix
+  ];
+
+  home.username = "brian";
+  home.homeDirectory = "/home/brian";
+
+  home.file.".config/hypr/hyprland.lua".source = ../.config/hypr/hyprland-celes.lua;
+
+  services.mpd = {
+    enable = true;
+    musicDirectory = "${config.home.homeDirectory}/Music";
+    extraConfig = ''
+      bind_to_address "/tmp/mpd_socket"
+
+      audio_output {
+        type "pipewire"
+        name "PipeWire"
+      }
+
+    '';
+  };
+
+  services.mpdris2.enable = true;
+
+  home.packages = [ pkgs.rmpc ];
+
+  programs.zsh.initContent = ''
+    hms() {
+      if [[ -f ~/code/dotfiles/flake.nix ]]; then
+        home-manager switch --flake ~/code/dotfiles#brian@celes
+      else
+        home-manager switch --flake github:bcrescimanno/dotfiles#brian@celes --refresh
+      fi
+    }
+
+    addliveyt() {
+      rmpc clear && yt-dlp -g -f 'bestaudio/best' "$1" | xargs rmpc add && rmpc play
+    }
+  '';
+
+  home.file.".config/rmpc/config.ron".source = ../.config/rmpc/config.ron;
+
+  # Generates qbt-tui config at activation time. Credentials stay encrypted in
+  # secrets/celes.env (sops). Create/update with: sops secrets/celes.env
+  home.activation.qbtTuiConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    mkdir -p "${config.home.homeDirectory}/.config/qbt-tui"
+
+    secrets_file="${config.home.homeDirectory}/code/dotfiles/secrets/celes.env"
+    if [ -f "$secrets_file" ]; then
+      eval "$(/usr/bin/sops -d "$secrets_file")"
+    fi
+
+    cat > "${config.home.homeDirectory}/.config/qbt-tui/config.toml" << EOF
+[server]
+url = "http://pirateship:9091"
+username = "''${QBT_USERNAME:-}"
+password = "''${QBT_PASSWORD:-}"
+refresh_interval = 3
+EOF
+    chmod 600 "${config.home.homeDirectory}/.config/qbt-tui/config.toml"
+  '';
+}
