@@ -20,6 +20,32 @@
 
   home.file.".config/hypr/hyprland.lua".source = ../.config/hypr/hyprland-celes.lua;
 
+  # Battery-aware idle policy: hypridle-smart picks hypridle-ac.conf or
+  # hypridle-battery.conf based on /sys/class/power_supply/ACAD/online.
+  home.file.".config/hypr/hypridle-battery.conf".source = ../.config/hypr/hypridle-battery.conf;
+
+  home.file.".config/systemd/user/hypridle.service.d/use-smart-wrapper.conf".text = ''
+    [Service]
+    ExecStart=
+    ExecStart=%h/.config/bin/hypridle-smart
+  '';
+
+  systemd.user.services.hypridle-power-watch = {
+    Unit = {
+      Description = "Restart hypridle when AC state changes";
+      After = [ "hypridle.service" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "%h/.config/bin/hypridle-power-watch";
+      Restart = "always";
+      RestartSec = "5";
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
+
   # AMD-primary hybrid laptop: no global NVIDIA GLX vars (those activate the dGPU
   # for every GTK4 app). Use __NV_PRIME_RENDER_OFFLOAD=1 per-launch for games.
   home.file.".config/uwsm/env".source = ../.config/uwsm/env-celes;

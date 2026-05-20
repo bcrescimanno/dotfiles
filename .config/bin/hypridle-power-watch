@@ -1,0 +1,8 @@
+#!/bin/bash
+# Restart hypridle when the AC adapter is plugged or unplugged so it switches
+# between the AC and battery idle policies.
+exec udevadm monitor --udev --subsystem-match=power_supply \
+    | grep --line-buffered "ACAD" \
+    | while read -r _; do
+        systemctl --user restart hypridle
+    done

@@ -65,6 +65,7 @@ in
   # hyprland.lua is machine-specific (monitor config, device config) and is
   # linked by each machine file. Everything else here is shared.
   home.file.".config/hypr/hypridle.conf".source = ../.config/hypr/hypridle.conf;
+  home.file.".config/hypr/hypridle-ac.conf".source = ../.config/hypr/hypridle.conf;
   home.file.".config/hypr/hyprlock.conf".source = ../.config/hypr/hyprlock.conf;
   home.file.".config/hypr/hyprpaper.conf".source = ../.config/hypr/hyprpaper.conf;
   home.file.".config/hypr/.luarc.json".source = ../.config/hypr/.luarc.json;

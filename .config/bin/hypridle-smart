@@ -1,0 +1,8 @@
+#!/bin/bash
+# Launch hypridle with the config appropriate for the current power source.
+AC=$(cat /sys/class/power_supply/ACAD/online 2>/dev/null || echo 1)
+if [ "$AC" = "1" ]; then
+    exec hypridle -c "$HOME/.config/hypr/hypridle-ac.conf"
+else
+    exec hypridle -c "$HOME/.config/hypr/hypridle-battery.conf"
+fi
