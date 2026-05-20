@@ -203,6 +203,7 @@ hl.bind("ALT + SHIFT + 4", hl.dsp.exec_cmd("hyprshot -m region"), { description 
 
 -- Media keys
 local osdclient = "swayosd-client"
+local backlight = "amdgpu_bl2"
 
 hl.bind(
 	"XF86AudioRaiseVolume",
@@ -226,12 +227,12 @@ hl.bind(
 )
 hl.bind(
 	"XF86MonBrightnessUp",
-	hl.dsp.exec_cmd(osdclient .. " --brightness raise"),
+	hl.dsp.exec_cmd(osdclient .. " --device " .. backlight .. " --brightness raise"),
 	{ locked = true, repeating = true, description = "Brightness up" }
 )
 hl.bind(
 	"XF86MonBrightnessDown",
-	hl.dsp.exec_cmd(osdclient .. " --brightness lower"),
+	hl.dsp.exec_cmd(osdclient .. " --device " .. backlight .. " --brightness lower"),
 	{ locked = true, repeating = true, description = "Brightness down" }
 )
 
@@ -248,12 +249,12 @@ hl.bind(
 )
 hl.bind(
 	"ALT + XF86MonBrightnessUp",
-	hl.dsp.exec_cmd(osdclient .. " --brightness +1"),
+	hl.dsp.exec_cmd(osdclient .. " --device " .. backlight .. " --brightness +1"),
 	{ locked = true, repeating = true, description = "Brightness up precise" }
 )
 hl.bind(
 	"ALT + XF86MonBrightnessDown",
-	hl.dsp.exec_cmd(osdclient .. " --brightness -1"),
+	hl.dsp.exec_cmd(osdclient .. " --device " .. backlight .. " --brightness -1"),
 	{ locked = true, repeating = true, description = "Brightness down precise" }
 )
 
