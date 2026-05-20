@@ -30,6 +30,7 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("uwsm app -- swayosd-server")
 	hl.exec_cmd("uwsm app -- quickshell -p /home/brian/code/liquidark-shell")
 	hl.exec_cmd("uwsm app -- walker --gapplication-service")
+	hl.exec_cmd("uwsm app -- bash -c 'sleep 3 && rog-control-center'")
 end)
 
 -----------------------
