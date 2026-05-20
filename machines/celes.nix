@@ -24,6 +24,14 @@
   # for every GTK4 app). Use __NV_PRIME_RENDER_OFFLOAD=1 per-launch for games.
   home.file.".config/uwsm/env".source = ../.config/uwsm/env-celes;
 
+  # hyprpaper links against libGLESv2 (libglvnd), which enumerates all EGL vendor
+  # ICDs at startup — including NVIDIA's, which opens /dev/nvidia0 and wakes the
+  # dGPU. Restrict it to Mesa-only EGL so only the AMD render node is used.
+  home.file.".config/systemd/user/hyprpaper.service.d/restrict-gpu.conf".text = ''
+    [Service]
+    Environment="__EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json"
+  '';
+
   services.mpd = {
     enable = true;
     musicDirectory = "${config.home.homeDirectory}/Music";

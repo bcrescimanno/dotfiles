@@ -21,6 +21,12 @@ export OZONE_PLATFORM=wayland
 # Qt
 export QT_QPA_PLATFORMTHEME=qt6ct
 
+# Restrict Hyprland's aquamarine backend to AMD only — prevents it from opening
+# the NVIDIA DRM node and advertising the NVIDIA render node to Wayland clients
+# (which causes hyprpaper and others to open /dev/nvidia0 and wake the dGPU).
+# If HDMI is ever needed via the NVIDIA port, remove this.
+export AQ_DRM_DEVICES=/dev/dri/card2
+
 # Prefer AMD Vulkan (RADV) for all desktop apps.
 # vulkan-radeon must be installed for this ICD to exist.
 # For NVIDIA offload: __NV_PRIME_RENDER_OFFLOAD=1 __VK_LAYER_NV_optimus=NVIDIA_only VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/nvidia_icd.json <cmd>
