@@ -31,8 +31,6 @@ let
   '';
 in
 {
-  home.packages = [ pkgs.nerd-fonts.jetbrains-mono ];
-
   home.file.".config/alacritty" = {
     source = ../.config/alacritty;
     recursive = true;
