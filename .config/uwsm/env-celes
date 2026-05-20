@@ -31,3 +31,15 @@ export AQ_DRM_DEVICES=/dev/dri/card2
 # vulkan-radeon must be installed for this ICD to exist.
 # For NVIDIA offload: __NV_PRIME_RENDER_OFFLOAD=1 __VK_LAYER_NV_optimus=NVIDIA_only VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/nvidia_icd.json <cmd>
 export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/radeon_icd.json
+
+# Force AMD EGL for all session apps — prevents libEGL from enumerating NVIDIA's
+# ICD at startup (which opens /dev/nvidia0 and wakes the dGPU).
+# Per-service overrides (hyprpaper.service.d) are superseded by this global setting.
+# For NVIDIA offload: unset __EGL_VENDOR_LIBRARY_FILENAMES before launching.
+export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json
+
+# Force AMD VA-API driver (radeonsi) for all session apps — prevents WirePlumber
+# and PipeWire from probing NVIDIA's VAAPI/NVDEC node, which periodically wakes
+# the dGPU even when nothing is actively using it.
+# For NVIDIA offload: unset LIBVA_DRIVER_NAME before launching.
+export LIBVA_DRIVER_NAME=radeonsi
