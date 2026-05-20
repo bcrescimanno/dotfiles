@@ -11,6 +11,13 @@
   home.username = "brian";
   home.homeDirectory = "/home/brian";
 
+  # Laptop display: tighter wleave margins and smaller fonts than the desktop
+  wayland.wleave = {
+    margins = { top = 400; bottom = 400; left = 300; right = 300; };
+    fontSizeAction  = 18;
+    fontSizeKeybind = 14;
+  };
+
   home.file.".config/hypr/hyprland.lua".source = ../.config/hypr/hyprland-celes.lua;
 
   # AMD-primary hybrid laptop: no global NVIDIA GLX vars (those activate the dGPU

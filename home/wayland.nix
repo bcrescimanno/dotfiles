@@ -10,6 +10,8 @@ let
 
   wleaveTheme = "dracula";
 
+  wleave = config.wayland.wleave;
+
   wleaveThemeColors = {
     dracula = {
       window_bg = "rgba(40, 42, 54, 0.9)";
@@ -48,6 +50,18 @@ let
   wleaveCurrentTheme = wleaveThemeColors.${wleaveTheme};
 in
 {
+  options.wayland.wleave = {
+    margins = {
+      top    = lib.mkOption { type = lib.types.int; default = 800; };
+      bottom = lib.mkOption { type = lib.types.int; default = 800; };
+      left   = lib.mkOption { type = lib.types.int; default = 1400; };
+      right  = lib.mkOption { type = lib.types.int; default = 1400; };
+    };
+    fontSizeAction  = lib.mkOption { type = lib.types.int; default = 24; };
+    fontSizeKeybind = lib.mkOption { type = lib.types.int; default = 20; };
+  };
+
+  config = {
   # hyprland.lua is machine-specific (monitor config, device config) and is
   # linked by each machine file. Everything else here is shared.
   home.file.".config/hypr/hypridle.conf".source = ../.config/hypr/hypridle.conf;
@@ -83,9 +97,22 @@ in
     source = ../.config/walker/themes/${walkerTheme}/style.css;
   };
 
-  # wleave layout (static) + generated theme CSS
+  # wleave layout — margins are configurable per machine via wayland.wleave.margins
   home.file.".config/wleave/layout.json" = {
-    source = ../.config/wleave/layout.json;
+    text = builtins.toJSON {
+      "buttons-per-row" = "5/1";
+      "margin-top"    = wleave.margins.top;
+      "margin-bottom" = wleave.margins.bottom;
+      "margin-left"   = wleave.margins.left;
+      "margin-right"  = wleave.margins.right;
+      buttons = [
+        { label = "lock";     action = "loginctl lock-session"; text = "Lock";     keybind = "l"; icon = "/usr/share/wleave/icons/lock.svg"; }
+        { label = "logout";   action = "uwsm stop";             text = "Logout";   keybind = "e"; icon = "/usr/share/wleave/icons/logout.svg"; }
+        { label = "shutdown"; action = "systemctl poweroff";    text = "Shutdown"; keybind = "p"; icon = "/usr/share/wleave/icons/shutdown.svg"; }
+        { label = "suspend";  action = "systemctl suspend";     text = "Suspend";  keybind = "s"; icon = "/usr/share/wleave/icons/suspend.svg"; }
+        { label = "reboot";   action = "systemctl reboot";      text = "Reboot";   keybind = "r"; icon = "/usr/share/wleave/icons/reboot.svg"; }
+      ];
+    };
   };
 
   home.file.".config/wleave/style.css" = {
@@ -109,11 +136,11 @@ in
       }
 
       button label.action-name {
-          font-size: 24px;
+          font-size: ${toString wleave.fontSizeAction}px;
       }
 
       button label.keybind {
-          font-size: 20px;
+          font-size: ${toString wleave.fontSizeKeybind}px;
           font-family: monospace;
           color: ${wleaveCurrentTheme.btn_border};
       }
@@ -178,4 +205,5 @@ in
   home.file.".config/xdg-desktop-portal/portals.conf" = {
     source = ../.config/xdg-desktop-portal/portals.conf;
   };
+  }; # end config
 }
