@@ -50,6 +50,14 @@
   # for every GTK4 app). Use __NV_PRIME_RENDER_OFFLOAD=1 per-launch for games.
   home.file.".config/uwsm/env".source = ../.config/uwsm/env-celes;
 
+  # System file (outside Home Manager): /etc/modprobe.d/nvidia-pm.conf
+  #   options nvidia NVreg_DynamicPowerManagement=2
+  # Overrides the driver default of 3 (fine-grained + VRAM migration). Value 3
+  # causes periodic dGPU wakeups every few minutes as the driver migrates VRAM
+  # to system RAM. Value 2 keeps fine-grained PM (D3cold) without the migration
+  # cycles. Requires reboot to take effect; no mkinitcpio rebuild needed unless
+  # nvidia is in MODULES= in mkinitcpio.conf.
+
   # hyprpaper links against libGLESv2 (libglvnd), which enumerates all EGL vendor
   # ICDs at startup — including NVIDIA's, which opens /dev/nvidia0 and wakes the
   # dGPU. Restrict it to Mesa-only EGL so only the AMD render node is used.
