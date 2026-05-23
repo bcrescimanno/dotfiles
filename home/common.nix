@@ -346,15 +346,11 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
-      "*" = {
-        identityAgent = "~/.1password/agent.sock";
-        extraOptions = {
-          ControlMaster = "auto";
-          ControlPath = "~/.ssh/sockets/%r@%h:%p";
-          ControlPersist = "30m";
-        };
-      };
+    settings."*" = {
+      IdentityAgent = "~/.1password/agent.sock";
+      ControlMaster = "auto";
+      ControlPath = "~/.ssh/sockets/%r@%h:%p";
+      ControlPersist = "30m";
     };
   };
 
