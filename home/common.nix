@@ -18,6 +18,10 @@
   # once at install time and never change it.
   home.stateVersion = "25.11";
 
+  # nixpkgs-unstable always reports a version ahead of the latest HM release,
+  # so the version-match check is a false alarm for this setup.
+  home.enableNixpkgsReleaseCheck = false;
+
   # Let home-manager manage itself.
   programs.home-manager.enable = true;
 
