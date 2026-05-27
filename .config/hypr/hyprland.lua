@@ -181,7 +181,7 @@ hl.device({ name = "razer-razer-mouse-dock-pro-keyboard", enabled = false })
 ---------------------
 
 local mainMod = "SUPER"
-local terminal = "uwsm app -- ghostty -e tmux"
+local terminal = "uwsm app -- ghostty"
 local menu = "uwsm app -- walker"
 local browser = "uwsm app -- firefox"
 local exit = "uwsm app -- wleave"

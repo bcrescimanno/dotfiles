@@ -28,6 +28,8 @@ let
     window-width = 90
 
     confirm-close-surface = false
+
+    initial-command = ${pkgs.tmux}/bin/tmux new-session -A -s main
   '';
 in
 {
