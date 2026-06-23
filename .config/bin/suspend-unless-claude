@@ -1,0 +1,14 @@
+#!/bin/bash
+# Suspend the system unless Claude Code is running.
+#
+# hypridle calls this at its suspend timeout. When a Claude Code session is
+# active we skip the suspend so a long-running task isn't interrupted by sleep.
+# The screen is still allowed to turn off, because the dpms listeners run
+# independently of this one.
+#
+# The nix-wrapped binary's comm is ".claude-wrapped" (argv[0] is "claude").
+if pgrep -x .claude-wrapped >/dev/null 2>&1; then
+    exit 0
+fi
+
+exec systemctl suspend
