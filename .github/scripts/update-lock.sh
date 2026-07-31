@@ -17,37 +17,20 @@ cd "$(dirname "${BASH_SOURCE[0]}")/../.."
 
 UPDATE_LOG="${UPDATE_LOG:-$PWD/.update-log}"
 
-# `nix flake check` only looks at the current system, and --all-systems drags
-# in the darwin devshells (valgrind is marked broken on aarch64-darwin). So:
-# check this system properly, then evaluate every machine's activation package
-# by hand — that catches a bad update on the Mac or the Pis from any runner.
-# NOTE: every failure below is checked with an explicit `|| return 1`. These
-# functions are called as `if` conditions, which turns off `set -e` inside
-# them — without the explicit checks a broken update would report success.
-validate() {
-  nix flake check --no-build || return 1
-
-  local machines system name
-  machines=$(nix eval --raw .#checks --apply \
-    'cs: with builtins; concatStringsSep "\n"
-       (concatMap (s: map (n: s + " " + n) (attrNames cs.${s})) (attrNames cs))') \
-    || return 1
-
-  while read -r system name; do
-    [[ -n "$system" ]] || continue
-    echo "checking checks.$system.\"$name\"..."
-    nix eval --raw ".#checks.\"$system\".\"$name\".drvPath" >/dev/null || return 1
-  done <<< "$machines"
-
-  echo "all machines evaluate"
-}
-
+# Validation lives in check-machines.sh so this and the push-triggered
+# workflow can't drift apart. Running it as a separate process also keeps it
+# honest: `attempt` is called as an `if` condition, which turns off `set -e`
+# inside it, but the child script has its own.
+#
+# NOTE: for the same reason, every failure below needs an explicit
+# `|| return 1` — without it a broken update would report success.
+#
 # $@ = inputs to update; no arguments updates everything.
 attempt() {
   git checkout -- flake.lock || return 1
   echo "==> updating ${*:-all inputs}"
   nix flake update "$@" 2>&1 | tee "$UPDATE_LOG" || return 1
-  validate
+  ./.github/scripts/check-machines.sh
 }
 
 if attempt; then

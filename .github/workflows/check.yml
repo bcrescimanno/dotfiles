@@ -1,0 +1,33 @@
+name: Check machines
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# A newer push supersedes an in-flight run of the same ref.
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      # The local pre-commit hook only runs `nix flake check --no-build`,
+      # which covers x86_64-linux and nothing else. This evaluates every
+      # machine, so an edit that only breaks the Mac or a Pi fails here
+      # instead of turning up the next time that machine runs `hms`.
+      - name: Evaluate every machine
+        run: ./.github/scripts/check-machines.sh

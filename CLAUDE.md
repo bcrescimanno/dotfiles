@@ -17,15 +17,19 @@ hms
 home-manager switch --flake github:bcrescimanno/dotfiles#brian@<machine> --refresh
 ```
 
-Check the flake without building:
+Check every machine, including the Mac and the Pis (evaluation is cross-platform even though building isn't):
+```
+./.github/scripts/check-machines.sh
+```
+Check only the current system:
 ```
 nix flake check --no-build
 ```
-This only covers the current system. `--all-systems` does not work here — the `cpp` devshell pulls in valgrind, which nixpkgs marks broken on aarch64-darwin. To evaluate every machine instead, run `./.github/scripts/update-lock.sh`, or evaluate one directly:
+`--all-systems` does not work here — the `cpp` devshell pulls in valgrind, which nixpkgs marks broken on aarch64-darwin. That's why `check-machines.sh` evaluates each machine explicitly instead. To evaluate just one:
 ```
 nix eval --raw '.#checks.aarch64-darwin."brian@mac".drvPath'
 ```
-Note: A pre-commit hook runs `nix flake check --no-build` automatically on commits in flake repos. It reads the git tree, so `git add -N` new files first or they'll appear missing.
+Note: A pre-commit hook runs `nix flake check --no-build` automatically on commits in flake repos, so it only covers x86_64-linux — a change that breaks the Mac gets caught by CI, not by the hook. The hook reads the git tree, so `git add -N` new files first or they'll appear missing.
 
 Enter a devshell:
 ```
@@ -77,13 +81,17 @@ Two configs live in separate repos and are symlinked via `mkOutOfStoreSymlink` s
   git clone https://github.com/bcrescimanno/liquidark-shell ~/code/liquidark-shell
   ```
 
-### Nightly flake.lock Updates
+### CI
 
-`.github/workflows/update-lock.yml` runs `.github/scripts/update-lock.sh` at 09:00 UTC nightly (and on `workflow_dispatch`), then commits the new `flake.lock` straight to `main`. Combined with `hms` using `--refresh`, running `hms` on any machine picks up the latest packages without anyone updating the lock by hand.
+Two workflows, both driven by scripts in `.github/scripts/` that also run locally.
 
-The script only keeps an update that still evaluates: it runs `nix flake check --no-build` plus an explicit `nix eval` of every `checks.<system>.<machine>` entry, so a bad nixpkgs bump is caught for the Mac and the Pis from the Linux runner. If the combined update doesn't evaluate it retries with only `nixpkgs`, then only `home-manager`, and pushes the first that works. If none do, nothing is pushed and the workflow fails (GitHub emails on failed scheduled runs).
+**`check.yml`** runs `check-machines.sh` on every push to `main`, on pull requests, and on demand. It evaluates all eight machines, so an edit that only breaks the Mac or a Pi fails here rather than surfacing the next time that machine runs `hms`.
 
-The script is not CI-only — run `./.github/scripts/update-lock.sh` locally to do the same validated update.
+**`update-lock.yml`** runs `update-lock.sh` at 09:00 UTC nightly (and on `workflow_dispatch`), then commits the new `flake.lock` straight to `main`. Combined with `hms` using `--refresh`, running `hms` on any machine picks up the latest packages without anyone updating the lock by hand.
+
+`update-lock.sh` only keeps an update that still evaluates — it validates with the same `check-machines.sh`. If the combined update fails it retries with only `nixpkgs`, then only `home-manager`, and pushes the first that works. If none do, nothing is pushed and the workflow fails (GitHub emails on failed scheduled runs).
+
+Note that the nightly job's own push does not trigger `check.yml`: GitHub does not fire workflows for pushes made with `GITHUB_TOKEN`. That's fine, since `update-lock.sh` has already run the same check before pushing.
 
 ### Unfree Packages
 
