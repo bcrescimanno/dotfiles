@@ -8,6 +8,8 @@
     ../home/wayland.nix
   ];
 
+  dotfiles.configName = "brian@celes";
+
   home.username = "brian";
   home.homeDirectory = "/home/brian";
 
@@ -85,14 +87,6 @@
   home.packages = [ pkgs.rmpc ];
 
   programs.zsh.initContent = ''
-    hms() {
-      if [[ -f ~/code/dotfiles/flake.nix ]]; then
-        home-manager switch --flake ~/code/dotfiles#brian@celes
-      else
-        home-manager switch --flake github:bcrescimanno/dotfiles#brian@celes --refresh
-      fi
-    }
-
     addliveyt() {
       rmpc clear && yt-dlp -g -f 'bestaudio/best' "$1" | xargs rmpc add && rmpc play
     }

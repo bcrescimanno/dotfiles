@@ -6,9 +6,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  programs.zsh.shellAliases = {
-    hms = "home-manager switch --flake github:bcrescimanno/dotfiles#brian@mac --refresh";
-  };
+  # `hms` comes from home/hms.nix, shared with every other machine.
 
   programs.zsh.initContent = ''
 	# Added by tec agent

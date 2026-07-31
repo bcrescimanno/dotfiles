@@ -6,6 +6,8 @@
     ../home/headless.nix
   ];
 
+  dotfiles.configName = "brian@rivendell";
+
   home.username = "brian";
   home.homeDirectory = "/home/brian";
 }

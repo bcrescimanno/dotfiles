@@ -8,6 +8,8 @@
     ../home/terminal.nix
   ];
 
+  dotfiles.configName = "brian@mac";
+
   home.username = "brian";
   home.homeDirectory = "/Users/brian";  # macOS uses /Users not /home
 }

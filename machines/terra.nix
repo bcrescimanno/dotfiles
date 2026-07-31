@@ -6,6 +6,8 @@
     ../home/arch.nix
   ];
 
+  dotfiles.configName = "brian@terra";
+
   home.username = "brian";
   home.homeDirectory = "/home/brian";
 }

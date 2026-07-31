@@ -7,6 +7,10 @@
 { config, pkgs, lib, ... }:
 
 {
+  # The `hms` command. Each machine sets dotfiles.configName to say which
+  # homeConfigurations entry it is.
+  imports = [ ./hms.nix ];
+
   # ---------------------------------------------------------------------------
   # Home-manager basics
   # ---------------------------------------------------------------------------
