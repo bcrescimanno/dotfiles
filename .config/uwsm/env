@@ -4,6 +4,14 @@ export LIBVA_DRIVER_NAME=nvidia
 export __GLX_VENDOR_LIBRARY_NAME=nvidia
 export CUDA_DISABLE_PERF_BOOST=1
 
+# WebKitGTK's DMA-BUF renderer exports buffers the NVIDIA driver describes with
+# modifiers Hyprland rejects; the compositor kills the connection and the app dies
+# with "Gdk-Message: Error 71 (Protocol error) dispatching to Wayland display".
+# Hits every WebKitGTK app, and so every Tauri app (Music Assistant Companion is
+# the one that surfaced it). Falls back to a slower GL path — on this GPU the
+# dmabuf path doesn't work at all, so there's nothing to lose.
+export WEBKIT_DISABLE_DMABUF_RENDERER=1
+
 # export MOZ_DISABLE_UTILITY_SANDBOX=1
 
 # Cursors
