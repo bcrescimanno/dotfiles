@@ -23,7 +23,8 @@
   home.file.".config/hypr/hyprland.lua".source = ../.config/hypr/hyprland-celes.lua;
 
   # Battery-aware idle policy: hypridle-smart picks hypridle-ac.conf or
-  # hypridle-battery.conf based on /sys/class/power_supply/ACAD/online.
+  # hypridle-battery.conf based on the power-source helper, and
+  # hypridle-power-watch restarts it when the source changes.
   home.file.".config/hypr/hypridle-battery.conf".source = ../.config/hypr/hypridle-battery.conf;
 
   home.file.".config/systemd/user/hypridle.service.d/use-smart-wrapper.conf".text = ''
@@ -34,8 +35,17 @@
 
   systemd.user.services.hypridle-power-watch = {
     Unit = {
-      Description = "Restart hypridle when AC state changes";
-      After = [ "hypridle.service" ];
+      Description = "Restart hypridle when the power source changes";
+      # Must order itself After graphical-session.target, exactly as
+      # hypridle.service does. A target implicitly gains After= on everything it
+      # Wants, so without this systemd derives Before=graphical-session.target
+      # here and the chain closes into a cycle:
+      #   power-watch -> hypridle -> graphical-session.target -> power-watch
+      # systemd breaks such a cycle by dropping a job, and the one it dropped
+      # was this service — it never started, so hypridle never switched configs.
+      # Ordering After the target suppresses the implicit reverse dependency.
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
     };
     Service = {
       Type = "simple";

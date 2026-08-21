@@ -1,0 +1,23 @@
+#!/bin/bash
+# Print "ac" if the machine is running on external power, "battery" otherwise.
+#
+# ACAD alone is not enough: a USB-C PD charger can power the machine while
+# leaving ACAD offline, because the EC only raises ACAD for supplies it treats
+# as mains. The battery status covers that case — it reads Discharging only
+# when nothing external is feeding the machine. Checking the ucsi-source-psy-*
+# supplies directly is not reliable; their "online" flag tracks the Type-C
+# partner, not whether it is actually delivering power.
+if [ "$(cat /sys/class/power_supply/ACAD/online 2>/dev/null)" = "1" ]; then
+    echo ac
+    exit
+fi
+
+for supply in /sys/class/power_supply/*/; do
+    [ "$(cat "$supply/type" 2>/dev/null)" = "Battery" ] || continue
+    if [ "$(cat "$supply/status" 2>/dev/null)" = "Discharging" ]; then
+        echo battery
+        exit
+    fi
+done
+
+echo ac

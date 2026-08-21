@@ -1,8 +1,16 @@
 #!/bin/bash
-# Restart hypridle when the AC adapter is plugged or unplugged so it switches
-# between the AC and battery idle policies.
-exec udevadm monitor --udev --subsystem-match=power_supply \
-    | grep --line-buffered "ACAD" \
-    | while read -r _; do
-        systemctl --user restart hypridle
-    done
+# Restart hypridle when the power source changes so it switches between the AC
+# and battery idle policies.
+#
+# Only restarts when the source actually flips. power_supply emits a steady
+# stream of events — a battery parked at its charge threshold can flip between
+# charging and pending-charge every few seconds — and restarting hypridle on
+# each one would reset the idle timers continuously.
+prev=$("$HOME/.config/bin/power-source")
+
+udevadm monitor --udev --subsystem-match=power_supply | while read -r _; do
+    cur=$("$HOME/.config/bin/power-source")
+    [ "$cur" = "$prev" ] && continue
+    prev=$cur
+    systemctl --user restart hypridle
+done
