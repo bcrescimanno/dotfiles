@@ -1,0 +1,147 @@
+#!/bin/bash
+# Park USB audio cards across suspend so they come back working.
+#
+# The xHCI controllers on this box do not survive suspend — every resume logs
+# "xHC error in resume, USBSTS 0x401, Reinit" followed by "root hub lost power
+# or was reset", and all USB re-enumerates. If PipeWire still has a PCM open on
+# a USB card when the kernel tears USB down, the close fails with
+# "snd_pcm_drop: No such device" and the node is left stale: no audio until
+# wireplumber is restarted by hand.
+#
+# Setting a card's profile to "off" before sleep closes the PCM while the
+# device is still there, so there is nothing stale to clean up on resume. The
+# profile in use is recorded first and put back afterwards.
+#
+# pactl suspend-sink is not enough — it is silently ignored for a sink that has
+# an active stream, which is precisely the case that wedges.
+#
+# Usage: audio-sleep before | after
+#
+# "after" is also run at session start, so a restore missed because of a crash
+# or a hard reset heals at the next login instead of leaving a card off. That
+# matters because wireplumber persists profile choices to
+# ~/.local/state/wireplumber/default-profile — an "off" left behind would
+# otherwise survive a reboot.
+
+set -u
+
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/audio-sleep-profiles"
+
+# Emit "id<TAB>device.name<TAB>current profile<TAB>profile->index map" for every
+# USB ALSA card PipeWire currently knows about.
+dump_usb_cards() {
+    pw-dump 2>/dev/null | python3 -c '
+import json, sys
+
+try:
+    objs = json.load(sys.stdin)
+except Exception:
+    sys.exit(1)
+
+for o in objs:
+    if not o.get("type", "").endswith("Device"):
+        continue
+    info = o.get("info", {}) or {}
+    props = info.get("props", {}) or {}
+    if props.get("device.bus") != "usb":
+        continue
+    if not props.get("device.name", "").startswith("alsa_card"):
+        continue
+    params = info.get("params", {}) or {}
+    current = [p.get("name") for p in params.get("Profile", []) if p.get("name")]
+    profiles = {p.get("name"): p.get("index") for p in params.get("EnumProfile", [])}
+    print("\t".join([
+        str(o.get("id")),
+        props.get("device.name", ""),
+        current[0] if current else "",
+        json.dumps(profiles),
+    ]))
+'
+}
+
+profile_index() {
+    # profile_index <json map> <profile name>
+    python3 -c '
+import json, sys
+print(json.loads(sys.argv[1]).get(sys.argv[2], ""))
+' "$1" "$2" 2>/dev/null
+}
+
+before() {
+    # A leftover state file means the last resume never restored. Put those
+    # cards back before recording a fresh set, or the saved profiles are lost.
+    # A single pass, not the retrying "after" — logind only holds sleep for
+    # InhibitDelayMaxSec (5s by default), and the cards are all present here.
+    [ -s "$STATE" ] && restore_pass
+
+    local tmp
+    tmp=$(mktemp) || return 1
+
+    while IFS=$'\t' read -r id name current _profiles; do
+        [ -n "$current" ] && [ "$current" != "off" ] || continue
+        printf '%s\t%s\n' "$name" "$current" >> "$tmp"
+        wpctl set-profile "$id" 0
+    done < <(dump_usb_cards)
+
+    if [ -s "$tmp" ]; then
+        mkdir -p "$(dirname "$STATE")"
+        mv "$tmp" "$STATE"
+    else
+        rm -f "$tmp"
+    fi
+}
+
+after() {
+    [ -s "$STATE" ] || return 0
+
+    # USB re-enumerates for a few seconds after resume, so the cards are often
+    # not back yet on the first pass. Retry until they are, or give up — an
+    # entry left in the state file is picked up at the next session start.
+    local deadline=$((SECONDS + 30))
+    while :; do
+        restore_pass
+        [ -s "$STATE" ] || return 0
+        [ "$SECONDS" -lt "$deadline" ] || return 0
+        sleep 1
+    done
+}
+
+restore_pass() {
+    local cards missing
+    cards=$(dump_usb_cards) || return 0
+    missing=$(mktemp) || return 1
+
+    while IFS=$'\t' read -r name profile; do
+        [ -n "$name" ] && [ -n "$profile" ] || continue
+
+        local line id profiles index
+        line=$(printf '%s\n' "$cards" | awk -F'\t' -v n="$name" '$2 == n {print; exit}')
+        if [ -z "$line" ]; then
+            # Card is not back yet (or was unplugged). Keep it so a later pass
+            # can restore it — wireplumber has "off" persisted for it now.
+            printf '%s\t%s\n' "$name" "$profile" >> "$missing"
+            continue
+        fi
+
+        id=$(printf '%s' "$line" | cut -f1)
+        profiles=$(printf '%s' "$line" | cut -f4)
+        index=$(profile_index "$profiles" "$profile")
+        if [ -n "$index" ]; then
+            wpctl set-profile "$id" "$index"
+        else
+            printf '%s\t%s\n' "$name" "$profile" >> "$missing"
+        fi
+    done < "$STATE"
+
+    if [ -s "$missing" ]; then
+        mv "$missing" "$STATE"
+    else
+        rm -f "$missing" "$STATE"
+    fi
+}
+
+case "${1:-}" in
+    before) before ;;
+    after)  after ;;
+    *) echo "usage: ${0##*/} before|after" >&2; exit 2 ;;
+esac
