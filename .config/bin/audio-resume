@@ -1,0 +1,37 @@
+#!/bin/bash
+# Restart WirePlumber after resume so audio comes back without doing it by hand.
+#
+# liquidark's xHCI controllers do not survive suspend — every resume logs
+# "xHC error in resume, USBSTS 0x401, Reinit" and "root hub lost power or was
+# reset". The USB audio cards themselves come back fine (the kernel resets them
+# in place; there is no disconnect and no re-enumeration), but WirePlumber's
+# graph does not: links are left dead and there is no sound until the session
+# manager is restarted.
+#
+# An earlier attempt parked each card's profile at "off" before sleep to close
+# the PCM cleanly. It could not work from hypridle's before_sleep_cmd: hypridle
+# releases its sleep inhibitor when the *lock* completes, not when the command
+# finishes, so the teardown had ~400ms before the kernel froze it mid-flight.
+# Restarting on the way out has no such race, and it is what was being done by
+# hand every time anyway.
+#
+# Usage: audio-resume   (from after_sleep_cmd)
+
+set -u
+
+# Give USB a moment to finish re-enumerating. Restarting mid-reset risks landing
+# in the same wedge, so wait for the card list to hold still rather than
+# guessing at a fixed delay.
+settle() {
+    local previous="" current deadline=$((SECONDS + 15))
+
+    while [ "$SECONDS" -lt "$deadline" ]; do
+        current=$(cat /proc/asound/cards 2>/dev/null)
+        [ -n "$current" ] && [ "$current" = "$previous" ] && return 0
+        previous="$current"
+        sleep 1
+    done
+}
+
+settle
+systemctl --user restart wireplumber

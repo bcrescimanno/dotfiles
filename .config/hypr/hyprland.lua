@@ -51,9 +51,6 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("uwsm app -- swayosd-server")
 	hl.exec_cmd("uwsm app -- quickshell -p /home/brian/code/liquidark-shell")
 	hl.exec_cmd("uwsm app -- walker --gapplication-service")
-	-- Heals a USB audio card left "off" by a suspend whose resume never
-	-- restored it (see .config/bin/audio-sleep). No-op when nothing is parked.
-	hl.exec_cmd("$HOME/.config/bin/audio-sleep after")
 end)
 
 -----------------------
