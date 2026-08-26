@@ -135,6 +135,13 @@ hl.gesture({
 	action = "scroll_move",
 })
 
+-- 4-finger vertical swipe to move between workspaces (same as SUPER + J/K).
+hl.gesture({
+	fingers = 4,
+	direction = "vertical",
+	action = "workspace",
+})
+
 -----------------------
 ---- WORKSPACE RULES ----
 -----------------------
