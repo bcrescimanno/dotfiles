@@ -222,6 +222,11 @@
 
   programs.tmux = {
     enable = true;
+    # Keep the socket in /tmp. secureSocket puts it under $XDG_RUNTIME_DIR,
+    # which systemd wipes on logout, and Ghostty's initial-command starts tmux
+    # without sourcing hm-session-vars.sh so its server lands in /tmp regardless
+    # -- leaving ssh sessions unable to find it.
+    secureSocket = false;
     terminal = "tmux-256color";
     historyLimit = 10000;
     keyMode = "vi";
