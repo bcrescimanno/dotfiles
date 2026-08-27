@@ -162,6 +162,15 @@ hl.animation({ leaf = "borderangle", enabled = true, speed = 8, bezier = "defaul
 hl.animation({ leaf = "fade", enabled = true, speed = 7, bezier = "default" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 4.5, bezier = "default", style = "slidevert" })
 
+-----------------
+---- DEVICES ----
+-----------------
+
+-- The global input.sensitivity of -0.2 suits a mouse but leaves the touchpad
+-- crawling, so give the touchpad its own faster sensitivity. Range is -1..1;
+-- raise toward 1.0 if it still feels slow. Name from `hyprctl devices`.
+hl.device({ name = "asup1208:00-093a:3011-touchpad", sensitivity = 0.2 })
+
 ---------------------
 ---- KEYBINDINGS ----
 ---------------------
