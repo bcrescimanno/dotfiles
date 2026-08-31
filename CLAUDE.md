@@ -16,6 +16,7 @@ hms
 ```
 home-manager switch --flake github:bcrescimanno/dotfiles#brian@<machine> --refresh
 ```
+`hms` authenticates its GitHub fetches, because nix resolves `github:` flake refs through `api.github.com` and that allows only 60 requests an hour per IP unauthenticated — a budget a shared or NAT'd network burns through on its own. It takes the token from `$GITHUB_TOKEN`, falling back to `gh auth token`, and passes it to nix via a function-scoped `NIX_CONFIG` so it never touches disk or the nix store. With no token available it runs unauthenticated, as it always did. Note that this covers `hms` only — `nix develop`, `nix flake check`, and the pre-commit hook still use the unauthenticated pool.
 
 Check every machine, including the Mac and the Pis (evaluation is cross-platform even though building isn't):
 ```
