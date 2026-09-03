@@ -200,6 +200,13 @@ in
     source = ../.config/wireplumber/wireplumber.conf.d/disable-suspension.conf;
   };
 
+  # Pin the Generic USB Audio card's graph quantum. Its S/PDIF device latches
+  # running-but-silent when the quantum is renegotiated mid-stream, which
+  # eqgame.exe triggers by asking for 256 frames while the graph sits at 1024.
+  home.file.".config/wireplumber/wireplumber.conf.d/force-quantum.conf" = {
+    source = ../.config/wireplumber/wireplumber.conf.d/force-quantum.conf;
+  };
+
   # Route portal requests to hyprland (screenshots/screencasting) and gtk
   # (file chooser, print, notifications, etc.) now that xdg-desktop-portal-gnome
   # is no longer present.
