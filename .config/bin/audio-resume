@@ -1,5 +1,6 @@
 #!/bin/bash
-# Restart WirePlumber after resume so audio comes back without doing it by hand.
+# Restart WirePlumber after resume, then prove the sink actually passes audio
+# before believing it.
 #
 # liquidark's xHCI controllers do not survive suspend — every resume logs
 # "xHC error in resume, USBSTS 0x401, Reinit" and "root hub lost power or was
@@ -15,16 +16,45 @@
 # Restarting on the way out has no such race, and it is what was being done by
 # hand every time anyway.
 #
+# 2026-09-03: one restart is not always enough. Caught live and measured, the
+# failed state is invisible from every angle anyone had been looking at:
+#
+#   - /proc/asound/cardN/streamN says Status: Running, correct altset, correct
+#     Momentary freq. hw_ptr advances at exactly the sample rate.
+#   - amixer contents is BYTE-IDENTICAL to the healthy card.
+#   - Links are active, every volume is unity, nothing is muted.
+#   - Yet the sink's own monitor carries no trace of a tone played into it.
+#
+# So the card is innocent and the graph looks perfect; the sink node inside the
+# long-lived pipewire daemon is mixing near-silence. Reopening the PCM does not
+# clear it (verified: forced two reopens via clock.force-rate, still silent),
+# and neither does toggling the S/PDIF UCM mute or replaying the UCM disdevall
+# sequence. Only destroying and recreating the node — what restarting
+# WirePlumber does — brings it back.
+#
+# Since the graph cannot be trusted to report this, the only reliable check is
+# to push audio through and watch the monitor. That is what probe_ok does, and
+# it is why this script now retries instead of restarting once and hoping.
+#
 # Usage: audio-resume   (from after_sleep_cmd)
 
 set -u
 
-# Give USB a moment to finish re-enumerating. Restarting mid-reset risks landing
-# in the same wedge, so wait for the card list to hold still rather than
-# guessing at a fixed delay.
+readonly ATTEMPTS=3           # restarts to try before giving up
+readonly SETTLE_FLOOR=3       # seconds to wait after resume no matter what
+readonly PROBE_HZ=19000       # inaudible to most adults, still mixes normally
+readonly PROBE_CTRL_HZ=7000   # control band: nothing should be here
+readonly PROBE_RATIO=10       # measured: ~0.7 silent, ~120 working
+
+log() { printf 'audio-resume: %s\n' "$*"; }
+
+# Wait for USB to finish re-enumerating. The audio cards do not re-enumerate
+# here, so /proc/asound/cards rarely moves — the floor below is what actually
+# does the waiting. Both are cheap and the check costs nothing when it is right.
 settle() {
     local previous="" current deadline=$((SECONDS + 15))
 
+    sleep "$SETTLE_FLOOR"
     while [ "$SECONDS" -lt "$deadline" ]; do
         current=$(cat /proc/asound/cards 2>/dev/null)
         [ -n "$current" ] && [ "$current" = "$previous" ] && return 0
@@ -33,5 +63,102 @@ settle() {
     done
 }
 
+# Play a brief tone into the default sink and record that sink's own monitor.
+# A working sink reproduces it; a wedged one mixes silence while still claiming
+# to be running. Returns 0 only when the audio demonstrably came back out.
+#
+# The measure is a Goertzel magnitude at the probe frequency over one at a
+# control frequency, not a peak. Peak amplitude does not work: measured on a
+# healthy sink, a recording of pure silence scored a HIGHER peak (287) than one
+# containing the probe (210), because at 19kHz the tone survives as only a few
+# hundred counts and loses to broadband noise. Picking the tone out by frequency
+# separates the two states by better than a hundredfold.
+probe_ok() {
+    local sink tmp ratio rec
+
+    sink=$(wpctl inspect @DEFAULT_AUDIO_SINK@ 2>/dev/null |
+           sed -n 's/^id \([0-9]*\).*/\1/p')
+    [ -n "$sink" ] || { log "no default sink"; return 1; }
+
+    tmp=$(mktemp -d) || return 1
+
+    python3 - "$tmp/probe.wav" "$PROBE_HZ" <<'MAKETONE' || { rm -rf "$tmp"; return 1; }
+import math, struct, sys, wave
+rate, freq, dur, amp = 48000, float(sys.argv[2]), 0.4, 32000
+w = wave.open(sys.argv[1], 'wb')
+w.setnchannels(2); w.setsampwidth(2); w.setframerate(rate)
+w.writeframes(b''.join(
+    struct.pack('<hh', v, v)
+    for v in (int(amp * math.sin(2 * math.pi * freq * i / rate))
+              for i in range(int(rate * dur)))))
+w.close()
+MAKETONE
+
+    timeout 8 pw-record --target="$sink" "$tmp/mon.wav" >/dev/null 2>&1 &
+    rec=$!
+    sleep 1
+    timeout 6 pw-play --target="$sink" "$tmp/probe.wav" >/dev/null 2>&1
+    sleep 0.5
+    kill "$rec" 2>/dev/null
+    wait "$rec" 2>/dev/null
+
+    ratio=$(python3 - "$tmp/mon.wav" "$PROBE_HZ" "$PROBE_CTRL_HZ" <<'MEASURE'
+import array, math, sys, wave
+
+def goertzel(samples, rate, freq):
+    n = len(samples)
+    if n == 0:
+        return 0.0
+    k = int(0.5 + n * freq / rate)
+    w = 2 * math.pi * k / n
+    cw, sw = math.cos(w), math.sin(w)
+    coeff = 2 * cw
+    s1 = s2 = 0.0
+    for x in samples:
+        s0 = x + coeff * s1 - s2
+        s2 = s1
+        s1 = s0
+    return math.hypot(s1 - s2 * cw, s2 * sw) / n
+
+try:
+    w = wave.open(sys.argv[1], 'rb')
+    a = array.array('h'); a.frombytes(w.readframes(w.getnframes()))
+    mono = [float(v) for v in a[0::w.getnchannels()]]
+    rate = w.getframerate()
+    probe = goertzel(mono, rate, float(sys.argv[2]))
+    ctrl = goertzel(mono, rate, float(sys.argv[3]))
+    print(int(probe / (ctrl + 1e-9)))
+except Exception:
+    print(0)
+MEASURE
+)
+    rm -rf "$tmp"
+
+    log "probe/control ratio ${ratio:-0} (need ${PROBE_RATIO})"
+    [ "${ratio:-0}" -ge "$PROBE_RATIO" ]
+}
+
 settle
-systemctl --user restart wireplumber
+
+# Without python3 or the pw-* tools there is nothing to verify with, so fall
+# back to the old behaviour: restart once and hope.
+if ! command -v python3 >/dev/null 2>&1 ||
+   ! command -v pw-record >/dev/null 2>&1 ||
+   ! command -v pw-play >/dev/null 2>&1; then
+    log "verification unavailable, restarting wireplumber once"
+    systemctl --user restart wireplumber
+    exit 0
+fi
+
+for attempt in $(seq 1 "$ATTEMPTS"); do
+    systemctl --user restart wireplumber
+    sleep 3
+    if probe_ok; then
+        log "audio verified after $attempt restart(s)"
+        exit 0
+    fi
+    log "still silent after restart $attempt"
+done
+
+log "audio still silent after $ATTEMPTS restarts — needs a look"
+exit 1

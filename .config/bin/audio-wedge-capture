@@ -1,0 +1,71 @@
+#!/bin/bash
+# Snapshot everything that distinguishes the S/PDIF wedge's possible causes.
+#
+# Run this the moment audio goes silent, BEFORE restarting wireplumber -- the
+# restart destroys the evidence. Then restart wireplumber as usual.
+#
+# The wedge looks identical in wpctl every time (links active, clock advancing,
+# zero xruns, unmuted), so the answer is not in PipeWire's view. These four
+# readings are what actually separate the candidates:
+#
+#   /proc/asound/card3/stream3   "Status: Running" + "Momentary freq"
+#       The USB isochronous endpoint. Status Stop, or a freq of 0, means the
+#       card stopped consuming while ALSA kept counting -- silent by definition.
+#   /proc/asound/card3/stream3   "Altset ="
+#       S/PDIF shares USB interface 6 with stream2. If the altsetting moved,
+#       something else claimed the interface out from under the live stream.
+#   pcm3p/sub0/status            hw_ptr across two samples
+#       Advancing = the ring is being drained. Frozen = the driver stalled.
+#   numid=28 'PCM Playback Switch',index=2
+#       The S/PDIF hardware mute, per the ALC4080 UCM profile.
+#
+# Usage: audio-wedge-capture [outdir]
+
+set -u
+
+card=3
+out=${1:-$HOME/.local/state/audio-wedge-$(date +%Y%m%d-%H%M%S)}
+mkdir -p "$out"
+
+{
+    echo "captured: $(date -Is)"
+    echo "uptime:   $(cut -d' ' -f1 /proc/uptime)"
+} > "$out/when"
+
+# Two samples so hw_ptr movement is visible.
+for n in 1 2; do
+    cat /proc/asound/card$card/pcm3p/sub0/status > "$out/pcm3p.$n" 2>&1
+    grep -E 'Status|Interface =|Altset =|Packet Size|Momentary freq' \
+        /proc/asound/card$card/stream3 > "$out/stream3.$n" 2>&1
+    [ "$n" = 1 ] && sleep 2
+done
+
+cat /proc/asound/card$card/stream3            > "$out/stream3.full"  2>&1
+cat /proc/asound/card$card/stream2            > "$out/stream2.full"  2>&1
+cat /proc/asound/cards                        > "$out/cards"         2>&1
+amixer -c $card contents                      > "$out/mixer"         2>&1
+wpctl status                                  > "$out/wpctl"         2>&1
+pw-dump                                       > "$out/pw-dump.json"  2>&1
+timeout 4 pw-top -b -n 3                      > "$out/pw-top"        2>&1
+pw-metadata -n settings                       > "$out/pw-settings"   2>&1
+fuser -v /dev/snd/pcmC${card}D3p /dev/snd/controlC$card \
+                                              > "$out/fuser"    2>&1
+journalctl --user -b -u wireplumber -u pipewire -n 200 -o short-precise \
+                                              > "$out/journal.user"  2>&1
+journalctl -b -k -n 300 -o short-precise      > "$out/journal.kernel" 2>&1
+
+# The four readings that matter, up front.
+{
+    echo "=== usb endpoint (want: Running, freq 48000, Altset 11) ==="
+    cat "$out/stream3.1"
+    echo
+    echo "=== hw_ptr movement (want: second > first) ==="
+    grep hw_ptr "$out/pcm3p.1" "$out/pcm3p.2"
+    grep -E '^state|trigger_time' "$out/pcm3p.1"
+    echo
+    echo "=== s/pdif hardware mute (want: on) ==="
+    amixer -c $card cget numid=28 2>&1 | sed -n 's/^  : values=/numid28=/p'
+} | tee "$out/summary"
+
+echo
+echo "full capture in $out"
