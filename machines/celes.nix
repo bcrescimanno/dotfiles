@@ -22,6 +22,12 @@
 
   home.file.".config/hypr/hyprland.lua".source = ../.config/hypr/hyprland-celes.lua;
 
+  # 96 x 1.5: XWayland apps draw at the panel's real scale themselves, since
+  # hyprland-celes.lua turns off Hyprland's blurry upscaling of them.
+  home.file.".Xresources".text = ''
+    Xft.dpi: 144
+  '';
+
   # Battery-aware idle policy: hypridle-smart picks hypridle-ac.conf or
   # hypridle-battery.conf based on the power-source helper, and
   # hypridle-power-watch restarts it when the source changes. The watcher also

@@ -36,6 +36,9 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("uwsm app -- quickshell -p /home/brian/code/liquidark-shell")
 	hl.exec_cmd("uwsm app -- walker --gapplication-service")
 	hl.exec_cmd("uwsm app -- bash -c 'sleep 3 && rog-control-center'")
+	-- XWayland apps render at 1x under force_zero_scaling (below); Xft.dpi
+	-- tells them to scale themselves up to match the panel's 1.5.
+	hl.exec_cmd("xrdb -merge /home/brian/.Xresources")
 end)
 
 -----------------------
@@ -121,6 +124,15 @@ hl.config({
 
 	layout = {
 		single_window_aspect_ratio = "10 11",
+	},
+
+	-- At scale 1.5, Hyprland renders XWayland windows at 1x and stretches the
+	-- bitmap, which smears their text. Bambu Studio is one of these: it forces
+	-- GDK_BACKEND=x11 on startup, overriding whatever the environment says.
+	-- Zero scaling hands XWayland windows real pixels instead; the Xft.dpi set
+	-- at startup makes GTK/Qt apps scale their own UI back up, sharply.
+	xwayland = {
+		force_zero_scaling = true,
 	},
 })
 
