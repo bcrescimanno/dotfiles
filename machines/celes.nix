@@ -24,7 +24,9 @@
 
   # Battery-aware idle policy: hypridle-smart picks hypridle-ac.conf or
   # hypridle-battery.conf based on the power-source helper, and
-  # hypridle-power-watch restarts it when the source changes.
+  # hypridle-power-watch restarts it when the source changes. The watcher also
+  # runs power-brightness, which keeps a separate backlight level for each
+  # source (saved in ~/.local/state/power-brightness).
   home.file.".config/hypr/hypridle-battery.conf".source = ../.config/hypr/hypridle-battery.conf;
 
   home.file.".config/systemd/user/hypridle.service.d/use-smart-wrapper.conf".text = ''
@@ -35,7 +37,7 @@
 
   systemd.user.services.hypridle-power-watch = {
     Unit = {
-      Description = "Restart hypridle when the power source changes";
+      Description = "Switch idle policy and brightness when the power source changes";
       # Must order itself After graphical-session.target, exactly as
       # hypridle.service does. A target implicitly gains After= on everything it
       # Wants, so without this systemd derives Before=graphical-session.target

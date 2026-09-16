@@ -1,16 +1,20 @@
 #!/bin/bash
-# Restart hypridle when the power source changes so it switches between the AC
-# and battery idle policies.
+# React to the power source changing: switch to the backlight level last used on
+# the new source, and restart hypridle so it picks up the AC or battery idle
+# policy. The brightness is also brought up to date at startup, in case the
+# source changed while this wasn't running (e.g. across a reboot).
 #
 # Only restarts when the source actually flips. power_supply emits a steady
 # stream of events — a battery parked at its charge threshold can flip between
 # charging and pending-charge every few seconds — and restarting hypridle on
 # each one would reset the idle timers continuously.
 prev=$("$HOME/.config/bin/power-source")
+"$HOME/.config/bin/power-brightness" update "$prev"
 
 udevadm monitor --udev --subsystem-match=power_supply | while read -r _; do
     cur=$("$HOME/.config/bin/power-source")
     [ "$cur" = "$prev" ] && continue
+    "$HOME/.config/bin/power-brightness" update "$cur"
     prev=$cur
     systemctl --user restart hypridle
 done

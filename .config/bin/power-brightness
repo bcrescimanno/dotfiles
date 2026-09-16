@@ -1,0 +1,70 @@
+#!/bin/bash
+# Keep a separate backlight level for AC and for battery.
+#
+#   power-brightness update SOURCE    SOURCE is now powering the machine: if it
+#                                     differs from the last source seen, remember
+#                                     the current level for that one and apply
+#                                     the last level used on SOURCE
+#   power-brightness dim LEVEL        idle dim; records the level to come back to
+#   power-brightness undim            undo an idle dim
+#
+# The last source seen is kept on disk rather than in the watcher, so a change
+# that happens while nothing is watching still gets applied. The main case is
+# booting on a different source than the machine shut down on:
+# systemd-backlight restores the level saved at shutdown, which belongs to the
+# old source. A watcher restart on the same source changes nothing, so it can't
+# undo an adjustment made since the last switch.
+#
+# Idle dimming goes through here rather than brightnessctl -s/-r so a switch
+# that happens while the screen is dimmed remembers the real level, not the dim
+# one. It also stops the screen being left dim: the switch restarts hypridle,
+# and the new instance never runs the old one's on-resume.
+device=amdgpu_bl2
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/power-brightness"
+dimmed="${XDG_RUNTIME_DIR:-/tmp}/power-brightness-dimmed"
+
+default_level() {
+    case "$1" in
+        battery) echo 30% ;;
+        *)       echo 60% ;;
+    esac
+}
+
+current() {
+    brightnessctl -d "$device" get
+}
+
+case "$1" in
+    update)
+        to=$2
+        mkdir -p "$state_dir"
+        from=$(cat "$state_dir/last-source" 2>/dev/null)
+        [ "$from" = "$to" ] && exit 0
+        echo "$to" > "$state_dir/last-source"
+        # First run: nothing to say which source the current level belongs to.
+        [ -n "$from" ] || exit 0
+
+        if [ -f "$dimmed" ]; then
+            level=$(cat "$dimmed")
+            rm -f "$dimmed"
+        else
+            level=$(current)
+        fi
+        echo "$level" > "$state_dir/$from"
+        target=$(cat "$state_dir/$to" 2>/dev/null || default_level "$to")
+        brightnessctl -q -d "$device" set "$target"
+        ;;
+    dim)
+        current > "$dimmed"
+        brightnessctl -q -d "$device" set "$2"
+        ;;
+    undim)
+        [ -f "$dimmed" ] || exit 0
+        brightnessctl -q -d "$device" set "$(cat "$dimmed")"
+        rm -f "$dimmed"
+        ;;
+    *)
+        echo "usage: power-brightness update SOURCE | dim LEVEL | undim" >&2
+        exit 2
+        ;;
+esac
