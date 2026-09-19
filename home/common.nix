@@ -9,7 +9,7 @@
 {
   # The `hms` command. Each machine sets dotfiles.configName to say which
   # homeConfigurations entry it is.
-  imports = [ ./hms.nix ];
+  imports = [ ./hms.nix ./ssh-agent.nix ];
 
   # ---------------------------------------------------------------------------
   # Home-manager basics
@@ -354,15 +354,13 @@
   # Connection multiplexing (ControlMaster) reuses an existing authenticated
   # connection for subsequent SSH sessions to the same host. This means tools
   # like Claude Code that make multiple git operations only trigger one
-  # 1Password confirmation prompt per session instead of one per operation.
+  # password-manager confirmation prompt per session instead of one per
+  # operation. IdentityAgent is set in ./ssh-agent.nix.
 
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
     settings."*" = {
-      IdentityAgent = if pkgs.stdenv.hostPlatform.isDarwin
-        then "~/Library/Group\\ Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-        else "~/.1password/agent.sock";
       ControlMaster = "auto";
       ControlPath = "~/.ssh/sockets/%r@%h:%p";
       ControlPersist = "30m";

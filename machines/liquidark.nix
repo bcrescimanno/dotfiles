@@ -11,6 +11,11 @@
 
   dotfiles.configName = "brian@liquidark";
 
+  # SSH auth + git signing through the Bitwarden desktop agent (native Arch
+  # package). See home/ssh-agent.nix — ~/.gitconfig must not set
+  # gpg.ssh.program, or it overrides this.
+  dotfiles.sshAgent = "bitwarden";
+
   home.username = "brian";
   home.homeDirectory = "/home/brian";
 
