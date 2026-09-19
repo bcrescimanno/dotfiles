@@ -130,6 +130,9 @@ hl.config({
 		disable_splash_rendering = true,
 		force_default_wallpaper = 0,
 		focus_on_activate = true,
+		-- lets a fresh hyprlock take over the lock if the old one hangs or dies;
+		-- see ~/.config/bin/hyprlock-restore
+		allow_session_lock_restore = true,
 	},
 
 	layout = {

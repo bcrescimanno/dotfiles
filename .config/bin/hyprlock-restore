@@ -1,0 +1,90 @@
+#!/bin/bash
+# Replace a hung or dead hyprlock without losing the Hyprland session.
+# Run it from a TTY (Ctrl+Alt+F3), then log back in at the new lock screen.
+#
+# Why this exists: on liquidark the monitor drops off HDMI and comes back
+# during every resume. Usually hyprlock rebuilds its lock surface in
+# milliseconds, but sometimes (always alongside the nvidia-drm error "Failed
+# to register auto-value-update on pre-wait value for sync FD semaphore
+# surface") it stops processing Wayland events partway through. It doesn't
+# crash, it just never draws again, and the session stays locked behind it.
+#
+# The fix is to kill it and have Hyprland start a new one. That only works
+# with misc.allow_session_lock_restore, which hyprland.lua sets. This also
+# sets it at runtime in case the running Hyprland predates that config.
+#
+# Before killing, it saves where hyprlock is stuck (thread states, kernel
+# stacks, gdb backtrace) to ~/hyprlock-hang-<time>.txt. That is the evidence
+# the root cause still needs. Pass --no-capture to skip it.
+set -u
+
+capture=1
+[[ ${1:-} == --no-capture ]] && capture=0
+
+# From a TTY there is no HYPRLAND_INSTANCE_SIGNATURE; --instance 0 finds it.
+hypr() { hyprctl --instance 0 "$@"; }
+
+if ! hypr instances >/dev/null 2>&1; then
+    echo "hyprlock-restore: no running Hyprland instance found" >&2
+    exit 1
+fi
+
+pid=$(pidof hyprlock)
+
+if [[ -n $pid && $capture == 1 ]]; then
+    out=~/hyprlock-hang-$(date +%Y%m%d-%H%M%S).txt
+    echo "Capturing hyprlock ($pid) state to $out (sudo needed for stacks)..."
+    {
+        echo "== $(date -Is)  hyprlock pid $pid"
+        echo
+        echo "== threads (state, wchan)"
+        ps -L -o tid,stat,wchan:32,comm -p "$pid"
+        echo
+        echo "== kernel stacks"
+        for t in /proc/"$pid"/task/*; do
+            echo "-- tid ${t##*/}"
+            sudo cat "$t/stack"
+        done
+        echo
+        echo "== userspace backtrace"
+        sudo timeout 60 gdb -p "$pid" -batch -ex 'thread apply all bt'
+        echo
+        echo "== recent hyprlock / nvidia log"
+        journalctl -b -o short-iso --no-pager --since -30min \
+            | grep -E "hypridle\[$pid\]|nvidia|drm" | grep -v 'Config error' | tail -200
+    } >"$out" 2>&1
+    echo "Saved."
+fi
+
+if [[ -n $pid ]]; then
+    echo "Killing hyprlock ($pid)..."
+    kill -9 $pid
+    for _ in {1..20}; do pidof hyprlock >/dev/null || break; sleep 0.25; done
+    if pidof hyprlock >/dev/null; then
+        echo "hyprlock-restore: hyprlock would not die" >&2
+        exit 1
+    fi
+fi
+
+hypr eval 'hl.config({ misc = { allow_session_lock_restore = true } })' >/dev/null
+hypr dispatch 'hl.dsp.exec_cmd("hyprlock")' >/dev/null
+
+for _ in {1..20}; do pidof hyprlock >/dev/null && break; sleep 0.25; done
+if ! pidof hyprlock >/dev/null; then
+    echo "hyprlock-restore: new hyprlock did not start; check journalctl -b | grep -i hyprlock" >&2
+    exit 1
+fi
+echo "New hyprlock running ($(pidof hyprlock))."
+
+# Go back to the graphical session's VT so the new lock screen is right there.
+vt=$(loginctl list-sessions --no-legend | awk -v u="$USER" '$3 == u {print $1}' \
+    | while read -r s; do
+        [[ $(loginctl show-session "$s" -p Type --value) == wayland ]] &&
+            loginctl show-session "$s" -p VTNr --value
+    done | head -1)
+if [[ -n $vt && $vt != 0 ]]; then
+    echo "Switching to VT $vt..."
+    sudo chvt "$vt"
+else
+    echo "Switch back to the graphical session (Ctrl+Alt+F1) and unlock."
+fi
