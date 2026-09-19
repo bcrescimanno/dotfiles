@@ -4,6 +4,7 @@
 -- Window rules — one file per application
 require("rules.1password")
 require("rules.battlenet")
+require("rules.bitwarden")
 require("rules.eden-daoc")
 require("rules.guild-wars-2")
 require("rules.lutris")()
