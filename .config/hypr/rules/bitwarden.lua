@@ -30,3 +30,15 @@ hl.on("window.title", function(w)
     hl.dispatch(hl.dsp.window.set_prop({ prop = "no_anim", value = "1", window = sel }))
     hl.dispatch(hl.dsp.window.float({ action = "enable", window = sel }))
 end)
+
+-- The Bitwarden desktop app. It comes to the front for every vault unlock and
+-- SSH-agent authorization prompt, and tiled it reflowed the whole workspace
+-- each time. Float it like 1Password (rules/1password.lua): the class is known
+-- at map time, so a plain static rule works here, unlike the pop-out above.
+hl.window_rule({
+    name   = "bitwarden-desktop",
+    match  = { class = "^(Bitwarden)$" },
+    float  = true,
+    center = true,
+    size   = "1000 800",
+})
