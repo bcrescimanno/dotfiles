@@ -82,6 +82,40 @@ Two configs live in separate repos and are symlinked via `mkOutOfStoreSymlink` s
   git clone https://github.com/bcrescimanno/liquidark-shell ~/code/liquidark-shell
   ```
 
+### Commit Signing
+
+Commits are signed with SSH, by the key held in the machine's password-manager
+agent (`home/ssh-agent.nix`). Verification is configured there too, for every
+machine: `gpg.ssh.allowedSignersFile` points at `~/.config/git/allowed_signers`,
+which home-manager writes.
+
+**`git log --format=%G?` printing `N` does not mean a commit is unsigned.** It
+means git could not verify it, and an unverifiable signature and an absent one
+look identical in that column. Before concluding anything from `N`, check the
+raw object for a signature:
+
+```
+git cat-file commit HEAD | grep -c gpgsig
+```
+
+`1` means the commit is signed and the verification setup is what's wrong;
+`0` means it really is unsigned. The bot's nightly `flake.lock` commits are
+genuinely unsigned — GitHub Actions pushes them with `GITHUB_TOKEN` — so `N`
+on those is correct and expected.
+
+`E` is also not a failure: it's what GitHub's own GPG web-flow signatures
+(merges, web edits) show, and no SSH allowed-signers file can ever verify one.
+
+If your own commits start showing `N` again, the cause is almost never signing.
+Check that the managed setting is the one actually in effect:
+
+```
+git config --show-origin --get gpg.ssh.allowedSignersFile
+```
+
+An unmanaged `~/.gitconfig` is read *after* `~/.config/git/config` and wins, so
+a stale entry there silently overrides the one home-manager writes.
+
 ### CI
 
 Two workflows, both driven by scripts in `.github/scripts/` that also run locally.
