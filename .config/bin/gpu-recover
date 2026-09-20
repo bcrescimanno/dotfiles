@@ -1,0 +1,304 @@
+#!/bin/bash
+# Reset a wedged NVIDIA GPU in place and bring the session back, no reboot.
+#
+# Run it over SSH if you possibly can. See "About the blind window" below.
+#
+# Why this exists: on 2026-09-20 at 07:58:03 a Firefox renderer doing hardware
+# decode hung a GPU context —
+#
+#   NVRM: Xid (PCI:0000:01:00): 109, pid=12099, name=Renderer,
+#         channel 0x0000000a, errorString CTX SWITCH TIMEOUT, Info 0x2c00e
+#   NVRM: Xid (PCI:0000:01:00): 154, GPU recovery action changed from
+#         0x0 (None) to 0x1 (PF FLR)
+#
+# Xid 154 is the driver saying the card needs a PCI function-level reset.
+# After it, every channel allocation returns NV_ERR_RESET_REQUIRED, so
+# Hyprland's CHyprOpenGLImpl::begin assertion fired mid-page-flip and aborted,
+# uwsm's restart segfaulted during modeset, and greetd burned its six retries
+# in eleven seconds and gave up. nvidia-smi still answered the whole time and
+# reported 100% util / 212W with no processes, which is the tell: the card is
+# alive enough to talk and too wedged to render.
+#
+# Two things were learned the expensive way that night, and both are encoded
+# here:
+#
+#   1. Unloading and reloading the kernel modules does NOT clear this state.
+#      It looks like it works — every modprobe returns 0 — but the reload
+#      logs "[drm:nv_drm_dev_load] *ERROR* Failed to allocate NvKmsKapiDevice"
+#      and no framebuffer is registered. Xid 154 asked for an FLR and nothing
+#      short of an FLR answers it. That is why this script writes to
+#      /sys/bus/pci/devices/<bdf>/reset while the modules are unloaded,
+#      instead of trusting a modprobe round-trip.
+#
+#   2. Never rebind fbcon without checking a framebuffer exists first. With
+#      the reload half-failed, /proc/fb was empty and
+#      "echo 1 > /sys/class/vtconsole/vtcon1/bind" walked into
+#      WARNING fbcon.c:1098 and then a NULL deref in fbcon_cursor. The kernel
+#      killed the script mid-run and left the console on the dummy
+#      "mono frame buffer device 80x25" — permanently black, hard reboot, no
+#      log visible to the person sitting in front of it. restore_console()
+#      below refuses to rebind unless /proc/fb is non-empty, so a failed run
+#      now ends with a readable tty and a status file instead of a dark room.
+#
+# About the blind window: fbcon holds a reference on nvidia_drm's fbdev, so
+# nvidia_drm cannot unload until the console lets go. liquidark has no second
+# framebuffer to fall back on — the AMD iGPU registers none — so between the
+# unbind and a successful reload the local screen is dark and nothing you type
+# there is seen. That window is unavoidable from the machine itself, which is
+# the whole argument for driving this over SSH from the Mac, where you watch
+# every step and a dark console costs you nothing. Progress is also appended
+# to /run/gpu-recover.status for exactly this reason.
+#
+# Usage: sudo gpu-recover [options]
+#   --force        run even though the GPU still answers (kills GPU clients)
+#   --no-greetd    reset the card but leave the display manager stopped
+#   --no-session   skip stopping greetd (implies --no-greetd)
+#   --dry-run      print what would happen, touch nothing
+
+set -u
+
+readonly STATUS=/run/gpu-recover.status
+readonly RELOAD_WAIT=15   # seconds to wait for the fb to reappear after reload
+readonly PROBE_WAIT=60    # vulkaninfo can be slow on a freshly reset card
+
+force=0 start_greetd=1 stop_session=1 dry_run=0
+
+while [ $# -gt 0 ]; do
+    case $1 in
+        --force)      force=1 ;;
+        --no-greetd)  start_greetd=0 ;;
+        --no-session) stop_session=0; start_greetd=0 ;;
+        --dry-run)    dry_run=1 ;;
+        -h|--help)    sed -n '/^# Usage:/,/^$/p' "$0" | sed 's/^# \?//'; exit 0 ;;
+        *)            echo "gpu-recover: unknown option $1" >&2; exit 2 ;;
+    esac
+    shift
+done
+
+log() {
+    printf 'gpu-recover: %s\n' "$*"
+    [ "$dry_run" = 1 ] || printf '%s %s\n' "$(date +%H:%M:%S)" "$*" >>"$STATUS" 2>/dev/null
+}
+
+run() {
+    if [ "$dry_run" = 1 ]; then
+        printf 'gpu-recover: would run: %s\n' "$*"
+        return 0
+    fi
+    "$@"
+}
+
+# Writing to sysfs through run() would need a shell; keep it explicit instead.
+write_sysfs() {
+    local value=$1 path=$2
+    if [ "$dry_run" = 1 ]; then
+        printf 'gpu-recover: would write %s > %s\n' "$value" "$path"
+        return 0
+    fi
+    echo "$value" >"$path"
+}
+
+die() { log "FAILED: $*"; exit 1; }
+
+[ "$dry_run" = 1 ] || [ "$(id -u)" = 0 ] || die "must run as root (sudo gpu-recover)"
+
+# ---------------------------------------------------------------- discovery
+
+# Class 0300 is the VGA controller; on liquidark that is 0000:01:00.0, but the
+# slot moves if the card does, so ask rather than hardcode.
+find_gpu() {
+    lspci -D -n -d 10de::0300 2>/dev/null | awk '{print $1; exit}'
+}
+
+# The vtcon that owns the framebuffer console. vtcon0 is the dummy device and
+# must be left alone.
+find_fb_vtcon() {
+    local v
+    for v in /sys/class/vtconsole/vtcon*; do
+        case $(cat "$v/name" 2>/dev/null) in
+            *"frame buffer device"*) echo "$v"; return 0 ;;
+        esac
+    done
+    return 1
+}
+
+# Anything holding an fd on /dev/nvidia* keeps the modules pinned. fuser is not
+# always installed and lsof is slow, so walk /proc directly.
+gpu_clients() {
+    local p pid
+    for p in /proc/[0-9]*; do
+        pid=${p##*/}
+        if ls -l "$p/fd" 2>/dev/null | grep -q '/dev/nvidia'; then
+            printf '%s %s\n' "$pid" "$(cat "$p/comm" 2>/dev/null)"
+        fi
+    done
+}
+
+# The honest test for this failure: can the driver still build a device? A
+# wedged card passes nvidia-smi and fails here with ERROR_INITIALIZATION_FAILED.
+gpu_usable() {
+    command -v vulkaninfo >/dev/null 2>&1 || return 0   # cannot tell; assume ok
+    ! timeout "$PROBE_WAIT" vulkaninfo --summary 2>&1 |
+        grep -q 'ERROR_INITIALIZATION_FAILED'
+}
+
+gpu=$(find_gpu)
+[ -n "$gpu" ] || die "no NVIDIA VGA device found"
+readonly gpu
+readonly gpu_dir=/sys/bus/pci/devices/$gpu
+
+[ -d "$gpu_dir" ] || die "$gpu_dir does not exist"
+
+log "=== starting on $gpu ($(date -Is)) ==="
+
+case $(cat "$gpu_dir/reset_method" 2>/dev/null) in
+    *flr*) log "FLR is supported" ;;
+    *)     die "$gpu does not advertise FLR (reset_method: $(cat "$gpu_dir/reset_method" 2>/dev/null))" ;;
+esac
+
+if gpu_usable; then
+    if [ "$force" = 0 ]; then
+        log "GPU still creates devices — nothing to recover."
+        log "Pass --force if you mean to reset it anyway (this kills your session)."
+        exit 0
+    fi
+    log "GPU looks healthy but --force was given; resetting anyway"
+else
+    log "GPU cannot create devices — confirmed wedged"
+fi
+
+# ------------------------------------------------------------ tear down
+
+if [ "$stop_session" = 1 ]; then
+    log "stopping greetd"
+    run systemctl stop greetd
+    run systemctl reset-failed greetd
+fi
+
+# Give the compositor a moment to actually exit before counting fds.
+[ "$dry_run" = 1 ] || sleep 1
+
+clients=$(gpu_clients)
+if [ -n "$clients" ]; then
+    log "GPU clients still open:"
+    printf '%s\n' "$clients" | while read -r pid comm; do log "  $pid $comm"; done
+    printf '%s\n' "$clients" | while read -r pid _; do run kill -9 "$pid"; done
+    [ "$dry_run" = 1 ] || sleep 2
+fi
+
+# Unbind the console last, so the screen stays readable through everything
+# above. From here to restore_console the local display is dark.
+vtcon=$(find_fb_vtcon) || vtcon=""
+unbound=0
+if [ -n "$vtcon" ] && [ "$(cat "$vtcon/bind" 2>/dev/null)" = 1 ]; then
+    log "unbinding console from $vtcon — local screen goes dark now"
+    write_sysfs 0 "$vtcon/bind" && unbound=1
+    [ "$dry_run" = 1 ] || sleep 1
+fi
+
+log "unloading nvidia modules"
+for m in nvidia_drm nvidia_modeset nvidia_uvm nvidia; do
+    grep -q "^${m} " /proc/modules 2>/dev/null || continue
+    if run modprobe -r "$m"; then
+        log "  removed $m"
+    else
+        log "  could not remove $m (refcnt $(cat "/sys/module/$m/refcnt" 2>/dev/null))"
+    fi
+done
+
+if [ "$dry_run" = 0 ] && grep -q '^nvidia' /proc/modules; then
+    log "modules still loaded; cannot reset a bound device"
+    restore=1
+else
+    restore=0
+fi
+
+# ------------------------------------------------------------ the reset
+
+if [ "$restore" = 0 ]; then
+    # This is the step the 2026-09-20 attempt was missing. The device must be
+    # driverless here, which the unload above guarantees.
+    log "issuing PCI function-level reset on $gpu"
+    if write_sysfs 1 "$gpu_dir/reset"; then
+        log "  FLR completed"
+    else
+        log "  FLR write failed"
+    fi
+    [ "$dry_run" = 1 ] || sleep 2
+
+    log "reloading nvidia modules"
+    for m in nvidia nvidia_uvm nvidia_modeset nvidia_drm; do
+        if run modprobe "$m"; then
+            log "  loaded $m"
+        else
+            log "  FAILED to load $m"
+        fi
+    done
+fi
+
+# A successful nvidia_drm load with fbdev=1 registers nvidia-drmdrmfb. If the
+# card were still wedged the load would log "Failed to allocate NvKmsKapiDevice"
+# and leave /proc/fb empty — so this one check covers both "did KMS come up"
+# and "is it safe to touch the console".
+if [ "$dry_run" = 0 ]; then
+    for _ in $(seq "$RELOAD_WAIT"); do
+        [ -s /proc/fb ] && break
+        sleep 1
+    done
+fi
+
+# ------------------------------------------------------------ the console
+
+# The guard that was missing on 2026-09-20. Rebinding with no framebuffer
+# registered NULL-derefs fbcon_cursor and takes the console down for good.
+restore_console() {
+    [ "$unbound" = 1 ] || return 0
+    [ -n "$vtcon" ] || return 0
+
+    if [ "$dry_run" = 0 ] && [ ! -s /proc/fb ]; then
+        log "NOT rebinding the console: /proc/fb is empty, no framebuffer exists."
+        log "Rebinding here is what oopsed the kernel last time. Leaving it unbound."
+        return 1
+    fi
+
+    log "framebuffer present ($(tr '\n' ' ' </proc/fb 2>/dev/null)); rebinding console"
+    write_sysfs 1 "$vtcon/bind" || log "  rebind failed"
+}
+
+restore_console
+console_ok=$?
+
+# ------------------------------------------------------------ verify
+
+if [ "$dry_run" = 1 ]; then
+    log "dry run complete"
+    exit 0
+fi
+
+if grep -q 'Failed to allocate NvKmsKapiDevice' \
+        <(journalctl -k --no-pager --since "-2min" 2>/dev/null); then
+    log "driver logged 'Failed to allocate NvKmsKapiDevice' — the reset did not take"
+    log "the card needs a power cycle; reboot when you are ready"
+    exit 1
+fi
+
+log "probing the GPU"
+if ! gpu_usable; then
+    log "probe FAILED — GPU still cannot create devices"
+    [ "$console_ok" = 0 ] && log "your console is back; reboot when you are ready"
+    exit 1
+fi
+log "probe OK — GPU creates devices again"
+
+if [ "$start_greetd" = 1 ]; then
+    log "starting greetd"
+    systemctl reset-failed greetd 2>/dev/null
+    if systemctl start greetd; then
+        log "greetd started — the login screen should be on VT 1"
+    else
+        log "greetd failed to start; check: journalctl -b -u greetd"
+        exit 1
+    fi
+fi
+
+log "=== recovered without a reboot ==="
