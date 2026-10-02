@@ -14,7 +14,6 @@ export XCURSOR_THEME=macOS
 export SDL_VIDEODRIVER=wayland
 export MOZ_ENABLE_WAYLAND=1
 export QT_QPA_PLATFORM=wayland
-# 1Password breaks with these settings for now
 export ELECTRON_OZONE_PLATFORM_HINT=wayland
 export OZONE_PLATFORM=wayland
 

@@ -6,7 +6,6 @@
 -- This panel is 2880x1800 at scale 1.5, so only 1920x1200 logical. Rules whose
 -- default size is tuned for liquidark's ultrawide (2000x1400) would open larger
 -- than the whole screen here, so those get an explicit laptop-sized override.
-require("rules.1password")
 require("rules.bitwarden")
 require("rules.lutris")({ size = "1600 1000" })
 require("rules.rpi-imager")
