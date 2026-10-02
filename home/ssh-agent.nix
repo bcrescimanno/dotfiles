@@ -96,6 +96,9 @@ in
           program = "${bwSshSign}";
         };
         commit.gpgsign = true;
+        # Which key to sign with, given inline ("key::") so it never depends on
+        # an unmanaged ~/.gitconfig. Without it git refuses to sign at all.
+        user.signingkey = "key::${signingKey}";
       };
 
       xdg.configFile."git/allowed_signers".text = ''

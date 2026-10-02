@@ -10,7 +10,8 @@ machine — those settings have never applied. Found 2026-09-19. The flake-check
 pre-commit hook works only because each repo carries its own copy in `.git/hooks`.
 
 `home/ssh-agent.nix` therefore writes `~/.config/git/config` via `xdg.configFile`
-(Bitwarden machines only) instead of `programs.git.settings`.
+(every machine; only `gpg.ssh.program` is Bitwarden-specific) instead of
+`programs.git.settings`.
 
 **Why not just enable it:** that would apply `core.hooksPath` globally on every
 machine, which makes git ignore every repo's own `.git/hooks`. Brian has not

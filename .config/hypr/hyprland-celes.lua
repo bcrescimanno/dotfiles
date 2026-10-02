@@ -7,6 +7,7 @@
 -- default size is tuned for liquidark's ultrawide (2000x1400) would open larger
 -- than the whole screen here, so those get an explicit laptop-sized override.
 require("rules.1password")
+require("rules.bitwarden")
 require("rules.lutris")({ size = "1600 1000" })
 require("rules.rpi-imager")
 require("rules.steam")({ size = "1600 1000" })
