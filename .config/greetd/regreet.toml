@@ -1,0 +1,22 @@
+# ReGreet config — published to the greeter profile by home/greeter.nix.
+# Everything referenced here must be readable by the `greeter` user, so
+# themes and fonts have to come from /usr/share, never from ~.
+
+[GTK]
+application_prefer_dark_theme = true
+theme_name = "Adwaita"
+icon_theme_name = "Adwaita"
+cursor_theme_name = "macOS"
+font_name = "Inter Variable 16"
+
+[commands]
+reboot = ["systemctl", "reboot"]
+poweroff = ["systemctl", "poweroff"]
+
+[appearance]
+greeting_msg = "Welcome back!"
+
+[widget.clock]
+format = "%A, %B %d   %I:%M %p"
+resolution = "500ms"
+label_width = 480

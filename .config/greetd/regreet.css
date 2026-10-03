@@ -1,0 +1,118 @@
+/* ReGreet stylesheet — Dracula, to match liquidark-shell.
+ *
+ * Layered on top of Adwaita dark (see regreet.toml), so only what differs
+ * from it is restyled here. Selectors follow ReGreet's widget tree in
+ * src/gui/templates.rs: the login card and the clock are both
+ * `frame.background`; the notification bar sits in a bare `frame` above the
+ * Reboot/Power Off buttons (`button.destructive-action`); Login is
+ * `button.suggested-action`.
+ *
+ * Adwaita paints buttons with background-image, so every button rule has to
+ * clear it or the theme's gradient shows through. Preview without logging
+ * out: regreet --demo -l /dev/null -c regreet.toml -s regreet.css */
+
+@define-color bg #282a36;
+@define-color surface #373a4f;
+@define-color raised #44475a;
+@define-color fg #f8f8f2;
+@define-color overlay #6272a4;
+@define-color accent #bd93f9;
+@define-color negative #ff5555;
+
+window {
+  background-color: @bg;
+  color: @fg;
+}
+
+label {
+  color: @fg;
+}
+
+/* The background image. Letting the window's Dracula base show through
+ * dims it about as much as hyprlock's brightness = 0.89 does. */
+window picture {
+  opacity: 0.88;
+}
+
+/* Login card and clock. */
+frame.background {
+  background-color: alpha(@surface, 0.85);
+  border: 1px solid alpha(@overlay, 0.5);
+  border-radius: 16px;
+  padding: 12px 16px;
+}
+
+/* Wrapper around the notification bar: invisible until a message shows. */
+frame:not(.background) {
+  background: none;
+  padding: 0;
+}
+
+infobar > revealer > box {
+  background-color: alpha(@negative, 0.2);
+  border-radius: 8px;
+}
+
+entry,
+combobox button.combo {
+  background-color: @raised;
+  background-image: none;
+  color: @fg;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  min-height: 40px;
+  box-shadow: none;
+}
+
+entry:focus-within {
+  border-color: @accent;
+}
+
+button {
+  background-color: @raised;
+  background-image: none;
+  color: @fg;
+  border: none;
+  border-radius: 8px;
+  min-height: 40px;
+  padding: 0 18px;
+  box-shadow: none;
+}
+
+button:hover,
+button:checked {
+  background-color: @overlay;
+}
+
+button.suggested-action {
+  background-color: @accent;
+  font-weight: bold;
+}
+
+button.suggested-action,
+button.suggested-action label {
+  color: @bg;
+}
+
+button.suggested-action:hover {
+  background-color: shade(@accent, 1.1);
+}
+
+button.destructive-action {
+  background-color: alpha(@bg, 0.75);
+  border: 1px solid alpha(@negative, 0.6);
+}
+
+button.destructive-action,
+button.destructive-action label {
+  color: @negative;
+}
+
+button.destructive-action:hover {
+  background-color: mix(@bg, @negative, 0.2);
+}
+
+popover > contents {
+  background-color: @surface;
+  color: @fg;
+}

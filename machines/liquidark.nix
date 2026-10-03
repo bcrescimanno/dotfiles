@@ -7,6 +7,7 @@
     ../home/terminal.nix
     ../home/wayland.nix
     ../home/red-tools.nix
+    ../home/greeter.nix
   ];
 
   dotfiles.configName = "brian@liquidark";
@@ -21,6 +22,22 @@
 
   home.file.".config/hypr/hyprland.lua".source = ../.config/hypr/hyprland.lua;
   home.file.".config/uwsm/env".source = ../.config/uwsm/env;
+
+  # The greetd login screen: hyprlock's background (keep the two in sync —
+  # .config/hypr/hyprlock.conf), and the same LG C4 mode as the session.
+  dotfiles.greeter.background = "/home/brian/Pictures/4kwp/1342341.png";
+  dotfiles.greeter.monitors = ''
+    hl.monitor({
+    	output = "HDMI-A-1",
+    	mode = "5120x2160@165",
+    	position = "0x0",
+    	scale = 1,
+    	transform = 0,
+    	bitdepth = 10,
+    	cm = "wide",
+    	vrr = 0,
+    })
+  '';
 
   services.mpd = {
     enable = true;

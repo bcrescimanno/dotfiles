@@ -51,12 +51,13 @@ Machine configs in `machines/` compose `home/` modules:
 - `home/wayland.nix` — Linux/Wayland only: Hyprland, Quickshell, Mako, wleave, uwsm, elephant
 - `home/dev-tools.nix` — dev packages (gcc, nodejs, python3, etc.) — not used on Arch to avoid conflicts with system packages
 - `home/headless.nix` — headless/server profile: minimal server tools only
+- `home/greeter.nix` — the greetd login screen (ReGreet in a Hyprland greeter); see below
 
 ### Machines
 
 | Config | System | Profile |
 |---|---|---|
-| `brian@liquidark` | x86_64-linux | common + arch + terminal + wayland + red-tools |
+| `brian@liquidark` | x86_64-linux | common + arch + terminal + wayland + red-tools + greeter |
 | `brian@celes` | x86_64-linux | common + arch + terminal + wayland |
 | `brian@terra` | x86_64-linux | common + arch |
 | `brian@orthanc` | x86_64-linux | common + dev-tools + headless |
@@ -81,6 +82,36 @@ Two configs live in separate repos and are symlinked via `mkOutOfStoreSymlink` s
   ```
   git clone https://github.com/bcrescimanno/liquidark-shell ~/code/liquidark-shell
   ```
+
+### Login Screen (greetd)
+
+`home/greeter.nix` manages liquidark's login screen from `.config/greetd/`
+(`regreet.toml`, `regreet.css`) plus the greeter's `hyprland.lua`, which it
+generates (the monitor block comes from `dotfiles.greeter.monitors` in the
+machine file).
+
+The `greeter` user can't read `~` (mode 700), so nothing is linked there.
+Activation publishes the files as a Nix profile at
+`/nix/var/nix/profiles/per-user/brian/greeter` instead — world-readable, and a
+GC root. Edits take effect the next time the greeter starts (log out), no sudo.
+
+The background image (`dotfiles.greeter.background`, the same file hyprlock
+uses) lives in `~/Pictures`, not the repo, so activation imports it with
+`nix-store --add` into a second profile, `.../per-user/brian/greeter-background`,
+which `regreet.toml` points at. A missing file only costs the background.
+
+`/etc/greetd/config.toml` is the exception: greetd reads it as root and it
+names the user the greeter runs as, so it is *copied* into place by
+`greeter-install` (sudo) rather than linked to a user-writable profile. It
+only points at the profile's `hyprland.lua`, so it rarely changes; `hms` warns
+when the installed copy has drifted. `greeter-install` is also the one-time
+setup on a new machine (it creates the profile directory).
+
+Preview the theme without logging out (the repo's `regreet.toml` has no
+`[background]`; that is appended at build time):
+```
+regreet --demo -l /dev/null -c .config/greetd/regreet.toml -s .config/greetd/regreet.css
+```
 
 ### Commit Signing
 
