@@ -10,6 +10,7 @@
     tree
     nixpkgs-fmt
     claude-code
+    pi-coding-agent
     cloudflared
   ];
 
