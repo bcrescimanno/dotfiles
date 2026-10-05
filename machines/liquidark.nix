@@ -66,6 +66,11 @@
 
   home.file.".config/rmpc/config.ron".source = ../.config/rmpc/config.ron;
 
+  # A mono "SM7B" source carved out of the Scarlett's 18-channel capture, so
+  # apps get the mic instead of an arbitrary downmix of AUX0..AUX17.
+  home.file.".config/pipewire/pipewire.conf.d/scarlett-mic.conf".source =
+    ../.config/pipewire/pipewire.conf.d/scarlett-mic.conf;
+
   # Generate qbt-tui config at activation time by decrypting secrets/liquidark.env
   # with sops. The non-secret parts live here; credentials stay encrypted in the repo.
   # To create/update credentials: sops secrets/liquidark.env (add QBT_USERNAME, QBT_PASSWORD)
