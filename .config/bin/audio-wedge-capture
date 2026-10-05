@@ -1,70 +1,172 @@
 #!/bin/bash
-# Snapshot everything that distinguishes the S/PDIF wedge's possible causes.
+# Snapshot everything that distinguishes the possible causes of silent audio.
 #
-# Run this the moment audio goes silent, BEFORE restarting wireplumber -- the
-# restart destroys the evidence. Then restart wireplumber as usual.
+# Run this the moment audio goes silent, BEFORE restarting anything -- a
+# restart destroys the evidence.
 #
-# The wedge looks identical in wpctl every time (links active, clock advancing,
-# zero xruns, unmuted), so the answer is not in PipeWire's view. These four
-# readings are what actually separate the candidates:
+# The signal chain is: PipeWire S/PDIF sink on the onboard "Generic USB Audio"
+# card -> optical -> Scarlett 16i16 S/PDIF in -> Scarlett mixer -> Scarlett
+# S/PDIF out -> WiiM amp. The first reading below splits it in half:
 #
-#   /proc/asound/card3/stream3   "Status: Running" + "Momentary freq"
-#       The USB isochronous endpoint. Status Stop, or a freq of 0, means the
-#       card stopped consuming while ALSA kept counting -- silent by definition.
-#   /proc/asound/card3/stream3   "Altset ="
-#       S/PDIF shares USB interface 6 with stream2. If the altsetting moved,
-#       something else claimed the interface out from under the live stream.
-#   pcm3p/sub0/status            hw_ptr across two samples
+#   sink monitor level
+#       Music present on the sink's own monitor means PipeWire is fine and the
+#       fault is downstream (onboard S/PDIF transmitter, the Scarlett, or the
+#       WiiM) -- stop restarting software and power-cycle the Scarlett.
+#       Silence on the monitor while something plays is the 2026-09-03 wedge:
+#       the sink node itself is mixing nothing, and restarting wireplumber
+#       fixes it.
+#   stream3 "Status" / "Momentary freq" / "Altset ="
+#       The S/PDIF USB endpoint. Stop, or freq 0, means the card stopped
+#       consuming while ALSA kept counting.
+#   pcm3p/sub0/status hw_ptr across two samples
 #       Advancing = the ring is being drained. Frozen = the driver stalled.
-#   numid=28 'PCM Playback Switch',index=2
+#   'PCM Playback Switch',index=2
 #       The S/PDIF hardware mute, per the ALC4080 UCM profile.
+#   Scarlett Clock Source / Sync Status
+#       Should read Internal / Locked.
+#   Scarlett lock to the onboard S/PDIF signal
+#       Healthy locks at once. Never locking means the onboard -> Scarlett
+#       optical link carries nothing usable (2026-10-04: fixed by a reboot
+#       plus power-cycling the Scarlett).
+#
+# Card numbers change between boots, so both cards are found by name.
 #
 # Usage: audio-wedge-capture [outdir]
 
 set -u
 
-card=3
+# /proc/asound/cards gives each card two lines; the number is only on the
+# first, the descriptive name is often only on the second.
+card_by_name() {
+    awk -v pat="$1" '/^ *[0-9]+ \[/ { n = $1 } $0 ~ pat { print n; exit }' \
+        /proc/asound/cards
+}
+
+card=$(card_by_name 'Generic USB Audio')
+scarlett=$(card_by_name 'Scarlett')
 out=${1:-$HOME/.local/state/audio-wedge-$(date +%Y%m%d-%H%M%S)}
 mkdir -p "$out"
 
 {
     echo "captured: $(date -Is)"
     echo "uptime:   $(cut -d' ' -f1 /proc/uptime)"
+    echo "onboard card: ${card:-NOT FOUND}   scarlett card: ${scarlett:-NOT FOUND}"
 } > "$out/when"
 
-# Two samples so hw_ptr movement is visible.
-for n in 1 2; do
-    cat /proc/asound/card$card/pcm3p/sub0/status > "$out/pcm3p.$n" 2>&1
-    grep -E 'Status|Interface =|Altset =|Packet Size|Momentary freq' \
-        /proc/asound/card$card/stream3 > "$out/stream3.$n" 2>&1
-    [ "$n" = 1 ] && sleep 2
-done
+# Record the default sink's monitor while whatever is playing plays. RMS in
+# dBFS; digital silence prints -inf. Only meaningful if something is playing,
+# so the streams feeding the sink are listed alongside.
+monitor_level() {
+    local sink wav feeding
+    sink=$(wpctl inspect @DEFAULT_AUDIO_SINK@ 2>/dev/null |
+           sed -n 's/.*node.name = "\(.*\)"/\1/p')
+    [ -n "$sink" ] || { echo "no default sink"; return; }
+    wav="$out/monitor.wav"
+    timeout 3 pw-record --target="$sink" -P stream.capture.sink=true \
+        "$wav" >/dev/null 2>&1
+    feeding=$(pw-link -l 2>/dev/null | awk -v s="$sink" '
+        $0 ~ "^"s":playback_" { f = 1; next } /^[^ ]/ { f = 0 }
+        f && /\|<-/ { sub(/:.*/, "", $2); print $2 }' | sort -u | tr '\n' ' ')
+    echo "streams feeding the sink: ${feeding:-none (nothing playing, so the level below means nothing)}"
+    python3 - "$wav" "$sink" <<'EOF'
+import array, math, sys, wave
+try:
+    w = wave.open(sys.argv[1])
+    a = array.array('h'); a.frombytes(w.readframes(w.getnframes()))
+    rms = math.sqrt(sum(v * v for v in a) / max(len(a), 1))
+    level = f"{20 * math.log10(rms / 32768):.1f} dBFS" if rms else "-inf (digital silence)"
+    print(f"{sys.argv[2]}: {level}")
+except Exception as e:
+    print(f"could not measure: {e}")
+EOF
+}
+monitor_level > "$out/monitor-level" 2>&1
 
-cat /proc/asound/card$card/stream3            > "$out/stream3.full"  2>&1
-cat /proc/asound/card$card/stream2            > "$out/stream2.full"  2>&1
+if [ -n "$card" ]; then
+    # Two samples so hw_ptr movement is visible.
+    for n in 1 2; do
+        cat /proc/asound/card$card/pcm3p/sub0/status > "$out/pcm3p.$n" 2>&1
+        grep -E 'Status|Interface =|Altset =|Packet Size|Momentary freq' \
+            /proc/asound/card$card/stream3 > "$out/stream3.$n" 2>&1
+        [ "$n" = 1 ] && sleep 2
+    done
+
+    cat /proc/asound/card$card/stream3        > "$out/stream3.full"  2>&1
+    cat /proc/asound/card$card/stream2        > "$out/stream2.full"  2>&1
+    amixer -c $card contents                  > "$out/mixer"         2>&1
+    fuser -v /dev/snd/pcmC${card}D3p /dev/snd/controlC$card \
+                                              > "$out/fuser"         2>&1
+fi
+
+if [ -n "$scarlett" ]; then
+    amixer -c $scarlett contents              > "$out/scarlett-mixer" 2>&1
+fi
+
+# Can the Scarlett lock to the onboard card's S/PDIF signal? Briefly clock it
+# from S/PDIF and watch Sync Status. Healthy (baseline 2026-10-04): Locked on
+# every sample, immediately. During the 2026-10-04 incident: never locked,
+# which put the fault on the onboard -> Scarlett optical link. Costs a few
+# seconds of output, which is already silent if you are running this.
+spdif_lock_test() {
+    local i s samples=""
+    trap 'amixer -c "$scarlett" cset name="Clock Source Clock Source" 0 >/dev/null' RETURN
+    amixer -c "$scarlett" cset name="Clock Source Clock Source" 1 >/dev/null
+    for i in 1 2 3 4 5 6; do
+        sleep 0.5
+        s=$(amixer -c "$scarlett" cget name='Sync Status' | sed -n 's/.*: values=//p')
+        samples+="$([ "$s" = 1 ] && echo L || echo -)"
+    done
+    echo "$samples"
+}
+if [ -n "$scarlett" ]; then
+    spdif_lock_test > "$out/spdif-lock" 2>&1
+    sleep 2   # the internal clock takes a moment to re-lock after the switch back
+fi
+
 cat /proc/asound/cards                        > "$out/cards"         2>&1
-amixer -c $card contents                      > "$out/mixer"         2>&1
 wpctl status                                  > "$out/wpctl"         2>&1
 pw-dump                                       > "$out/pw-dump.json"  2>&1
 timeout 4 pw-top -b -n 3                      > "$out/pw-top"        2>&1
 pw-metadata -n settings                       > "$out/pw-settings"   2>&1
-fuser -v /dev/snd/pcmC${card}D3p /dev/snd/controlC$card \
-                                              > "$out/fuser"    2>&1
 journalctl --user -b -u wireplumber -u pipewire -n 200 -o short-precise \
                                               > "$out/journal.user"  2>&1
 journalctl -b -k -n 300 -o short-precise      > "$out/journal.kernel" 2>&1
 
-# The four readings that matter, up front.
+enum_value() {
+    amixer -c "$1" cget name="$2" 2>/dev/null | awk -F"'" '
+        /Item #/ { split($0, p, "#"); n = p[2] + 0; item[n] = $2 }
+        /: values=/ { split($0, v, "="); val = v[2] + 0 }
+        END { print (val in item) ? item[val] : "?" }'
+}
+
+# The readings that matter, up front.
 {
-    echo "=== usb endpoint (want: Running, freq 48000, Altset 11) ==="
-    cat "$out/stream3.1"
+    echo "=== sink monitor (music present = PipeWire fine, fault is downstream) ==="
+    cat "$out/monitor-level"
     echo
-    echo "=== hw_ptr movement (want: second > first) ==="
-    grep hw_ptr "$out/pcm3p.1" "$out/pcm3p.2"
-    grep -E '^state|trigger_time' "$out/pcm3p.1"
+    if [ -n "$card" ]; then
+        echo "=== usb endpoint, card $card (want: Running, freq 48000, Altset 11) ==="
+        cat "$out/stream3.1"
+        echo
+        echo "=== hw_ptr movement (want: second > first) ==="
+        grep hw_ptr "$out/pcm3p.1" "$out/pcm3p.2"
+        grep -E '^state|trigger_time' "$out/pcm3p.1"
+        echo
+        echo "=== s/pdif hardware mute (want: on) ==="
+        amixer -c $card cget name='PCM Playback Switch',index=2 2>&1 |
+            sed -n 's/^  : values=/spdif switch=/p'
+    else
+        echo "=== onboard Generic USB Audio card NOT FOUND ==="
+    fi
     echo
-    echo "=== s/pdif hardware mute (want: on) ==="
-    amixer -c $card cget numid=28 2>&1 | sed -n 's/^  : values=/numid28=/p'
+    if [ -n "$scarlett" ]; then
+        echo "=== scarlett, card $scarlett (want: Internal / Locked) ==="
+        echo "clock: $(enum_value $scarlett 'Clock Source Clock Source')"
+        echo "sync:  $(enum_value $scarlett 'Sync Status')"
+        echo "lock to onboard S/PDIF, 6 samples (want LLLLLL): $(cat "$out/spdif-lock")"
+    else
+        echo "=== scarlett NOT FOUND ==="
+    fi
 } | tee "$out/summary"
 
 echo
