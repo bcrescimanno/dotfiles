@@ -2,7 +2,7 @@
 #
 # Imported only by machines/liquidark.nix.
 #
-# Scripts (eac-to-flac, flac-to-mp3, mktorrent-wrap, redacted-transcode, ...) live in ~/code/red-tools.
+# Scripts (eac-to-flac, flac-to-mp3, mktorrent-wrap, redacted-transcode, red-candidates, ...) live in ~/code/red-tools.
 # They are wrapped here so they use a Nix-managed Python with mutagen without
 # putting a Nix python3 on PATH (which would shadow the system pacman Python).
 #
@@ -27,6 +27,7 @@ in
     (wrapScript "mktorrent-wrap")
     (wrapScript "rip-to-library")
     (wrapScript "redacted-transcode")
+    (wrapScript "red-candidates")
   ];
 
   programs.beets = {
