@@ -59,7 +59,7 @@ Machine configs in `machines/` compose `home/` modules:
 |---|---|---|
 | `brian@liquidark` | x86_64-linux | common + arch + terminal + wayland + red-tools + greeter |
 | `brian@celes` | x86_64-linux | common + arch + terminal + wayland |
-| `brian@terra` | x86_64-linux | common + arch |
+| `brian@terra` | x86_64-linux | common (NixOS, via homelab-nix) |
 | `brian@orthanc` | x86_64-linux | common + dev-tools + headless |
 | `brian@mac` | aarch64-darwin | common + darwin + dev-tools + terminal |
 | `brian@pirateship` | aarch64-linux | common + dev-tools + headless |
