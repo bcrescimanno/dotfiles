@@ -16,8 +16,16 @@
     # file, and brian is a trusted-user there, so the daemon honours it.
     # Written raw rather than via `nix.settings`, which would require HM to
     # own `nix.package` on a system whose nix comes from pacman.
+    #
+    # Bounded, not `auto`: `auto` with the default `cores = 0` lets 16 jobs
+    # each use every core — up to 256 compiler threads on liquidark. Thirty
+    # minutes after that went live (2026-10-09), terra's closure build hard-froze
+    # the machine with kernel `Bad page state` errors in cc1plus and nix-daemon.
+    # That smells like marginal RAM exposed by sustained full load, which a cap
+    # does not fix — but 4 × 4 keeps total build threads near nproc.
     xdg.configFile."nix/nix.conf".text = ''
-      max-jobs = auto
+      max-jobs = 4
+      cores = 4
     '';
 
     # Nothing on Arch collects Nix garbage (NixOS hosts get nix.gc from the
