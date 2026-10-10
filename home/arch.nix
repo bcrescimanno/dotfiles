@@ -19,4 +19,18 @@
     xdg.configFile."nix/nix.conf".text = ''
       max-jobs = auto
     '';
+
+    # Nothing on Arch collects Nix garbage (NixOS hosts get nix.gc from the
+    # system), and this machine builds orthanc's and terra's full closures on
+    # every deploy. With 219 home-manager generations pinning old closures the
+    # root fs hit 100% (2026-10-09). A user timer is enough: generations live in
+    # brian's profile, and the collection itself runs through the daemon.
+    # nix.package is null here, so HM runs pkgs.nix's nix-collect-garbage,
+    # which only speaks the daemon protocol — the pacman version is unaffected.
+    nix.gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 14d";
+      persistent = true;
+    };
   }
