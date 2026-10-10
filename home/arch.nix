@@ -21,8 +21,11 @@
     # each use every core — up to 256 compiler threads on liquidark. Thirty
     # minutes after that went live (2026-10-09), terra's closure build hard-froze
     # the machine with kernel `Bad page state` errors in cc1plus and nix-daemon.
-    # That smells like marginal RAM exposed by sustained full load, which a cap
-    # does not fix — but 4 × 4 keeps total build threads near nproc.
+    # memtest86+ confirmed it (2026-10-10): the EXPO I memory profile fails
+    # within one pass and hard-locks; JEDEC passes. EXPO is now off in the
+    # BIOS, and that was the fix — not this cap. 4 × 4 stays because it keeps
+    # total build threads near nproc. If liquidark crashes under a build,
+    # check first whether EXPO is back on.
     xdg.configFile."nix/nix.conf".text = ''
       max-jobs = 4
       cores = 4
