@@ -58,7 +58,8 @@ Machine configs in `machines/` compose `home/` modules:
 | Config | System | Profile |
 |---|---|---|
 | `brian@liquidark` | x86_64-linux | common + arch + terminal + wayland + red-tools + greeter |
-| `brian@celes` | x86_64-linux | common + arch + terminal + wayland |
+| `brian@celes` | x86_64-linux | common + arch + terminal + wayland (Arch; retired once celes runs NixOS) |
+| `brian@celes-nixos` | x86_64-linux | common + terminal (NixOS + Plasma 6, via homelab-nix) |
 | `brian@terra` | x86_64-linux | common (NixOS, via homelab-nix) |
 | `brian@orthanc` | x86_64-linux | common + dev-tools + headless |
 | `brian@mac` | aarch64-darwin | common + darwin + dev-tools + terminal |
