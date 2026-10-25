@@ -15,6 +15,12 @@ hl.window_rule({
 -- timer, running only while EAC has a floating window, re-centers each one
 -- over the main window whenever that window moves or resizes. Between moves a
 -- dialog stays wherever you drag it.
+--
+-- Wine's popup menus (and combo-box drop-downs, tooltips) are override-redirect
+-- X windows, which Hyprland also reports as floating eac.exe windows. Moving
+-- one away from where it opened leaves it unusable, so leave them alone. Hyprland
+-- exposes no override-redirect flag, but those windows are untitled while every
+-- EAC dialog has a caption, so the title tells them apart.
 local CLASS = "eac.exe"
 
 local last = {} -- dialog address -> parent geometry it was last centered on
@@ -23,10 +29,10 @@ local follow
 local function tick()
     local parent, dialogs = nil, {}
     for _, w in ipairs(hl.get_windows({ class = CLASS })) do
-        if w.mapped and w.floating then
-            dialogs[#dialogs + 1] = w
-        elseif w.mapped then
+        if w.mapped and not w.floating then
             parent = w
+        elseif w.mapped and w.title ~= "" then
+            dialogs[#dialogs + 1] = w
         end
     end
     if #dialogs == 0 then
