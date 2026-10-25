@@ -15,6 +15,9 @@ require("rules.steam")()
 require("rules.wow-classic")
 require("rules.rmpc")
 
+-- Keep XWayland's _NET_WORKAREA current (Hyprland lets it go stale)
+require("xwayland-workarea")
+
 --------------------
 ---- MONITORS ----
 --------------------

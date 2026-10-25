@@ -13,6 +13,9 @@ require("rules.steam")({ size = "1600 1000" })
 require("rules.rmpc")
 require("rules.browser")
 
+-- Keep XWayland's _NET_WORKAREA current (Hyprland lets it go stale)
+require("xwayland-workarea")
+
 --------------------
 ---- MONITORS ----
 --------------------

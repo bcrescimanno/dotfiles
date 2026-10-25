@@ -69,6 +69,9 @@ in
   home.file.".config/hypr/hyprlock.conf".source = ../.config/hypr/hyprlock.conf;
   home.file.".config/hypr/hyprpaper.conf".source = ../.config/hypr/hyprpaper.conf;
   home.file.".config/hypr/.luarc.json".source = ../.config/hypr/.luarc.json;
+  home.file.".config/hypr/xwayland-workarea.lua".source = pkgs.replaceVars ../.config/hypr/xwayland-workarea.lua {
+    xprop = lib.getExe pkgs.xprop;
+  };
   home.file.".config/hypr/rules" = {
     source = ../.config/hypr/rules;
     recursive = true;
