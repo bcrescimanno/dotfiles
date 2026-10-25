@@ -5,6 +5,7 @@
 require("rules.1password")
 require("rules.battlenet")
 require("rules.bitwarden")
+require("rules.eac")
 require("rules.eden-daoc")
 require("rules.guild-wars-2")
 require("rules.lutris")()
@@ -13,6 +14,9 @@ require("rules.rpi-imager")
 require("rules.steam")()
 require("rules.wow-classic")
 require("rules.rmpc")
+
+-- Keep XWayland's _NET_WORKAREA current (Hyprland lets it go stale)
+require("xwayland-workarea")
 
 --------------------
 ---- MONITORS ----
