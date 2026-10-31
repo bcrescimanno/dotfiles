@@ -160,6 +160,18 @@ Two workflows, both driven by scripts in `.github/scripts/` that also run locall
 
 Note that the nightly job's own push does not trigger `check.yml`: GitHub does not fire workflows for pushes made with `GITHUB_TOKEN`. That's fine, since `update-lock.sh` has already run the same check before pushing.
 
+### Merging (ruleset "Protect Main")
+
+`main` is protected by a repository ruleset named "Protect Main", modeled on homelab-nix's. It blocks deleting `main` and force-pushes to it, and it requires the `check` status from `check.yml`. The repo allows auto-merge and deletes head branches on merge. The ruleset lives in GitHub's settings, not in this repo: `gh api repos/bcrescimanno/dotfiles/rulesets`.
+
+PRs merge through auto-merge: open the PR, then arm it and GitHub merges once `check` passes:
+```
+gh pr merge <n> --auto --squash   # or --merge to keep a PR's commits separate
+```
+Admins (the repo owner) can bypass the ruleset, so a direct push to `main` still works. Prefer a PR, so CI covers the Mac and the Pis first.
+
+The nightly lock job can't be a bypass actor (GitHub only allows the Actions app as one on organization repos), and a PR opened with `GITHUB_TOKEN` never triggers `check.yml`. So `update-lock.yml` attests its own check instead. It pushes the commit to a scratch `update-lock/<run id>` branch, creates a passing `check` run on it from the result `update-lock.sh` already got, fast-forwards `main`, and deletes the branch. If the nightly push starts getting rejected, look there first.
+
 ### Unfree Packages
 
 `pkgsFor` in `flake.nix` uses `allowUnfreePredicate` to allow `claude-code` specifically. Add other unfree package names there as needed.
