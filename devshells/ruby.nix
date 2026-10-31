@@ -3,7 +3,7 @@ let common = import ./common.nix { inherit pkgs; }; in
 pkgs.mkShell {
   name = "ruby";
   packages = common.packages ++ (with pkgs; [
-    ruby_3_3
+    ruby
     bundler
     libyaml
     libffi
