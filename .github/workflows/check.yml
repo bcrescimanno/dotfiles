@@ -1,5 +1,9 @@
 name: Check machines
 
+# `check` is a REQUIRED status check on main (ruleset "Protect Main"), and it
+# is what auto-merge waits on. Keep the job id `check`: it is the context name
+# recorded in the ruleset, and update-lock.yml creates a run with that name.
+
 on:
   push:
     branches: [main]

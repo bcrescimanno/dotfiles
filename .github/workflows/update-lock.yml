@@ -14,6 +14,8 @@ concurrency:
 
 permissions:
   contents: write
+  # To record the `check` run on the new commit; see "Commit and push".
+  checks: write
 
 jobs:
   update:
@@ -31,7 +33,25 @@ jobs:
       - name: Update and validate inputs
         run: ./.github/scripts/update-lock.sh
 
+      # main requires a passing `check` (ruleset "Protect Main"), so a bare
+      # push of a fresh commit is rejected. The ruleset can't let this job
+      # bypass it either: GitHub only accepts the Actions app as a bypass actor
+      # on organization repos, and this is a personal one. A PR doesn't help:
+      # check.yml never runs on a PR opened with GITHUB_TOKEN, so it would wait
+      # forever.
+      #
+      # So the job attests its own check. update-lock.sh has just validated
+      # this exact lock with check-machines.sh, the same script check.yml runs.
+      # The commit goes to a scratch branch first, because a check run can only
+      # be attached to a commit GitHub already has. Then main fast-forwards to
+      # it and the scratch branch is deleted. The run is created with
+      # GITHUB_TOKEN, so it comes from the GitHub Actions app, the source the
+      # ruleset requires.
       - name: Commit and push
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
           if git diff --quiet -- flake.lock; then
@@ -45,4 +65,19 @@ jobs:
 
           $(cat .update-log)
           EOF
+
+          scratch="update-lock/${GITHUB_RUN_ID}"
+          trap 'git push -q origin --delete "$scratch" || true' EXIT
+          git push origin "HEAD:refs/heads/$scratch"
+
+          gh api "repos/$REPO/check-runs" \
+            -f name=check \
+            -f head_sha="$(git rev-parse HEAD)" \
+            -f status=completed \
+            -f conclusion=success \
+            -f details_url="$RUN_URL" \
+            -f 'output[title]=Validated by update-lock.sh' \
+            -f 'output[summary]=update-lock.sh evaluated every machine with check-machines.sh before committing this lock.' \
+            --jq .html_url
+
           git push origin HEAD:main
