@@ -27,6 +27,7 @@ in
     (wrapScript "mktorrent-wrap")
     (wrapScript "rip-to-library")
     (wrapScript "redacted-transcode")
+    (wrapScript "redacted-upload")
     (wrapScript "red-candidates")
   ];
 
