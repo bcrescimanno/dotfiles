@@ -1,0 +1,49 @@
+#!/bin/bash
+# Suspend, but only once no process is still in the middle of exiting.
+#
+# A game that is quitting can spend several seconds inside the GPU driver
+# tearing down its memory. If suspend starts during that window, the kernel
+# cannot freeze the process, so the suspend aborts with the GPU already
+# half-suspended. On liquidark (2026-11-15) that ended with the GPU falling
+# off the bus. So wait here until no task has PF_EXITING set, which is the
+# kernel's own "this task is exiting" flag (field 9 of /proc/<tid>/stat).
+#
+# If something is still exiting after SAFE_SUSPEND_TIMEOUT seconds (default
+# 30), it is probably wedged. Skip the suspend and say so: suspending anyway
+# is exactly the case this script exists to avoid.
+
+timeout=${SAFE_SUSPEND_TIMEOUT:-30}
+PF_EXITING=0x4
+
+# Print the name of each live task (any thread) that is exiting. Zombies are
+# skipped: they keep the flag but are already done and do not block a freeze.
+exiting_tasks() {
+    local f stat state flags
+    for f in /proc/[0-9]*/task/[0-9]*/stat; do
+        read -r stat <"$f" 2>/dev/null || continue
+        # The comm field may contain spaces or ')', so parse from the last ') '.
+        read -r state _ _ _ _ _ flags _ <<<"${stat##*) }"
+        [[ $state == [ZX] ]] && continue
+        (( flags & PF_EXITING )) || continue
+        stat=${stat#*(}
+        echo "${stat%) *}"
+    done | sort -u
+}
+
+deadline=$((SECONDS + timeout))
+notified=
+while busy=$(exiting_tasks) && [[ -n $busy ]]; do
+    names=$(paste -sd, <<<"$busy")
+    if (( SECONDS >= deadline )); then
+        notify-send -u critical "Suspend skipped" "Still exiting after ${timeout}s: $names" 2>/dev/null
+        echo "safe-suspend: still exiting after ${timeout}s ($names); not suspending" >&2
+        exit 1
+    fi
+    if [[ -z $notified ]]; then
+        notify-send "Suspend waiting" "Waiting for $names to finish exiting" 2>/dev/null
+        notified=1
+    fi
+    sleep 0.5
+done
+
+exec systemctl suspend

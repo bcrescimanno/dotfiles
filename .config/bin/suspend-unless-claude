@@ -11,4 +11,4 @@ if pgrep -x .claude-wrapped >/dev/null 2>&1; then
     exit 0
 fi
 
-exec systemctl suspend
+exec "$(dirname "$0")/safe-suspend"

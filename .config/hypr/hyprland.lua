@@ -216,7 +216,7 @@ hl.bind(mainMod .. " + Q", hl.dsp.window.close(), { description = "Close window"
 
 -- Windows and workspaces
 hl.bind(mainMod .. " + TAB", hl.dsp.window.cycle_next(), { description = "Cycle Windows" })
-hl.bind(mainMod .. " + ALT + end", hl.dsp.exec_cmd("systemctl suspend"), { description = "Suspend" })
+hl.bind(mainMod .. " + ALT + end", hl.dsp.exec_cmd("$HOME/.config/bin/safe-suspend"), { description = "Suspend" })
 hl.bind(mainMod .. " + escape", hl.dsp.exec_cmd(exit), { description = "Exit Menu" })
 
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))

@@ -113,7 +113,7 @@ in
         { label = "lock";     action = "loginctl lock-session"; text = "Lock";     keybind = "l"; icon = "/usr/share/wleave/icons/lock.svg"; }
         { label = "logout";   action = "uwsm stop";             text = "Logout";   keybind = "e"; icon = "/usr/share/wleave/icons/logout.svg"; }
         { label = "shutdown"; action = "systemctl poweroff";    text = "Shutdown"; keybind = "p"; icon = "/usr/share/wleave/icons/shutdown.svg"; }
-        { label = "suspend";  action = "systemctl suspend";     text = "Suspend";  keybind = "s"; icon = "/usr/share/wleave/icons/suspend.svg"; }
+        { label = "suspend";  action = "${config.home.homeDirectory}/.config/bin/safe-suspend"; text = "Suspend";  keybind = "s"; icon = "/usr/share/wleave/icons/suspend.svg"; }
         { label = "reboot";   action = "systemctl reboot";      text = "Reboot";   keybind = "r"; icon = "/usr/share/wleave/icons/reboot.svg"; }
       ];
     };
