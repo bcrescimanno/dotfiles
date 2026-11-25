@@ -1,95 +1,39 @@
-# machines/celes.nix — Arch Linux laptop
-{ pkgs, config, lib, ... }:
+# machines/celes.nix — celes (ASUS Zephyrus G14 laptop) on NixOS with
+# Plasma 6. Consumed by homelab-nix's hosts/celes.nix through the home-manager
+# NixOS module, like terra. (Until 2026-11-24 this was celes-nixos.nix, beside
+# the Arch profile it replaced; that one is in git history.)
+#
+# No wayland.nix: the desktop is Plasma, configured by its own defaults, so
+# Hyprland, Quickshell, uwsm and the hypridle battery/AC split do not apply —
+# Plasma's power settings own idle and per-source brightness now. No arch.nix.
+# terminal.nix stays for the Ghostty/Alacritty/Vesktop configs; on NixOS the
+# apps themselves come from home.packages below (on Arch, pacman installed
+# them). The JetBrainsMono Nerd Font Ghostty asks for, and Lutris (it pulls in
+# unfree Steam runtime pieces, which only the host allows), are in
+# hosts/celes.nix.
+{ config, pkgs, lib, ... }:
 {
   imports = [
     ../home/common.nix
-    ../home/arch.nix
     ../home/terminal.nix
-    ../home/wayland.nix
   ];
 
   dotfiles.configName = "brian@celes";
 
-  # SSH auth + git signing through the Bitwarden desktop agent (native Arch
-  # package). See home/ssh-agent.nix — ~/.gitconfig must not set
-  # gpg.ssh.program, or it overrides this.
+  # SSH auth + git signing through the Bitwarden desktop agent. The app is a
+  # system package in hosts/celes.nix. See home/ssh-agent.nix.
   dotfiles.sshAgent = "bitwarden";
 
   home.username = "brian";
   home.homeDirectory = "/home/brian";
 
-  # Laptop display: tighter wleave margins and smaller fonts than the desktop
-  wayland.wleave = {
-    margins = { top = 400; bottom = 400; left = 300; right = 300; };
-    fontSizeAction  = 18;
-    fontSizeKeybind = 14;
-  };
-
-  home.file.".config/hypr/hyprland.lua".source = ../.config/hypr/hyprland-celes.lua;
-
-  # 96 x 1.5: XWayland apps draw at the panel's real scale themselves, since
-  # hyprland-celes.lua turns off Hyprland's blurry upscaling of them.
-  home.file.".Xresources".text = ''
-    Xft.dpi: 144
-  '';
-
-  # Battery-aware idle policy: hypridle-smart picks hypridle-ac.conf or
-  # hypridle-battery.conf based on the power-source helper, and
-  # hypridle-power-watch restarts it when the source changes. The watcher also
-  # runs power-brightness, which keeps a separate backlight level for each
-  # source (saved in ~/.local/state/power-brightness).
-  home.file.".config/hypr/hypridle-battery.conf".source = ../.config/hypr/hypridle-battery.conf;
-
-  home.file.".config/systemd/user/hypridle.service.d/use-smart-wrapper.conf".text = ''
-    [Service]
-    ExecStart=
-    ExecStart=%h/.config/bin/hypridle-smart
-  '';
-
-  systemd.user.services.hypridle-power-watch = {
-    Unit = {
-      Description = "Switch idle policy and brightness when the power source changes";
-      # Must order itself After graphical-session.target, exactly as
-      # hypridle.service does. A target implicitly gains After= on everything it
-      # Wants, so without this systemd derives Before=graphical-session.target
-      # here and the chain closes into a cycle:
-      #   power-watch -> hypridle -> graphical-session.target -> power-watch
-      # systemd breaks such a cycle by dropping a job, and the one it dropped
-      # was this service — it never started, so hypridle never switched configs.
-      # Ordering After the target suppresses the implicit reverse dependency.
-      PartOf = [ "graphical-session.target" ];
-      After = [ "graphical-session.target" ];
-    };
-    Service = {
-      Type = "simple";
-      ExecStart = "%h/.config/bin/hypridle-power-watch";
-      Restart = "always";
-      RestartSec = "5";
-    };
-    Install = {
-      WantedBy = [ "graphical-session.target" ];
-    };
-  };
-
-  # AMD-primary hybrid laptop: no global NVIDIA GLX vars (those activate the dGPU
-  # for every GTK4 app). Use __NV_PRIME_RENDER_OFFLOAD=1 per-launch for games.
-  home.file.".config/uwsm/env".source = ../.config/uwsm/env-celes;
-
-  # System file (outside Home Manager): /etc/modprobe.d/nvidia-pm.conf
-  #   options nvidia NVreg_DynamicPowerManagement=2
-  # Overrides the driver default of 3 (fine-grained + VRAM migration). Value 3
-  # causes periodic dGPU wakeups every few minutes as the driver migrates VRAM
-  # to system RAM. Value 2 keeps fine-grained PM (D3cold) without the migration
-  # cycles. Requires reboot to take effect; no mkinitcpio rebuild needed unless
-  # nvidia is in MODULES= in mkinitcpio.conf.
-
-  # hyprpaper links against libGLESv2 (libglvnd), which enumerates all EGL vendor
-  # ICDs at startup — including NVIDIA's, which opens /dev/nvidia0 and wakes the
-  # dGPU. Restrict it to Mesa-only EGL so only the AMD render node is used.
-  home.file.".config/systemd/user/hyprpaper.service.d/restrict-gpu.conf".text = ''
-    [Service]
-    Environment="__EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json"
-  '';
+  home.packages = with pkgs; [
+    ghostty
+    vesktop
+    yazi
+    yt-dlp
+    rmpc
+  ];
 
   services.mpd = {
     enable = true;
@@ -107,8 +51,6 @@
 
   services.mpdris2.enable = true;
 
-  home.packages = [ pkgs.rmpc ];
-
   programs.zsh.initContent = ''
     addliveyt() {
       rmpc clear && yt-dlp -g -f 'bestaudio/best' "$1" | xargs rmpc add && rmpc play
@@ -116,24 +58,4 @@
   '';
 
   home.file.".config/rmpc/config.ron".source = ../.config/rmpc/config.ron;
-
-  # Generates qbt-tui config at activation time. Credentials stay encrypted in
-  # secrets/celes.env (sops). Create/update with: sops secrets/celes.env
-  home.activation.qbtTuiConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    mkdir -p "${config.home.homeDirectory}/.config/qbt-tui"
-
-    secrets_file="${config.home.homeDirectory}/code/dotfiles/secrets/celes.env"
-    if [ -f "$secrets_file" ]; then
-      eval "$(/usr/bin/sops -d "$secrets_file")"
-    fi
-
-    cat > "${config.home.homeDirectory}/.config/qbt-tui/config.toml" << EOF
-[server]
-url = "http://pirateship:9091"
-username = "''${QBT_USERNAME:-}"
-password = "''${QBT_PASSWORD:-}"
-refresh_interval = 3
-EOF
-    chmod 600 "${config.home.homeDirectory}/.config/qbt-tui/config.toml"
-  '';
 }
