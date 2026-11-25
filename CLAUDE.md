@@ -58,8 +58,7 @@ Machine configs in `machines/` compose `home/` modules:
 | Config | System | Profile |
 |---|---|---|
 | `brian@liquidark` | x86_64-linux | common + arch + terminal + wayland + red-tools + greeter |
-| `brian@celes` | x86_64-linux | common + arch + terminal + wayland (Arch; retired once celes runs NixOS) |
-| `brian@celes-nixos` | x86_64-linux | common + terminal (NixOS + Plasma 6, via homelab-nix) |
+| `brian@celes` | x86_64-linux | common + terminal (NixOS + Plasma 6, via homelab-nix) |
 | `brian@terra` | x86_64-linux | common (NixOS, via homelab-nix) |
 | `brian@orthanc` | x86_64-linux | common + dev-tools + headless |
 | `brian@mac` | aarch64-darwin | common + darwin + dev-tools + terminal |
@@ -152,7 +151,7 @@ a stale entry there silently overrides the one home-manager writes.
 
 Two workflows, both driven by scripts in `.github/scripts/` that also run locally.
 
-**`check.yml`** runs `check-machines.sh` on every push to `main`, on pull requests, and on demand. It evaluates all eight machines, so an edit that only breaks the Mac or a Pi fails here rather than surfacing the next time that machine runs `hms`.
+**`check.yml`** runs `check-machines.sh` on every push to `main`, on pull requests, and on demand. It evaluates all seven machines, so an edit that only breaks the Mac or a Pi fails here rather than surfacing the next time that machine runs `hms`.
 
 **`update-lock.yml`** runs `update-lock.sh` at 09:00 UTC nightly (and on `workflow_dispatch`), then commits the new `flake.lock` straight to `main`. Combined with `hms` using `--refresh`, running `hms` on any machine picks up the latest packages without anyone updating the lock by hand.
 
